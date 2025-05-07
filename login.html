@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HIS Hospital - Login</title>
     <style>
-        /* Reset y estilos base */
+      
         * {
             margin: 0;
             padding: 0;
@@ -21,8 +21,7 @@
             align-items: center;
         }
         
-        /* Contenedor principal */
-        .login-container {
+        .contenedor-login {
             width: 90%;
             max-width: 400px;
             background: white;
@@ -37,30 +36,26 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
-        /* Logo */
-        .hospital-logo {
-            width: 280px;
-            height: 280px;
-            margin-bottom: -4rem;
+
+        .logo-hospital {
+            width: 140px;
+            height: 100px;            
             object-fit: contain;
-        }
-        
-        /* Títulos */
-        h1 {
+        }       
+       
+        .titulo {
             color: #1976d2;
             margin-bottom: 0.5rem;
             font-size: 1.8rem;
         }
         
-        .subtitle {
+        .subtitulo {
             color: #757575;
             margin-bottom: 2rem;
             font-size: 0.9rem;
         }
         
-        /* Formulario */
-        .form-group {
+        .grupo-formulario {
             margin-bottom: 1.5rem;
             text-align: left;
         }
@@ -86,22 +81,10 @@
             border-color: #1976d2;
             outline: none;
             box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.2);
-        }
-        
-        /* Checkbox */
-        .remember-me {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        
-        .remember-me input {
-            width: auto;
-            margin-right: 0.5rem;
-        }
-        
+        }  
+
         /* Botón */
-        .login-btn {
+        .boton-login {
             width: 100%;
             padding: 14px;
             background: #1976d2;
@@ -114,26 +97,10 @@
             transition: background 0.3s;
         }
         
-        .login-btn:hover {
+        .boton-login:hover {
             background: #1565c0;
-        }
+        }        
         
-        /* Enlaces */
-        .links {
-            margin-top: 1.5rem;
-            font-size: 0.9rem;
-        }
-        
-        .links a {
-            color: #1976d2;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        
-        .links a:hover {
-            color: #0d47a1;
-            text-decoration: underline;
-        }
         
         .divider {
             margin: 0 0.5rem;
@@ -142,47 +109,36 @@
         
         /* Responsive */
         @media (max-width: 480px) {
-            .login-container {
+            .contenedor-login {
                 padding: 1.5rem;
             }
             
-            h1 {
+            .titulo {
                 font-size: 1.5rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <img src="img/Logo-Hospital.jpg" alt="Hospital Logo" class="hospital-logo">
-        <h1>Sistema Hospitalario HIS</h1>
-        <p class="subtitle">Ingrese sus credenciales para acceder al sistema</p>
+    <div class="contenedor-login">
+        <img src="img/Logo-Hospital1.jpg" alt="Logo del Hospital" class="logo-hospital">
+        <h1 class="titulo">Sistema Hospitalario HIS</h1>
         
-        <form id="loginForm">
-            <div class="form-group">
+        
+        <form id="formulario-login">
+            <div class="grupo-formulario">
                 <label for="username">Usuario</label>
                 <input type="text" id="username" name="username" placeholder="Ingrese su usuario" required>
             </div>
             
-            <div class="form-group">
+            <div class="grupo-formulario">
                 <label for="password">Contraseña</label>
                 <input type="password" id="password" name="password" placeholder="Ingrese su contraseña" required>
-            </div>
-            
-            <div class="remember-me">
-                <input type="checkbox" id="remember" name="remember">
-                <label for="remember">Recordar mi sesión</label>
-            </div>
-            
-            <button type="submit" class="login-btn">Iniciar Sesión</button>
+            </div> 
+
+            <button type="submit" class="boton-login">Iniciar Sesión</button>
         </form>
-        
-        <div class="links">
-            <a href="#">¿Olvidó su contraseña?</a>
-            <span class="divider">|</span>
-            <a href="#">Contactar al administrador</a>
-        </div>
-    </div>
+    </div>  
 
     <script>
         document.getElementById('loginForm').addEventListener('submit', function(e) {

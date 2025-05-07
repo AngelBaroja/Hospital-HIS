@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HIS Hospital - Registro</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>    
+    <div class="contenedor">
+        <header>
+            <img src="/TP-Integrador/Hospital-HIS/img/Logo-Hospital.jpg" alt="Logo del Hospital">
+            <div class="logo">HIS Hospital</div>
+            <div class="info-usuario">
+                <span>Recepcionista: Angel Baroja</span>
+            </div>
+        </header>
+        
+        <div class="pestañas">
+            <div class="pestaña">1. Recepción</div>
+            <div class="pestaña activa" data-pestana="registro">2. Registro</div>
+            <div class="pestaña" data-pestana="asignacion">3. Asignación</div>
+        </div>
+        
+        <!-- Paso 2: Registro Completo -->
+        <div class="contenido-pestaña activa" id="registro">
+            <h2>Registro Completo</h2>
+            <p>Complete todos los datos del paciente para el ingreso al sistema.</p>
+            
+            <form id="formulario-registro">
+                <div class="formulario-grid">
+                    <div class="grupo-formulario">
+                        <label for="nombre-completo">Nombre Completo</label>
+                        <input type="text" id="nombre-completo" required>
+                    </div>
+                    
+                    <div class="grupo-formulario">
+                        <label for="fecha-nacimiento">Fecha de Nacimiento</label>
+                        <input type="date" id="fecha-nacimiento" required>
+                    </div>
+                    
+                    <div class="grupo-formulario">
+                        <label for="genero">Género</label>
+                        <select id="genero" required>
+                            <option value="">Seleccione...</option>
+                            <option value="masculino">Masculino</option>
+                            <option value="femenino">Femenino</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
+                    
+                    <div class="grupo-formulario">
+                        <label for="direccion">Dirección</label>
+                        <input type="text" id="direccion" required>
+                    </div>
+                    
+                    <div class="grupo-formulario">
+                        <label for="telefono">Teléfono</label>
+                        <input type="tel" id="telefono" required>
+                    </div>
+                    
+                    <div class="grupo-formulario">
+                        <label for="seguro">Seguro Médico</label>
+                        <input type="text" id="seguro">
+                    </div>
+                    
+                    <div class="grupo-formulario">
+                        <label for="motivo">Motivo de Internación</label>
+                        <textarea id="motivo" rows="3" style="width: 100%; padding: 0.8rem;"></textarea>
+                    </div>
+                </div>
+                
+                <div class="botones-accion">
+                    <button type="button" class="boton boton-secundario" onclick="anteriorPestana('recepcion')">Atrás</button>
+                    <button type="button" class="boton boton-primario" onclick="siguientePestana('asignacion')">Continuar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
