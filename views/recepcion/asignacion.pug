@@ -1,0 +1,29 @@
+extends ../layout
+
+block content  
+        .pestanas 
+            .pestana 1. Recepción
+            .pestana 2. Registro
+            .pestana.activa3 3. Asignación
+        .contenido-pestana#asignacion
+            h2 Asignacion de Habitacion 
+            p#texto Seleccione una habitación disponible para el paciente.
+
+            .grupo-formulario 
+                label(filtro-habitaciones) Filtrar por:
+                select#filtro-habitaciones(onchange="filtrarHabitaciones()")
+                    option(value="Todas") Todas las habitaciones
+                    option(value="Ala Norte") Ala Norte
+                    option(value="Ala Sur") Ala Sur
+                    option(value="Ala Este") Ala Este
+                    option(value="Ala Oeste") Ala Oeste
+                    option(value="Individual") Individual
+                    option(value="Compartida") Compartidas
+      
+            .grid-habitaciones#contenedor-habitaciones            
+
+            .botones-accion 
+                button.boton.boton-secundario(type="button" onclick="cambiarPestana(`/registro`)") Atrás
+                button.boton.boton-primario(type="button") Asignar Habitacion
+
+            script(src="/scriptAsignacionHabitacion.js")    

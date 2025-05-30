@@ -1,0 +1,53 @@
+extends ../layout
+
+block content 
+        .pestanas 
+            .pestana 1. Recepción
+            .pestana.activa2 2. Registro
+            .pestana 3. Asignación
+        .contenido-pestana#recepcion
+            h2 Datos Basicos del Paciente 
+            p#texto Complete la información inicial para comenzar el proceso de admisión.
+
+            form#formulario-registro(action="/recepcion/registro" method="POST")
+                .formulario-grid
+                    .grupo-formulario
+                        label(for="nombre") Nombre
+                        input(type="text" placeholder="Ingrese el nombre" name="nombre" required)#nombre
+
+                    .grupo-formulario
+                        label(for="apellido") Apellido
+                        input(type="text" placeholder="Ingrese el apellido" name="apellido" required)#apellido
+
+                    .grupo-formulario 
+                        label(for="fecha-nacimiento") Fecha de Nacimiento
+                        input(type="date" placeholder="Ingrese la fecha de nacimiento" name="fecha-nacimiento" required)#fecha-nacimiento
+
+                    .grupo-formulario 
+                        label(for="genero") Género 
+                        select#genero(required)
+                            option(value="") Seleccione...
+                            option(value="masculino") Masculino
+                            option(value="femenino") Femenino
+                            option(value="otro") Otro
+
+                    .grupo-formulario 
+                        label(for="direccion") Dirección
+                        input(type="text" placeholder="Ingrese la dirección" name="direccion" required)#direccion
+
+                    .grupo-formulario 
+                        label(for="telefono") Teléfono de Contacto
+                        input(type="text" placeholder="Ingrese el número de teléfono" name="telefono" required)#telefono
+                        
+                    .grupo-formulario 
+                        label(for="seguro") Seguro Médico
+                        input(type="text" placeholder="Ingrese el seguro médico" name="seguro" )#seguro
+
+                    .grupo-formulario 
+                        label(for="motivo") Motivo de la internacion
+                        textarea(rows="3" placeholder="Ingrese el motivo de la internacion" name="motivo")#motivo
+                    
+                .botones-accion 
+                    button(type="submit" class="boton boton-secundario") Atrás
+                    button(type="submit" class="boton boton-primario") Continuar
+                script(src="/script.js")

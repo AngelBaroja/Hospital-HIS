@@ -1,0 +1,30 @@
+const Recepcion = require('../models/Recepcion');
+
+async function formulario(req, res) {  
+   res.render('recepcion/recepcion');
+}
+
+async function buscarTurno(req, res) {  
+   res.redirect('/recepcion/registro');
+}
+
+async function abrirRegistro(req, res) {  
+   res.render('recepcion/registro');
+}
+
+async function crearPaciente(req, res) {
+    // Aquí tengo que crear al paciente y para luego asignarle la habitacion
+   res.redirect('recepcion/asignacion');
+}
+
+async function abrirAsignacion(req, res) {  
+   res.render('recepcion/asignacion');
+}
+
+module.exports = {
+  formulario,
+  buscarTurno,
+  abrirRegistro,
+  crearPaciente,
+  abrirAsignacion
+};

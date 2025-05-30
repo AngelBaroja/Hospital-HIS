@@ -1,3 +1,8 @@
+// Función para cambiar entre pestañas
+function cambiarPestana(url) {
+       // Redireccionar a la página correspondiente
+    window.location.href = url;
+}
 // Datos simulados de habitaciones
 const habitaciones = [
     { numero: "101", ala: "Ala Norte", tipo: "Compartida", genero: "Masculino", estado: "Disponible" },
@@ -14,21 +19,6 @@ const habitaciones = [
 ];
 
 let habitacionSeleccionada = null;
-
-// Función para cambiar entre pestañas
-function cambiarPestana(pestanaId) {
-    // Redireccionar a la página correspondiente
-    window.location.href = pestanaId + '.html';
-}
-
-function siguientePestana(pestanaId) {
-    // Aquí podrías agregar validación del formulario antes de avanzar
-    cambiarPestana(pestanaId);
-}
-
-function anteriorPestana(pestanaId) {
-    cambiarPestana(pestanaId);
-}
 
 // Cargar habitaciones disponibles
 function cargarHabitaciones(filtro = 'Todas') {
@@ -108,7 +98,7 @@ function completarAdmision() {
 // Inicializar
 document.addEventListener('DOMContentLoaded', () => {
     // Cargar habitaciones si estamos en la página de asignación
-    if (window.location.pathname.includes('asignacion.html')) {
+    if (window.location.pathname.includes('asignacion.pug')) {
         cargarHabitaciones();
     }
 });

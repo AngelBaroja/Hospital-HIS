@@ -1,0 +1,30 @@
+extends ../layout
+
+block content
+      .pestanas 
+        .pestana.activa1 1. Recepción
+        .pestana 2. Registro
+        .pestana 3. Asignación
+      .contenido-pestana#recepcion
+        h2 Datos Básicos del Paciente
+        p#texto Complete la información inicial para comenzar el proceso de admisión.
+
+        form(accion="/recepcion" method="POST")#formulario-recepcion
+          .formulario-grid
+            .grupo-formulario
+              label(for="tipo-paciente") Tipo de Paciente 
+              select#tipo-paciente(required)
+                option(value="") Seleccione...                
+                option(value="cita-programada") Cita Programada
+                option(value="derivacion") Derivacion 
+                option(value="emergencia") Emergencia
+            
+            .grupo-formulario
+              label(for="id") ID / DNI 
+              input#id(type="text" name="id" placeholder="Número de identificación" required)
+          
+          .botones-accion
+            button.boton.boton-secundario(type='submit' disabled) Atrás
+            button.boton.boton-primario(type='submit') Continuar
+    
+          script(src="/script.js")

@@ -105,7 +105,7 @@ html(lang="es")
       img.logo-hospital(src="img/Logo-Hospital1.jpg" alt="Logo del Hospital")
       h1.titulo Sistema Hospitalario HIS
       
-      form#formulario-login
+      form#formulario-login(action="/login" method="POST")
         .grupo-formulario
           label(for="usuario") Usuario
           input#username(type="text" name="usuario" placeholder="Ingrese su usuario")
@@ -114,13 +114,11 @@ html(lang="es")
           label(for="contraseña") Contraseña
           input#password(type="password" name="contraseña" placeholder="Ingrese su contraseña")
 
-        button.boton-login(type="submit",href:"/recepcion.pug") Iniciar Sesión
-
-    script.
-       document.getElementById('formulario-login').addEventListener('submit', function(e) {
-          e.preventDefault(); 
+        button.boton-login(type="submit" onclick="validarFormulario()") Iniciar Sesión
           
-         
+    script.       
+      
+      function validarFormulario() {
           const usuario = document.getElementById('username');
           const contraseña = document.getElementById('password');
           
@@ -131,7 +129,7 @@ html(lang="es")
           if (errorContraseña) errorContraseña.remove();
           
           
-          let hasError = false;
+          let hayError = false;
           if (!usuario.value.trim()) {
               const error = document.createElement('p');
               error.id = 'error-usuario';
@@ -139,7 +137,7 @@ html(lang="es")
               error.style.fontSize = '12px';
               error.textContent = 'El campo usuario es obligatorio.';
               usuario.parentNode.appendChild(error);
-              hasError = true;
+              hayError = true;
           }
           
           if (!contraseña.value.trim()) {
@@ -149,16 +147,14 @@ html(lang="es")
               error.style.fontSize = '12px';
               error.textContent = 'El campo contraseña es obligatorio.';
               contraseña.parentNode.appendChild(error);
-              hasError = true;
+              hayError = true;
           }
           
-          if (hasError) {
+          if (hayError) {
               return;
+          }else{
+                window.location.href = '/recepcion'; 
           }
-          
-          // Aquí iría la conexión con tu backend en Node.js
-          console.log(`Enviando: ${usuario.value}, ${contraseña.value}`);
-          
-          // Simulación de redirección (reemplazar con tu lógica real)          
-           window.location.href = '/recepcion';
-      });
+        }
+
+        

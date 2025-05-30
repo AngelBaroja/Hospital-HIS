@@ -1,0 +1,14 @@
+
+
+async function validarUsuario(req, res) {
+  // Aquí podrías agregar la lógica para validar el usuario 
+  res.redirect('/recepcion');
+}
+async function formularioLogin(req, res) { 
+   res.render('login');
+}
+
+module.exports = {
+  validarUsuario,
+  formularioLogin 
+};
