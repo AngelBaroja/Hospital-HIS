@@ -6,10 +6,14 @@ block content
             .pestana.activa2 2. Registro
             .pestana 3. Asignación
         .contenido-pestana#recepcion
-            h2 Datos Basicos del Paciente 
+            h2 Datos Basicos del Paciente
+            h3 DNI: #{dni} | Tipo de Paciente: #{tipo}
             p#texto Complete la información inicial para comenzar el proceso de admisión.
 
-            form#formulario-registro(action="/recepcion/registro" method="POST")
+            form#formulario-registro(action="/recepcion/registro" method="POST" novalidate)
+                input(type="hidden" name="dni" value=dni)
+                input(type="hidden" name="tipo-paciente" value=tipo)
+                input(type="hidden" name="usuario" value=usuario)
                 .formulario-grid
                     .grupo-formulario
                         label(for="nombre") Nombre
@@ -48,6 +52,6 @@ block content
                         textarea(rows="3" placeholder="Ingrese el motivo de la internacion" name="motivo")#motivo
                     
                 .botones-accion 
-                    button(type="submit" class="boton boton-secundario") Atrás
+                    button(type="button" onclick="history.back()" class="boton boton-secundario") Atrás
                     button(type="submit" class="boton boton-primario") Continuar
                 script(src="/script.js")

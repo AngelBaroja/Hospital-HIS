@@ -9,22 +9,24 @@ block content
         h2 Datos Básicos del Paciente
         p#texto Complete la información inicial para comenzar el proceso de admisión.
 
-        form(accion="/recepcion" method="POST")#formulario-recepcion
+        form(action="/recepcion" method="POST")#formulario-recepcion
+          input(type="hidden" name="usuario" value=usuario)
           .formulario-grid
             .grupo-formulario
               label(for="tipo-paciente") Tipo de Paciente 
-              select#tipo-paciente(required)
+              select#tipo-paciente(name="tipo-paciente" required)
                 option(value="") Seleccione...                
-                option(value="cita-programada") Cita Programada
+                option(value="cita programada") Cita Programada
                 option(value="derivacion") Derivacion 
                 option(value="emergencia") Emergencia
             
             .grupo-formulario
-              label(for="id") ID / DNI 
-              input#id(type="text" name="id" placeholder="Número de identificación" required)
-          
+              label(for="dni") DNI 
+              input#dni(type="text" name="dni" placeholder="Número de identificación" required)
+            if error
+              p(style='color: red;') #{error}
           .botones-accion
-            button.boton.boton-secundario(type='submit' disabled) Atrás
+            span 
             button.boton.boton-primario(type='submit') Continuar
     
           script(src="/script.js")

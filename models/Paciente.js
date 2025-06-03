@@ -49,9 +49,9 @@ Paciente.init(
         type: DataTypes.STRING,
         allowNull: false,
         unique: false,
-        defaultValue: 'Otro', 
+        defaultValue: 'No especificado', 
         validate: {
-           isIn: [['Masculino', 'Femenino', 'Otro']]  // Validación para asegurarse de que el género es uno de los valores permitidos
+           isIn: [['Masculino', 'Femenino', 'No especificado']]  // Validación para asegurarse de que el género es uno de los valores permitidos
         },
         comment: 'Género del paciente'
     },

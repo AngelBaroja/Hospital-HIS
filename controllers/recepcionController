@@ -1,30 +1,85 @@
 const Recepcion = require('../models/Recepcion');
+const Paciente = require('../models/Paciente');
+const Turno = require('../models/Turno');
+ const { Op } = require('sequelize');
 
-async function formulario(req, res) {  
-   res.render('recepcion/recepcion');
-}
+async function buscarTurno(req, res) {
+    const { dni, 'tipo-paciente': tipo, usuario } = req.body;
+    
+    try {
+      // Si es cita programada, buscar turno
+        if (tipo === 'cita programada') {
+           // Buscar paciente por DNI
+        const paciente = await Paciente.findOne({ where: { dni: dni } });
+        
+        if (!paciente) {
+            return res.status(404).render('recepcion/recepcion', {  // Renderizar una vista de error si no se encuentra el paciente
+                error: `Paciente con DNI ${dni} no encontrado.`,
+                usuario
+            });
+        }
+            // Buscar turno del paciente para el día de hoy
+            const today = new Date();
+            const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+            const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+            const turno = await Turno.findOne({
+                where: {
+                    id_paciente: paciente.id,
+                    fecha_turno: {
+                        [Op.between]: [startOfDay, endOfDay]
+                    }
+                }
+            });
 
-async function buscarTurno(req, res) {  
-   res.redirect('/recepcion/registro');
-}
+            if (!turno) {
+                return res.render('recepcion/recepcion', {
+                    dni,
+                    usuario,
+                    error: `No tiene turno programado para hoy.`
+                });
+            }
+            // Si encontramos el turno
+            return res.render('recepcion/registro', {
+                dni,
+                tipo,
+                usuario,
+                paciente
+            });
+        }
 
-async function abrirRegistro(req, res) {  
-   res.render('recepcion/registro');
+        // Si no es cita programada
+        return res.render('recepcion/registro', {
+            dni,
+            usuario,
+            paciente
+        });
+
+    } catch (error) {
+        console.error('Error en buscarTurno:', error);
+        return res.status(500).render('recepcion/recepcion', {
+            error: 'Error al buscar turno',
+            usuario
+        });
+    }
 }
 
 async function crearPaciente(req, res) {
-    // Aquí tengo que crear al paciente y para luego asignarle la habitacion
-   res.redirect('recepcion/asignacion');
+  const { dni, 'tipo-paciente': tipo, usuario } = req.body;   
+  // Aquí tengo que crear al paciente y para luego asignarle la habitacion
+   res.render('recepcion/asignacion', { 
+        dni,
+        tipo,
+        usuario        
+    });
 }
 
-async function abrirAsignacion(req, res) {  
-   res.render('recepcion/asignacion');
+async function ingresarHabitacion(req, res) {  
+  console.log('Ingresando a la habitacion');
+  
 }
 
-module.exports = {
-  formulario,
-  buscarTurno,
-  abrirRegistro,
+module.exports = {  
+  buscarTurno,  
   crearPaciente,
-  abrirAsignacion
+ ingresarHabitacion
 };

@@ -7,8 +7,9 @@ block content
             .pestana.activa3 3. Asignación
         .contenido-pestana#asignacion
             h2 Asignacion de Habitacion 
+            h3 DNI: #{dni} | Tipo de Paciente: #{tipo}
             p#texto Seleccione una habitación disponible para el paciente.
-
+            
             .grupo-formulario 
                 label(filtro-habitaciones) Filtrar por:
                 select#filtro-habitaciones(onchange="filtrarHabitaciones()")
@@ -23,7 +24,7 @@ block content
             .grid-habitaciones#contenedor-habitaciones            
 
             .botones-accion 
-                button.boton.boton-secundario(type="button" onclick="cambiarPestana(`/registro`)") Atrás
+                button.boton.boton-secundario(type="button" onclick="history.back()") Atrás
                 button.boton.boton-primario(type="button") Asignar Habitacion
 
             script(src="/scriptAsignacionHabitacion.js")    

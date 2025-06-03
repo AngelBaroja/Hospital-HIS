@@ -50,7 +50,7 @@ app.use('/recepcion', recepcionRoutes);
 //app.use('/habitacion', habitacionRoutes);
 
 // Inicio del servidor
-modelos.sequelize.sync({ force: true })
+modelos.sequelize.sync({ alter: true })
   .then(() => {
     console.log('Modelos sincronizados');
     app.listen(PORT, () => {

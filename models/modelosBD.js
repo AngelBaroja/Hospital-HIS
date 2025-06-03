@@ -9,6 +9,7 @@ const Ala = require('./Ala');
 const Mutual = require('./Mutual');
 const Empleado = require('./Empleado');
 const Usuario = require('./Usuario');
+const Mutual_Paciente = require('./Mutual_Paciente');
 
 
 module.exports = {
@@ -22,5 +23,6 @@ module.exports = {
     Mutual,
     Recepcion,
     Usuario,
-    Empleado
+    Empleado,
+    Mutual_Paciente
 }

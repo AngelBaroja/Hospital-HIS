@@ -15,6 +15,15 @@ Ala.init(
         },        
         comment: `Sector dentro del Hospital`                
     },
+    descripcion: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        unique: false,        
+        validate: {
+            len: [0, 200]
+        },
+        comment: `Descripcion del Ala`                
+    },
     activo: {
         type: DataTypes.BOOLEAN,
         allowNull: false,

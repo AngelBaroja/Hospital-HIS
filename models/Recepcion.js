@@ -62,10 +62,20 @@ Recepcion.init(
 }
 );
 
-Paciente.belongsTo(Recepcion, { foreignKey: 'id_paciente' });
+
+// Un Paciente puede tener muchas Recepciones
+Paciente.hasMany(Recepcion, { foreignKey: 'id_paciente' });
+
+// Una Recepción pertenece a un Paciente (y lleva la clave foránea)
 Recepcion.belongsTo(Paciente, { foreignKey: 'id_paciente' });
+
+// Una Recepción pertenece a una Cama (y lleva la clave foránea)
 Recepcion.belongsTo(Cama, { foreignKey: 'id_cama' });
+
+// Un Motivo puede estar en muchas Recepciones
 Motivo.hasMany(Recepcion, { foreignKey: 'id_motivo' });
+
+// Una Recepción pertenece a un Motivo (y lleva la clave foránea)
 Recepcion.belongsTo(Motivo, { foreignKey: 'id_motivo' });
 
 module.exports = Recepcion;

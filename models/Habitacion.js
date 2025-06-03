@@ -12,7 +12,7 @@ Habitacion.init(
         unique: false,
         defaultValue:`Individual`,
         validate: {
-            isIn: [['Individual', `Doble`]] 
+            isIn: [['Individual', `Compartida`]] 
         },        
         comment: `Tipo de habitacion`                
     },

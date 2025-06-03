@@ -1,9 +1,11 @@
 
 
 async function validarUsuario(req, res) {
-  // Aquí podrías agregar la lógica para validar el usuario 
-  res.redirect('/recepcion');
+  // Aquí podrías agregar la lógica para validar el usuario
+  const { usuario, password } = req.body;
+  res.render('recepcion/recepcion',{usuario});
 }
+
 async function formularioLogin(req, res) { 
    res.render('login');
 }
