@@ -1,32 +1,59 @@
 extends ../layout
 
 block content
-      .pestanas 
-        .pestana.activa1 1. Recepción
-        .pestana 2. Registro
-        .pestana 3. Asignación
-      .contenido-pestana#recepcion
-        h2 Datos Básicos del Paciente
-        p#texto Complete la información inicial para comenzar el proceso de admisión.
+  .pestanas 
+    .pestana.activa1 1. Recepción
+    .pestana 2. Registro
+    .pestana 3. Asignación
+  .contenido-pestana#recepcion
+    h2 Datos Básicos del Paciente
+    p#texto Complete la información inicial para comenzar el proceso de admisión.
 
-        form(action="/recepcion" method="POST")#formulario-recepcion
-          input(type="hidden" name="usuario" value=usuario)
-          .formulario-grid
-            .grupo-formulario
-              label(for="tipo-paciente") Tipo de Paciente 
+    form(action="/recepcion" method="POST")#formulario-recepcion     
+      .formulario-grid
+        .grupo-formulario
+          label(for="tipo-paciente") Tipo de Paciente 
+          if tipo
+            if tipo === 'Cita Programada' 
               select#tipo-paciente(name="tipo-paciente" required)
-                option(value="") Seleccione...                
-                option(value="cita programada") Cita Programada
-                option(value="derivacion") Derivacion 
-                option(value="emergencia") Emergencia
-            
-            .grupo-formulario
-              label(for="dni") DNI 
-              input#dni(type="text" name="dni" placeholder="Número de identificación" required)
-            if error
-              p(style='color: red;') #{error}
-          .botones-accion
+                option(value="") Seleccione...
+                option(value="Cita Programada" selected) Cita Programada
+                option(value="Derivacion") Derivacion 
+                option(value="Emergencia") Emergencia
+            else if tipo === 'Derivacion'
+              select#tipo-paciente(name="tipo-paciente" required)
+                option(value="") Seleccione...
+                option(value="Cita Programada") Cita Programada
+                option(value="Derivacion" selected) Derivacion 
+                option(value="Emergencia") Emergencia
+            else if tipo === 'Emergencia'
+              select#tipo-paciente(name="tipo-paciente" required)
+                option(value="") Seleccione...
+                option(value="Cita Programada") Cita Programada
+                option(value="Derivacion") Derivacion 
+                option(value="Emergencia" selected) Emergencia            
+          else
+            select#tipo-paciente(name="tipo-paciente" required)
+              option(value="") Seleccione...                
+              option(value="Cita Programada") Cita Programada
+              option(value="Derivacion") Derivacion 
+              option(value="Emergencia") Emergencia
+        
+        .grupo-formulario
+          label(for="dni") DNI 
+          if dni
+            input#dni(type="text" name="dni" value=dni placeholder="Número de identificación")
+          else
+            input#dni(type="text" name="dni" placeholder="Número de identificación")
+
+        if error 
+          p#textoError #{error}
+        else
+          if paciente
+            p#textoCorrecto El Paciente #{paciente.nombre} #{paciente.apellido} se esta registrando...
+          else 
             span 
-            button.boton.boton-primario(type='submit') Continuar
-    
-          script(src="/script.js")
+                             
+        .botones-accion
+          span 
+          button.boton.boton-primario(type='submit') Continuar

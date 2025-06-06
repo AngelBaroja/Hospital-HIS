@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const app = express();
 const modelos = require('./models/modelosBD');
+const session = require(`express-session`);
 
 const PORT = 3000;
 
@@ -11,24 +12,6 @@ const loginRoutes = require('./routes/login');
 const recepcionRoutes = require('./routes/recepcion');
 const turnosRoutes = require('./routes/turno');
 const habitacionRoutes = require('./routes/habitacion');
-
-
-/*
-app.get('/turno', (req, res) => {
-  res.render('recepcion/turno', { title: 'Login' });
-});
-
-app.get('/recepcion', (req, res) => {
-  res.render('recepcion/recepcion', { title: 'Login' });
-});
-
-app.get('/registro', (req, res) => {
-  res.render('recepcion/registro', { title: 'Login' });
-});
-
-app.get('/asignacion', (req, res) => {
-  res.render('recepcion/asignacion', { title: 'Login' });
-});*/
 
 // Middleware para obtener datos del formulario
 app.use(express.json());
@@ -41,6 +24,14 @@ app.use('/img', express.static('img'));
 // Configuracion del motor de plantillas - PUG
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
+
+// Middleware para session
+app.use(session({
+  secret: 'angel',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // Cambiar a true en producción
+}));
 
 // Rutas
 app.use('/', indexRoutes);

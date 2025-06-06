@@ -1,57 +1,180 @@
 extends ../layout
 
 block content 
-        .pestanas 
-            .pestana 1. Recepción
-            .pestana.activa2 2. Registro
-            .pestana 3. Asignación
-        .contenido-pestana#recepcion
-            h2 Datos Basicos del Paciente
-            h3 DNI: #{dni} | Tipo de Paciente: #{tipo}
-            p#texto Complete la información inicial para comenzar el proceso de admisión.
+    .pestanas 
+        .pestana 1. Recepción
+        .pestana.activa2 2. Registro
+        .pestana 3. Asignación
+    .contenido-pestana#recepcion
+        h2 Datos Basicos del Paciente
+        if paciente
+            h3 DNI: #{paciente.dni} | Tipo de Paciente: #{tipo}
+        else 
+           h3 DNI: #{dni} | Tipo de Paciente: #{tipo} 
+        p#texto Complete la información inicial para comenzar el proceso de admisión.
 
-            form#formulario-registro(action="/recepcion/registro" method="POST" novalidate)
-                input(type="hidden" name="dni" value=dni)
-                input(type="hidden" name="tipo-paciente" value=tipo)
-                input(type="hidden" name="usuario" value=usuario)
-                .formulario-grid
-                    .grupo-formulario
-                        label(for="nombre") Nombre
-                        input(type="text" placeholder="Ingrese el nombre" name="nombre" required)#nombre
+        form#formulario-registro(action="/recepcion/registro" method="POST")
+            input(type="hidden" name="dni" value=dni)
+            input(type="hidden" name="tipo" value=tipo)            
+            input(type="hidden" name="paciente" value=paciente)           
+            .formulario-grid
+                .grupo-formulario
+                    label(for="nombre") Nombre
+                    if paciente
+                        input(type="text" value=paciente.nombre placeholder="Ingrese el nombre" name="nombre" minlength="3" maxlength="20" required)#nombre
+                    else
+                        input(type="text" placeholder="Ingrese el nombre" name="nombre" minlength="3" maxlength="20"  required)#nombre
+                .grupo-formulario
+                    label(for="apellido") Apellido
+                    if paciente
+                        input(type="text" value=paciente.apellido placeholder="Ingrese el apellido" name="apellido" minlength="3" maxlength="20"  required)#apellido
+                    else
+                        input(type="text" placeholder="Ingrese el apellido" name="apellido" minlength="3" maxlength="20"  required)#apellido
 
-                    .grupo-formulario
-                        label(for="apellido") Apellido
-                        input(type="text" placeholder="Ingrese el apellido" name="apellido" required)#apellido
+                .grupo-formulario 
+                    label(for="fecha_nacimiento") Fecha de Nacimiento
+                    if paciente
+                        input(type="date" value=paciente.fecha_nacimiento placeholder="Ingrese la fecha de nacimiento" name="fecha_nacimiento")#fecha_nacimiento
+                    else
+                        input(type="date" placeholder="Ingrese la fecha de nacimiento" name="fecha_nacimiento")#fecha_nacimiento
 
-                    .grupo-formulario 
-                        label(for="fecha-nacimiento") Fecha de Nacimiento
-                        input(type="date" placeholder="Ingrese la fecha de nacimiento" name="fecha-nacimiento" required)#fecha-nacimiento
-
-                    .grupo-formulario 
-                        label(for="genero") Género 
-                        select#genero(required)
+                .grupo-formulario 
+                    label(for="genero") Género
+                    if paciente
+                        select#genero(name="genero" required)
                             option(value="") Seleccione...
-                            option(value="masculino") Masculino
-                            option(value="femenino") Femenino
-                            option(value="otro") Otro
+                            if paciente.genero == 'Masculino'
+                                option(value="Masculino" selected) Masculino
+                                option(value="Femenino") Femenino
+                                option(value="No especificado") No especificado
+                            else if paciente.genero == 'Femenino'
+                                option(value="Masculino") Masculino
+                                option(value="Femenino" selected) Femenino
+                                option(value="No especificado") No especificado
+                            else  
+                                option(value="Masculino") Masculino
+                                option(value="Femenino") Femenino
+                                option(value="No especificado" selected) No especificado
+                    else 
+                        select#genero(name="genero" required)
+                            option(value="") Seleccione...
+                            option(value="Masculino") Masculino
+                            option(value="Femenino") Femenino
+                            option(value="No especificado") No especificado
 
-                    .grupo-formulario 
-                        label(for="direccion") Dirección
-                        input(type="text" placeholder="Ingrese la dirección" name="direccion" required)#direccion
+                .grupo-formulario 
+                    label(for="telefono") Contacto de Emergencia
+                    if paciente
+                        input(type="text" value=paciente.contacto_emergencia placeholder="Ingrese el número de teléfono de emergencia" name="contacto_emergencia" minlength="10" maxlength="10" )#contacto_emergencia
+                    else
+                        input(type="text" placeholder="Ingrese el número de teléfono de emergencia" name="contacto_emergencia" minlength="10" maxlength="10" )#contacto_emergencia
+                
+                .grupo-formulario 
+                    label(for="direccion") Dirección
+                    if paciente
+                        input(type="text" value=paciente.direccion placeholder="Ingrese la dirección" name="direccion" minlength="3" maxlength="30"  required)#direccion
+                    else
+                        input(type="text" placeholder="Ingrese la dirección" name="direccion" minlength="3" maxlength="30"  required)#direccion
 
-                    .grupo-formulario 
-                        label(for="telefono") Teléfono de Contacto
-                        input(type="text" placeholder="Ingrese el número de teléfono" name="telefono" required)#telefono
+                .grupo-formulario 
+                    label(for="provincia") Provincia
+                    if paciente
+                        input(type="text" value=paciente.provincia placeholder="Ingrese la provincia" name="provincia"  minlength="3" maxlength="30"  required)#direccion
+                    else
+                        input(type="text" placeholder="Ingrese la provincia" name="provincia"  minlength="3" maxlength="30"  required)#direccion
+
+                .grupo-formulario 
+                    label(for="localidad") Localidad
+                    if paciente
+                        input(type="text" value=paciente.localidad placeholder="Ingrese la localidad" name="localidad"  minlength="3" maxlength="30"  required)#direccion
+                    else
+                        input(type="text" placeholder="Ingrese la localidad" name="localidad"  minlength="3" maxlength="30"  required)#direccion 
+
+                h3 Datos de la Mutual
+                span
+
+                .grupo-formulario                     
+                    label(for="seguro") Seguro Médico                    
+                    select#seguro(name="seguro" )
+                        option(value="") Seleccione...
+                        each mutual in mutuales
+                            if nombreMutual && mutual.nombre == nombreMutual
+                                option(value=mutual.nombre selected) #{mutual.nombre}
+                            else
+                                option(value=mutual.nombre) #{mutual.nombre}
+                
+                .grupo-formulario 
+                    label(for="codigo_mutual") Credencial Nº
+                    if mutualPacientes
+                        input(type="text" value=mutualPacientes.codigo_mutual placeholder="Ingrese el codigo de la credencial" name="codigo_mutual" minlength="5" maxlength="5")#codigo_mutual
+                    else
+                        input(type="text" placeholder="Ingrese el codigo de la credencial" name="codigo_mutual" minlength="5" maxlength="5" )#codigo_mutual
                         
-                    .grupo-formulario 
-                        label(for="seguro") Seguro Médico
-                        input(type="text" placeholder="Ingrese el seguro médico" name="seguro" )#seguro
+                .grupo-formulario   
+                    label(for="tipo_cobertura") Tipo de Cobertura 
+                    if mutualPacientes
+                        select#tipo_cobertura(name="tipo_cobertura")
+                            option(value="") Seleccione...
+                            if mutualPacientes.tipo_cobertura == 'Basico'
+                                option(value="Basico" selected) Básico
+                                option(value="Completo") Completo
+                                option(value="Premium") Premium
+                            else if mutualPacientes.tipo_cobertura == 'Completo'
+                                option(value="Basico") Básico
+                                option(value="Completo" selected) Completo
+                                option(value="Premium") Premium
+                            else if mutualPacientes.tipo_cobertura == 'Premium'
+                                option(value="Basico") Básico
+                                option(value="Completo") Completo
+                                option(value="Premium" selected) Premium
+                    else
+                        select#tipo_cobertura(name="tipo_cobertura")
+                            option(value="") Seleccione...
+                            option(value="Basico") Básico
+                            option(value="Completo") Completo
+                            option(value="Premium") Premium
 
-                    .grupo-formulario 
-                        label(for="motivo") Motivo de la internacion
-                        textarea(rows="3" placeholder="Ingrese el motivo de la internacion" name="motivo")#motivo
-                    
-                .botones-accion 
-                    button(type="button" onclick="history.back()" class="boton boton-secundario") Atrás
-                    button(type="submit" class="boton boton-primario") Continuar
-                script(src="/script.js")
+                .grupo-formulario 
+                    label(for="activa") Mutual Activa
+                    if mutualPacientes
+                        if mutualPacientes.activa == true
+                            select#mutual_activa(name="activa")
+                                option(value="") Seleccione...
+                                option(value="Activa" selected) Activa
+                                option(value="Inactiva") Inactiva
+                        else
+                            select#mutual_activa(name="activa")
+                                option(value="") Seleccione...
+                                option(value="Activa") Activa
+                                option(value="Inactiva" selected) Inactiva                        
+                    else
+                        select#mutual_activa(name="activa")
+                            option(value="") Seleccione...
+                             option(value="Activa") Activa
+                                option(value="Inactiva") Inactiva
+                         
+                h3 Motivo de la Internación
+                span
+                .grupo-formulario 
+                    label(for="motivo") Motivo de la Internación
+                    select#motivo(name="motivo" required)
+                        option(value="") Seleccione...
+                            each motivo in motivos                               
+                                option(value=motivo.tipos) #{motivo.tipos}
+                      
+                .grupo-formulario 
+                    label(for="detalle_motivo") Detalle de la Internación
+                    textarea(rows="3" placeholder="Ingrese detalles del motivo de la internacion" name="detalle_motivo")#detalle_motivo
+                
+            .botones-accion             
+                span 
+                button(type="submit" class="boton boton-primario") Continuar
+        
+        form(action="/recepcion/atras" method="POST" style ="margin-top: -48px;")
+            input(type="hidden" name="dni" value=dni)
+            input(type="hidden" name="tipo" value=tipo)          
+            input(type="hidden" name="paciente" value=paciente)
+            button(type="submit" class="boton boton-secundario") Atrás
+            
+                
+        script(src="/script.js")

@@ -78,35 +78,35 @@ const mutualesPacientes = await Mutual_Paciente.bulkCreate([
 {
     id_paciente: 1,
     id_mutual: 1,
-    numero_mutual: 10001,
+    codigo_mutual: "1000",
     tipo_cobertura: "Basico",
     activa: true
 },
 {
     id_paciente:2,
     id_mutual: 2,
-    numero_mutual: 10002,
+    codigo_mutual: "1001",
     tipo_cobertura: "Completo",
     activa: true
 },
 {
     id_paciente: 3,
     id_mutual: 3,
-    numero_mutual: 10003,
+    codigo_mutual: "1002",
     tipo_cobertura: "Premium",
     activa: true
 },
 {
     id_paciente: 4,
     id_mutual: 4,
-    numero_mutual: 10004,
+    codigo_mutual: "1003",
     tipo_cobertura: "Basico",
     activa: true
 },
 {
     id_paciente: 5,
     id_mutual: 5,
-    numero_mutual: 10005,
+    codigo_mutual: "1004",
     tipo_cobertura: "Completo",
     activa: true
 }
@@ -115,11 +115,11 @@ console.log('Mutuales_Pacientes creados:', mutualesPacientes.length);
 
 // Turnos
 const turnos = await Turno.bulkCreate([
-    { doctor: 'Dr. Smith', fecha_turno: new Date('2024-06-03'), hora: 9, id_paciente: 1 },
-    { doctor: 'Dra. Johnson', fecha_turno: new Date('2024-06-03'), hora: 10, id_paciente: 2 },
-    { doctor: 'Dr. Brown', fecha_turno: new Date('2024-06-03'), hora: 11, id_paciente: 3 },
-    { doctor: 'Dra. Davis', fecha_turno: new Date('2024-06-03'), hora: 12, id_paciente: 4 },
-    { doctor: 'Dr. Wilson', fecha_turno: new Date('2024-06-03'), hora: 13, id_paciente: 5 }
+    { doctor: 'Dr. Smith', fecha_turno: new Date('2025-06-03'), hora: 9, id_paciente: 1 },
+    { doctor: 'Dra. Johnson', fecha_turno: new Date('2025-06-03'), hora: 10, id_paciente: 2 },
+    { doctor: 'Dr. Brown', fecha_turno: new Date('2025-06-03'), hora: 11, id_paciente: 3 },
+    { doctor: 'Dra. Davis', fecha_turno: new Date('2025-06-03'), hora: 12, id_paciente: 4 },
+    { doctor: 'Dr. Wilson', fecha_turno: new Date('2025-06-03'), hora: 13, id_paciente: 5 }
 ]);
 console.log('Turnos creados:', turnos.length);
 

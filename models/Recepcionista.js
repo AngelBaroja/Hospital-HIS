@@ -83,10 +83,7 @@ Recepcionista.init(
         type: DataTypes.BOOLEAN,
         allowNull: false,
         unique: false,
-        defaultValue: true,
-        validate: {
-            isIn: [[true, false]]
-        },
+        defaultValue: true,       
         comment: `Indica si el Recepcionista esta activo o no`
     }    
   },{

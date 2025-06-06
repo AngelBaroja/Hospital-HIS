@@ -13,30 +13,24 @@ Recepcion.init(
             allowNull: false,
             unique: false,        
             validate: {
-                isIn: [['Cita Programada', `Emergencia`]]   
+                isIn: [['Cita Programada', `Derivacion`, `Emergencia`]]   
             },        
             comment: `Tipo de recepcion dentro del Hospital`                
         },
         detalle_motivo: {
             type: DataTypes.STRING,
-            allowNull: false,
-            validate:{
-                len: [1, 200]
-            },
+            allowNull: false,            
             comment: `Motivo detallado del porque de la recepcion del paciente`                
         },
         hora: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            unique: false,        
-            validate: {
-                isNumeric: true,
-                isIn: [[7,8,9,10,11,12,13,14,15,16,17,18,19]]            
-            },
-            comment: `Hora de recepcion`                
+            unique: false,
+            defaultValue: () => new Date().getHours(),          
+            comment: `Hora de recepcion (valores válidos: 00 a 23)`                
         },
         fecha_entrada: {
-            type: DataTypes.DATE,
+            type: DataTypes.DATEONLY,
             allowNull: false,
             unique: false,
             defaultValue: () => new Date(),    // Siempre genera la fecha actual            
@@ -46,7 +40,7 @@ Recepcion.init(
             comment: `Fecha de recepcion`
         },
         fecha_salida: {
-            type: DataTypes.DATE,
+            type: DataTypes.DATEONLY,
             allowNull: true,
             unique: false,
             defaultValue: null,               
@@ -66,16 +60,16 @@ Recepcion.init(
 // Un Paciente puede tener muchas Recepciones
 Paciente.hasMany(Recepcion, { foreignKey: 'id_paciente' });
 
-// Una Recepción pertenece a un Paciente (y lleva la clave foránea)
+// Una Recepción tiene a un Paciente (y lleva la clave foránea)
 Recepcion.belongsTo(Paciente, { foreignKey: 'id_paciente' });
 
-// Una Recepción pertenece a una Cama (y lleva la clave foránea)
+// Una Recepción tiene a una Cama (y lleva la clave foránea)
 Recepcion.belongsTo(Cama, { foreignKey: 'id_cama' });
 
 // Un Motivo puede estar en muchas Recepciones
 Motivo.hasMany(Recepcion, { foreignKey: 'id_motivo' });
 
-// Una Recepción pertenece a un Motivo (y lleva la clave foránea)
+// Una Recepción tiene a un Motivo (y lleva la clave foránea)
 Recepcion.belongsTo(Motivo, { foreignKey: 'id_motivo' });
 
 module.exports = Recepcion;

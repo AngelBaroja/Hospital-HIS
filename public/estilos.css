@@ -197,7 +197,7 @@ input:focus, select:focus, textarea:focus {
 
 .boton-primario {
     background: #1976d2;
-    color: white;
+    color: white;    
 }
 
 .boton-primario:hover {
@@ -207,7 +207,7 @@ input:focus, select:focus, textarea:focus {
 .boton-secundario {
     background: #e0e0e0;
     color: #333;
-    border: 1px solid #c1c1c1a4;
+    border: 1px solid #c1c1c1a4;        
 }
 
 .boton-secundario:hover {
@@ -219,3 +219,16 @@ input:focus, select:focus, textarea:focus {
     justify-content: space-between;
     margin-top: 2rem;
 }
+
+#textoError {
+    color: red;
+    font-weight: bold;
+    margin-top: 1rem;
+}
+
+#textoCorrecto {
+    color: rgb(97, 191, 97);
+    font-weight: bold;
+    margin-top: 1rem;
+}
+

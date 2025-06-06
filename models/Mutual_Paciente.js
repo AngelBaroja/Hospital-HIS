@@ -1,4 +1,3 @@
-// models/Mutual_Paciente.js
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../config/conexion");
 const Mutual = require("./Mutual");
@@ -7,14 +6,12 @@ const Paciente = require("./Paciente");
 class Mutual_Paciente extends Model {}
 
 Mutual_Paciente.init(
-  {
-   
-    numero_mutual: { 
-        type: DataTypes.INTEGER, 
+  {   
+    codigo_mutual: { 
+        type: DataTypes.STRING, 
         enableNull: false, 
-        unique: true, 
-        validar: { len: [5, 5] }, 
-        comment: "Numero de la mutual del paciente, debe tener 5 digitos"
+        unique: false,        
+        comment: "Codigo de la mutual del paciente, debe tener 5 digitos"
      }, 
      tipo_cobertura: { 
         type: DataTypes.STRING, 
@@ -27,10 +24,7 @@ Mutual_Paciente.init(
      activa: { 
         type: DataTypes.BOOLEAN, 
         enableNull: false, 
-        defaultValue: true, 
-        validar: { 
-            isIn: [[true, false]] 
-        }, 
+        defaultValue: true,        
         comment: "Indica si la mutua del paciente esta activa o no"
      },
   

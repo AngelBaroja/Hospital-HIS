@@ -10,39 +10,27 @@ Paciente.init(
         allowNull: false,           // El campo 'nombre' NO es obligatorio
         unique: false,              // No es único, puede haber varios pacientes con el mismo nombre
         defaultValue: 'Sin nombre', // Valor por defecto si no se proporciona un Nombre
-        validate: {                 // Validaciones
-            len: [3, 20]            // Longitud mínima y máxima del nombre
-        },
         comment: 'Nombre del paciente' // Comentario para el campo
     },
     apellido: {
        type: DataTypes.STRING,
         allowNull: false,
         unique: false,
-        defaultValue: 'Sin Apellido',
-        validate: {
-            len: [3, 20]
-        },
+        defaultValue: 'Sin Apellido',        
         comment: 'Apellido del paciente'
     },
     dni: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: false,
-        defaultValue: `Sin DNI`,        
-        validate: {
-           len: [7, 8],              
-        },
+        defaultValue: `Sin DNI`,
         comment: 'DNI del paciente'
     },
     fecha_nacimiento: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: true,
         unique: false,
-        defaultValue: null,
-        validate: {
-            isDate: true  // Validación para asegurarse de que es una fecha
-        },
+        defaultValue: null,       
         comment: 'Fecha de nacimiento del paciente'
     },
     genero: {
@@ -59,41 +47,28 @@ Paciente.init(
         type: DataTypes.STRING,
         allowNull: false,
         unique: false,
-        defaultValue: 'Sin dirección',
-        validate: {
-            len: [5, 50]  
-        },
+        defaultValue: 'Sin dirección',       
         comment: 'Dirección del paciente'
     },
     contacto_emergencia: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: false,
-        defaultValue: `Sin contacto`,
-        validate: {
-            isNumeric: true,    // Validacion para asegurarse de que es un numero
-            len: [7, 15]         // Longitud mínima y máxima del teléfono
-        },
+        defaultValue: `Sin contacto`,       
         comment: `Contacto de emergencia del paciente`,
     },
     provincia:{
         type: DataTypes.STRING,
         allowNull: false,
         unique: false,
-        defaultValue: `Sin Provincia`,
-        validate: {
-            len: [3, 20]         // Longitud mínima y máxima de la provincia
-        },
+        defaultValue: `Sin Provincia`,       
         comment: `Provincia del paciente`
     },
     localidad:{
         type: DataTypes.STRING,
         allowNull: false,
         unique: false,
-        defaultValue: `Sin Localidad`,
-        validate: {
-            len: [3,60]
-        },
+        defaultValue: `Sin Localidad`,        
         comment: `Localidad del paciente`
     }    
   },{

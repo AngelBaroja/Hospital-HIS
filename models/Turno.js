@@ -12,7 +12,7 @@ Turno.init(
         comment: `Nombre del doctor`                
     },
     fecha_turno: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY, // Solo fecha, sin hora        
         allowNull: false,        
         defaultValue: DataTypes.NOW,  
         validate: {
@@ -22,11 +22,7 @@ Turno.init(
     },
     hora : {
         type: DataTypes.INTEGER,
-        allowNull: false,              
-        validate: {
-            isNumeric: true,
-            isIn: [[7,8,9,10,11,12,13,14,15,16,17,18,19]]            
-        },
+        allowNull: false,
         comment: `Horario del turno`                
     }, 
   }, {
