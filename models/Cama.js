@@ -1,6 +1,7 @@
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../config/conexion");
 
+
 class Cama extends Model { }
 
 Cama.init(
@@ -61,5 +62,6 @@ Cama.init(
         tableName: "camas",
     }
 );
+
 
 module.exports = Cama;

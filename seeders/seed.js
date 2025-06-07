@@ -182,7 +182,7 @@ const habitaciones = await Habitacion.bulkCreate([
     { numero: '117', tipo: 'Individual',  activa: true, id_ala: 2 },
     { numero: '118', tipo: 'Individual',  activa: true, id_ala: 3 },
     { numero: '119', tipo: 'Individual',  activa: true, id_ala: 4 },
-    { numero: '120', tipo: 'Individual',  activa: true, id_ala: 1 }
+    { numero: '120', tipo: 'Compartida',  activa: true, id_ala: 1 }
 ]);
 console.log('Habitaciones creadas:', habitaciones.length);
 
@@ -192,13 +192,13 @@ const camas = await Cama.bulkCreate([
     { numero: 1, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: true, id_habitacion: 2 },
     { numero: 2, tipo: 'UCI', estado: 'Libre', electrica: true, oxigeno: true, id_habitacion: 2 },
     { numero: 1, tipo: 'UCI', estado: 'Libre', electrica: true, oxigeno: true, id_habitacion: 3 },
-    { numero: 1, tipo: 'Reanimacion', estado: 'Libre', electrica: false, oxigeno: true, id_habitacion: 4},
+    { numero: 1, tipo: 'Reanimacion', estado: 'Libre', electrica: true, oxigeno: true, id_habitacion: 4},
     { numero: 2, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: false, id_habitacion: 4 },
     { numero: 1, tipo: 'Pediátrica', estado: 'Libre', electrica: false, oxigeno: false, id_habitacion: 5 },
     { numero: 1, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: true, id_habitacion: 6},
     { numero: 1, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: false, id_habitacion: 7 },
     { numero: 2, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: false, id_habitacion: 7 },
-    { numero: 1, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: false, id_habitacion: 8 },
+    { numero: 1, tipo: 'Reanimacion', estado: 'Libre', electrica: true, oxigeno: true, id_habitacion: 8 },
     { numero: 1, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: true, id_habitacion: 9},
     { numero: 2, tipo: 'UCI', estado: 'Libre', electrica: true, oxigeno: true, id_habitacion: 9 },
     { numero: 1, tipo: 'UCI', estado: 'Libre', electrica: true, oxigeno: true, id_habitacion: 10},
@@ -213,7 +213,8 @@ const camas = await Cama.bulkCreate([
     { numero: 1, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: false, id_habitacion: 17 },
     { numero: 1, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: false, id_habitacion: 18 },
     { numero: 1, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: false, id_habitacion: 19 },
-    { numero: 1, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: false, id_habitacion: 20 }
+    { numero: 1, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: false, id_habitacion: 20 },
+    { numero: 1, tipo: 'UCI', estado: 'Libre', electrica: true, oxigeno: true, id_habitacion: 20 }
 ]);
 
 console.log('Camas creadas:', camas.length);

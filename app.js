@@ -8,6 +8,7 @@ const PORT = 3000;
 
 // Importar las rutas
 const indexRoutes = require('./routes/index');
+const homeRutes = require('./routes/home');
 const loginRoutes = require('./routes/login');
 const recepcionRoutes = require('./routes/recepcion');
 const turnosRoutes = require('./routes/turno');
@@ -36,6 +37,7 @@ app.use(session({
 // Rutas
 app.use('/', indexRoutes);
 app.use('/login', loginRoutes);
+app.use('/home', homeRutes);
 app.use('/recepcion', recepcionRoutes);
 //app.use('/turnos', turnosRoutes);
 //app.use('/habitacion', habitacionRoutes);

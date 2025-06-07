@@ -4,7 +4,15 @@ const Turno = require('../models/Turno');
 const Mutual_Paciente = require('../models/Mutual_Paciente');
 const Mutual = require('../models/Mutual');
 const Motivo = require('../models/Motivo');
+const Cama = require('../models/Cama');
+const Habitacion = require('../models/Habitacion');
+const Ala = require('../models/Ala');
  const { Op, EagerLoadingError } = require('sequelize');
+
+async function inicioRecepcion(req, res) {
+    const usuario= req.session.nombreUsuario;
+    res.status(200).render('recepcion/recepcion',{usuario})
+}
 
 async function buscarTurno(req, res) {
     try {
@@ -25,6 +33,22 @@ async function buscarTurno(req, res) {
    
         // Buscar paciente por DNI
         paciente = await Paciente.findOne({ where: { dni: dni } });
+
+        if (paciente) {
+             const recepcionActiva = await Recepcion.findOne({
+            where: {
+                id_paciente: paciente.id,
+                fecha_salida: null
+            }});
+            if (recepcionActiva) {
+                return res.status(404).render('recepcion/recepcion', {  // Renderizar una vista de error si el paciente se encuentra internado
+                    error: `El Paciente ${paciente.nombre} ${paciente.apellido} ya se encuentra internado detro del hospital`,
+                    usuario,
+                    dni,
+                    tipo                   
+                });
+            }
+        }
 
          //Si existe buscamos su mutual si es que tiene
         if (paciente) {
@@ -141,54 +165,93 @@ async function atrasRegistro(req, res) {
 
 
 async function crearPaciente(req, res) {
-// Extraer todos los campos del formulario de registro
-const {
-    dni,
-    tipo, 
-    nombre,
-    apellido,
-    fecha_nacimiento, 
-    genero,    
-    contacto_emergencia,
-    direccion,
-    provincia,
-    localidad,
-    seguro,
-    codigo_mutual,
-    tipo_cobertura,
-    activa,
-    motivo,
-    detalle_motivo
-} = req.body;
-
+    // Extraer todos los campos del formulario de registro
+    const {
+        dni,
+        tipo, 
+        nombre,
+        apellido,
+        fecha_nacimiento, 
+        genero,    
+        contacto_emergencia,
+        direccion,
+        provincia,
+        localidad,
+        seguro,
+        codigo_mutual,
+        tipo_cobertura,
+        activa,
+        motivo,
+        detalle_motivo
+    } = req.body;
+    
     let paciente = req.body.paciente;
     const usuario = req.session.nombreUsuario;
 
-     //Obtengo el id del Motivo para la Recepcion
+    // Obtener el id del Motivo para la Recepcion
     const idMotivo = await Motivo.findOne({
-        where:{tipos: motivo}
+        where: { tipos: motivo }
     });  
 
-    // Convertir string JSON a objeto
-    paciente = JSON.parse(paciente);
-    if (paciente.dni =="Sin DNI") { 
+    const recepciones = await Recepcion.findAll({
+            where: { fecha_salida: null },
+            include: [
+                { model: Paciente, attributes: ['id', 'genero'] },
+                { 
+                    model: Cama, 
+                    attributes: ['id', 'id_habitacion'],
+                    include: [{ model: Habitacion, attributes: ['id'] }]
+                }
+            ]
+         });
+
+    if (paciente) {
+        // Convertir string JSON a objeto
+        paciente = JSON.parse(paciente);
+    }
+    
+    
+    if (paciente.dni == "Sin DNI") {
+        req.session.PacienteEmergencia = paciente; 
         console.log("El paciente ingreso por Emergencia");        
-        return res.status(200).render('recepcion/asignacion', { 
-            dni,
+        
+        // Obtener habitaciones disponibles para emergencia
+        const habitacionesDisponibles = await Habitacion.findAll({
+    where: { activa: true },
+    include: [{
+        model: Cama,  // <-- Elimina el where: { estado: 'Libre' }
+        include: [{
+            model: Recepcion,
+            where: { fecha_salida: null },
+            required: false,  // <-- Importante para incluir camas sin recepción
+            include: [{
+                model: Paciente,
+                attributes: ['id', 'genero']
+            }]
+        }]
+    },
+    {
+        model: Ala 
+    }]
+    });
+        
+        return res.status(200).render('recepcion/asignacion', {            
             tipo,
             usuario,
             paciente,
             idMotivo,
-            detalle_motivo        
+            detalle_motivo,
+            habitaciones: habitacionesDisponibles,
+            recepciones 
         });
     }
    
-  const activaBoolean = activa === "Activa" ? true : false;
+    const activaBoolean = activa === "Activa" ? true : false;
 
-// Compara los campos relevantes de paciente (ignorando id, createdAt, updatedAt)
- const pacienteExistente = await Paciente.findOne({ where: { dni } });
+    // Compara los campos relevantes de paciente (ignorando id, createdAt, updatedAt)
+    const pacienteExistente = await Paciente.findOne({ where: { dni } });
 
-if (    pacienteExistente && pacienteExistente.nombre === nombre &&
+    if (pacienteExistente && pacienteExistente.nombre === nombre &&
         pacienteExistente.apellido === apellido && 
         String(pacienteExistente.fecha_nacimiento) === String(fecha_nacimiento) &&
         pacienteExistente.genero === genero &&  
@@ -197,8 +260,8 @@ if (    pacienteExistente && pacienteExistente.nombre === nombre &&
         pacienteExistente.provincia === provincia &&
         pacienteExistente.localidad === localidad) 
     {
-    console.log('El paciente ya existe en la base de datos');  
-}else {
+        console.log('El paciente ya existe en la base de datos');  
+    } else {
         console.log('El paciente no existe, se creará uno nuevo o se actualizará el existente');
         // Buscar el paciente haber si existe por DNI
         const pacienteExistente = await Paciente.findOne({ where: { dni } });
@@ -232,77 +295,122 @@ if (    pacienteExistente && pacienteExistente.nombre === nombre &&
         }
     };
 
-   // Buscamos la mutual por su nombre
-  const mutualExistente = await Mutual.findOne({ where: { nombre: seguro } });
+    // Buscamos la mutual por su nombre
+    const mutualExistente = await Mutual.findOne({ where: { nombre: seguro } });
 
-  const Elpaciente = await Paciente.findOne({ where: { dni } });
+    const Elpaciente = await Paciente.findOne({ where: { dni } });
     
-  // Buscamos que mutual tiene el paciente
-  const pacienteMutual = await Mutual_Paciente.findOne({
-    where: { id_paciente: Elpaciente.id }
-  });
+    // Buscamos que mutual tiene el paciente
+    const pacienteMutual = await Mutual_Paciente.findOne({
+        where: { id_paciente: Elpaciente.id }
+    });
 
     // Verificar si ya existe una mutual para el paciente 
-    if ( pacienteMutual ) {
-         if (   pacienteMutual.id_mutual != mutualExistente.id ||
-                pacienteMutual.codigo_mutual != codigo_mutual ||
-                pacienteMutual.tipo_cobertura != tipo_cobertura ||
-                pacienteMutual.activa != activaBoolean) {
-                    await pacienteMutual.update({
-                            id_mutual: mutualExistente.id,
-                            codigo_mutual,
-                            tipo_cobertura,
-                            activa: activaBoolean
-                        });
-                    console.log('Mutual del paciente actualizada correctamente');
-            }else{
-                console.log("El Paciente no modifico su Mutual");                
-            } 
-    }else{
+    if (pacienteMutual) {
+        if (pacienteMutual.id_mutual != mutualExistente?.id ||
+            pacienteMutual.codigo_mutual != codigo_mutual ||
+            pacienteMutual.tipo_cobertura != tipo_cobertura ||
+            pacienteMutual.activa != activaBoolean) {
+                await pacienteMutual.update({
+                    id_mutual: mutualExistente?.id,
+                    codigo_mutual,
+                    tipo_cobertura,
+                    activa: activaBoolean
+                });
+                console.log('Mutual del paciente actualizada correctamente');
+        } else {
+            console.log("El Paciente no modifico su Mutual");                
+        } 
+    } else {
         // Si no se cargaron datos de la mutual, no se crea una mutual al paciente
-        //Si se cargaron datos de la mutual y no existe una Mutual_Paciente, se crea una al paciente
-        if(codigo_mutual && tipo_cobertura  ) {        
-        await Mutual_Paciente.create({
-            id_paciente: Elpaciente.id,
-            id_mutual: mutualExistente.id,
-            codigo_mutual,
-            tipo_cobertura,
-            activa: activaBoolean
-        });
-        console.log('Nueva mutual creada para el paciente');
-        }else {
+        // Si se cargaron datos de la mutual y no existe una Mutual_Paciente, se crea una al paciente
+        if (codigo_mutual && tipo_cobertura) {        
+            await Mutual_Paciente.create({
+                id_paciente: Elpaciente.id,
+                id_mutual: mutualExistente?.id,
+                codigo_mutual,
+                tipo_cobertura,
+                activa: activaBoolean
+            });
+            console.log('Nueva mutual creada para el paciente');
+        } else {
             console.log('Este paciente no tiene mutual, no se crea una nueva');
         }
     }
-
-   
+    
+    paciente = Elpaciente;
+    
+    // Obtener habitaciones disponibles con sus camas libres
+    const habitacionesDisponibles = await Habitacion.findAll({
+    where: { activa: true },
+    include: [{
+        model: Cama,  // <-- Elimina el where: { estado: 'Libre' }
+        include: [{
+            model: Recepcion,
+            where: { fecha_salida: null },
+            required: false,  // <-- Importante para incluir camas sin recepción
+            include: [{
+                model: Paciente,
+                attributes: ['id', 'genero']
+            }]
+        }]
+    },
+    {
+        model: Ala 
+    }]
+});
 
     // Renderizar la vista de asignación
-   res.status(200).render('recepcion/asignacion', { 
-        dni,
+    res.status(200).render('recepcion/asignacion', {         
         tipo,
         usuario,
-        Elpaciente,
+        habitaciones: habitacionesDisponibles, 
+        paciente, 
         pacienteMutual,
         idMotivo,
-        detalle_motivo        
+        detalle_motivo,
+        recepciones       
     });
 }
 
 async function ingresarHabitacion(req, res) {  
   console.log('Ingresando a la habitacion');
-  const {paciente}=req.body;
-  // Convertir string JSON a objeto
-  const pacienteObj = JSON.parse(paciente);  
+ 
+    const { tipo, idMotivo, detalle_motivo, idCama } = req.body;
+    const usuario = req.session.nombreUsuario;
+    const paciente = JSON.parse(req.body.paciente);
 
-  if (pacienteObj.dni === "Sin DNI") {
-    console.log("Lo logramos");   
-  } else {
-    console.log("No lo logramos");    
-  }  
+    //Busco la cama 
+    const cama = await Cama.findOne({
+            where: { 
+                id: idCama,               
+            }
+        });
+
+    
+    
+    //Cambio el estado de la cama a Ocupada
+    await cama.update({ estado: 'Ocupada' });
+
+        // Creo la recepción
+        const recepcion = await Recepcion.create({
+            id_paciente: paciente.id,
+            id_cama: idCama,
+            id_motivo: idMotivo,
+            detalle_motivo,
+            tipo,
+            fecha_entrada: new Date(),
+            hora: new Date().getHours()
+        });
+    console.log(`Recepcion creada, Paciente: ${paciente.nombre}, cama nº ${cama.numero}, habitacion nº ${cama.id_habitacion}`);
+        
+
+       res.status(200).render('home',{usuario});
+
 }
 
 module.exports = {  
+ inicioRecepcion,
  buscarTurno,  
  crearPaciente,
  ingresarHabitacion,

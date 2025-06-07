@@ -19,37 +19,76 @@ body {
 }
 
 header {
-    background: #1976d2;
-    color: white;
-    padding: 1rem;
-    border-radius: 8px 8px 0 0;
-    display: flex;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1000;    
+  background: #1976d2;
+  color: white;
+  padding: 1rem 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.1);
 }
 
-header img {
-    margin-left: 13px;
-    margin-right: 13px;                
-    width: 55px;
-    height: 40px;   
-    border-radius: 50%;            
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 2rem;
 }
 
-.logo {     
-    margin-right: 500px;      
-    font-weight: bold;
-    font-size: 1.2rem;
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
-.info-usuario {           
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+.navbar-left img{
+    width: 70px;
+    height: 50px;
+    border-radius: 80%;
+}
+
+.logo {
+  font-weight: bold;
+  font-size: 1.3rem;
+  margin-left: 0.5rem;
+}
+
+.navbar-center nav {
+  display: flex;
+  gap: 2rem;
+}
+
+.navbar-center a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.navbar-center a:hover,
+.navbar-center a.active {
+  background: #1565c0;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+}
+
+.info-usuario span {
+  background: #fff;
+  color: #1976d2;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-weight: 500;
 }
 
 /* Pestañas de navegación */
@@ -146,43 +185,79 @@ input:focus, select:focus, textarea:focus {
 }
 
 
-
-/* Habitaciones disponibles */
+/* Estilos para las tarjetas de habitación */
 .grid-habitaciones {
-    display: grid;   
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1rem;
     margin-top: 1.5rem;
 }
 
 .tarjeta-habitacion {
-    border: 1px solid #c1c1c1;
+    border: 1px solid #ddd;
     border-radius: 8px;
     padding: 1rem;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    height: 100%;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;    
 }
 
 .tarjeta-habitacion:hover {
     transform: translateY(-3px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .tarjeta-habitacion.seleccionada {
-    border-color: 2px solid #1976d2;
-    background-color: #cadeeb;
+    border: 2px solid #1976d2;
+    background-color: #e3f2fd;
+    box-shadow: 0 0 0 2px #bbdefb;
+}
+
+.header-tarjeta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
 }
 
 .numero-habitacion {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     font-weight: bold;
     color: #1976d2;
+    text-align: center;
+}
+
+.numero-cama {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #1976d2;
+    text-align: center;
 }
 
 .info-habitacion {
-    margin-top: 0.5rem;
     font-size: 0.9rem;
-    color: #666;
+    color: #555;
+}
+
+.info-habitacion p {
+    margin: 0.3rem 0;
+}
+
+.extras {
+    color: #777;
+    font-size: 0.8rem;
+    margin-top: 0.5rem !important;
+}
+
+.error {
+    color: #d32f2f;
+    font-weight: bold;
+    padding: 1rem;
+    text-align: center;
 }
 
 /* Botones */

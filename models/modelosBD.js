@@ -11,6 +11,8 @@ const Empleado = require('./Empleado');
 const Usuario = require('./Usuario');
 const Mutual_Paciente = require('./Mutual_Paciente');
 
+Cama.hasMany(Recepcion, { foreignKey: 'id_cama' });
+Recepcion.belongsTo(Cama, { foreignKey: 'id_cama' });
 
 module.exports = {
     sequelize,

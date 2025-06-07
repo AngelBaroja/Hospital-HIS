@@ -8,11 +8,18 @@ html(lang="es")
   
   body 
     .contenedor    
-      header 
-        img(src="img/Logo-Hospital.jpg" alt="Logo del Hospital")
-        .logo HIS Hospital
-        .info-usuario
-          span Recepcionista: #{usuario}
+      header
+        .navbar
+          .navbar-left
+            img(src="/img/Logo-Hospital.jpg" alt="Logo del Hospital")
+            .logo HIS Hospital
+          .navbar-center
+            nav
+              a#recepcion(href="/recepcion") Recepción
+              a#turno(href="/turno") Turno
+          .navbar-right
+            .info-usuario
+              span Recepcionista: #{usuario}
       block content      
       
         

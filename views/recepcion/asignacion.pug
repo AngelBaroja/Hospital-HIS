@@ -1,37 +1,45 @@
 extends ../layout
 
 block content  
-        .pestanas 
-            .pestana 1. Recepción
-            .pestana 2. Registro
-            .pestana.activa3 3. Asignación
-        .contenido-pestana#asignacion
-            h2 Asignacion de Habitacion 
-            if paciente
-                h3 DNI: #{paciente.dni} | Tipo de Paciente: #{tipo}
-            else 
-                h3 DNI: #{dni} | Tipo de Paciente: #{tipo} 
-            p#texto Seleccione una habitación disponible para el paciente.
-
-            form(action="/recepcion/asignacion" method="POST")#formulario-recepcion
-                input(type="hidden" name="dni" value=dni)
-                input(type="hidden" name="tipo" value=tipo)          
-                input(type="hidden" name="paciente" value=paciente)
-                .grupo-formulario 
-                    label(filtro-habitaciones) Filtrar por:
-                    select#filtro-habitaciones(onchange="filtrarHabitaciones()")
-                        option(value="Todas") Todas las habitaciones
-                        option(value="Ala Norte") Ala Norte
-                        option(value="Ala Sur") Ala Sur
-                        option(value="Ala Este") Ala Este
-                        option(value="Ala Oeste") Ala Oeste
-                        option(value="Individual") Individual
-                        option(value="Compartida") Compartidas
+    .pestanas 
+        .pestana 1. Recepción
+        .pestana 2. Registro
+        .pestana.activa3 3. Asignación
+    .contenido-pestana#asignacion
+        h2 Asignacion de Habitacion 
         
-                .grid-habitaciones#contenedor-habitaciones            
+        h3 DNI: #{paciente.dni} | Tipo de Paciente: #{tipo}
+       
+        p#texto Seleccione una habitación disponible para el paciente.
 
-                .botones-accion 
-                    button.boton.boton-secundario(type="button" onclick="history.back()") Atrás
-                    button.boton.boton-primario(type="submit") Asignar Habitacion
+        // Datos de habitaciones en formato JSON para el script
+        script#habitaciones-data(type="application/json").
+            !{JSON.stringify(habitaciones)}
+        script#recepciones-data(type="application/json").
+            !{JSON.stringify(recepciones)}
 
-                script(src="/scriptAsignacionHabitacion.js")    
+        form(action="/recepcion/asignacion" method="POST")#formulario-recepcion                
+            input(type="hidden" name="tipo" value=tipo)          
+            input(type="hidden" name="paciente" value=JSON.stringify(paciente))
+            input(type="hidden" name="pacienteMutual" value= pacienteMutual ? JSON.stringify(pacienteMutual) : '')
+            input(type="hidden" name="idMotivo" value=idMotivo.id) 
+            input(type="hidden" name="detalle_motivo" value=detalle_motivo)
+                     
+            .grupo-formulario 
+                label(filtro-habitaciones) Filtrar por:
+                select#filtro-habitaciones(onchange="filtrarHabitaciones()")
+                    option(value="Todas") Todas las habitaciones
+                    option(value="Ala Norte") Ala Norte
+                    option(value="Ala Sur") Ala Sur
+                    option(value="Ala Este") Ala Este
+                    option(value="Ala Oeste") Ala Oeste
+                    option(value="Individual") Individual
+                    option(value="Compartida") Compartidas
+    
+            .grid-habitaciones#contenedor-habitaciones            
+
+            .botones-accion 
+                button.boton.boton-secundario(type="button" onclick="history.back()") Atrás
+                button.boton.boton-primario(type="submit") Asignar Habitacion
+
+        script(src="/scriptAsignacionHabitacion.js")

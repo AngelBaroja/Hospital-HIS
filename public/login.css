@@ -1,0 +1,93 @@
+  * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+      
+      body {
+          background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+          height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+      }
+      
+      .contenedor-login {
+          width: 90%;
+          max-width: 400px;
+          background: white;
+          border-radius: 15px;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+          padding: 2.5rem;
+          text-align: center;
+          animation: fadeIn 0.5s ease-in-out;
+      }
+      
+      @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+      }
+
+      .logo-hospital {
+          width: 140px;
+          height: 100px;            
+          object-fit: contain;
+      }       
+     
+      .titulo {
+          color: #1976d2;
+          margin-bottom: 0.5rem;
+          font-size: 1.8rem;
+      }
+      
+      .subtitulo {
+          color: #757575;
+          margin-bottom: 2rem;
+          font-size: 0.9rem;
+      }
+      
+      .grupo-formulario {
+          margin-bottom: 1.5rem;
+          text-align: left;
+      }
+      
+      label {
+          display: block;
+          margin-bottom: 0.5rem;
+          color: #424242;
+          font-weight: 500;
+          font-size: 0.9rem;
+      }
+      
+      input {
+          width: 100%;
+          padding: 12px 15px;
+          border: 1px solid #e0e0e0;
+          border-radius: 8px;
+          font-size: 1rem;
+          transition: all 0.3s;
+      }
+      
+      input:focus {
+          border-color: #1976d2;
+          outline: none;
+          box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.2);
+      }  
+      
+      .boton-login {
+          width: 100%;
+          padding: 14px;
+          background: #1976d2;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-size: 1rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: background 0.3s;
+      }
+      
+      .boton-login:hover {
+          background: #1565c0;
+      }  
