@@ -1,0 +1,117 @@
+extends ../layout
+
+block content   
+    .pestanas 
+        .pestana.activa4 Generar Turno             
+    .contenido-pestana#recepcion
+        h2 Asignación de Turno 
+        p#texto Complete la información del paciente para generar un turno. 
+        .formulario-grid           
+            .grupo-formulario
+                label(for="dni") DNI 
+                input(type="text" placeholder="Ingrese su DNI" name="dni" minlength="8" maxlength="8" required)#dni
+                .mensaje-error#dni-error
+                .mensaje-error#paciente-no-encontrado-error
+            .grupo-formulario
+                script#pacientes-data(type="application/json").
+                    !{JSON.stringify(pacientes)}
+                script#mutual-pacientes-data(type="application/json").
+                    !{JSON.stringify(mutualPacientes)}
+                script#mutuales-data(type="application/json").
+                    !{JSON.stringify(mutuales)}
+                label(for="nada" style="visibility:hidden") a
+                button.boton.boton-primario(type="button" onclick="buscarPaciente()") Buscar
+                
+        form#formulario-registro(action="/turno/generar" method="POST")                      
+            .formulario-grid
+                .grupo-formulario
+                    label(for="nombre") Nombre
+                    input(type="text" placeholder="Ingrese el nombre" name="nombre" minlength="3" maxlength="20" required)#nombre
+                .grupo-formulario
+                    label(for="apellido") Apellido
+                    input(type="text" placeholder="Ingrese el apellido" name="apellido" minlength="3" maxlength="20" required)#apellido
+
+                .grupo-formulario 
+                    label(for="fecha_nacimiento") Fecha de Nacimiento
+                    input(type="date" placeholder="Ingrese la fecha de nacimiento" name="fecha_nacimiento" required)#fecha_nacimiento
+
+                .grupo-formulario 
+                    label(for="genero") Género
+                    select#genero(name="genero" required)
+                            option(value="") Seleccione...
+                            option(value="Masculino") Masculino
+                            option(value="Femenino") Femenino
+                            option(value="No especificado") No especificado
+
+                .grupo-formulario 
+                    label(for="telefono") Contacto de Emergencia
+                    input(type="text" placeholder="Ingrese el número de teléfono de emergencia" name="contacto_emergencia" minlength="10" maxlength="10")#contacto_emergencia
+                
+                .grupo-formulario 
+                    label(for="direccion") Dirección
+                    input(type="text" placeholder="Ingrese la dirección" name="direccion" minlength="3" maxlength="30" required)#direccion
+
+                .grupo-formulario 
+                    label(for="provincia") Provincia
+                    input(type="text" placeholder="Ingrese la provincia" name="provincia"  minlength="3" maxlength="30" required)#provincia
+
+                .grupo-formulario 
+                    label(for="localidad") Localidad
+                    input(type="text" placeholder="Ingrese la localidad" name="localidad"  minlength="3" maxlength="30" required)#localidad 
+
+                h3 Datos de la Mutual
+                span
+
+                .grupo-formulario                     
+                    label(for="seguro") Seguro Médico                    
+                    select#seguro(name="seguro" )
+                        option(value="") Seleccione...
+                        each mutual in mutuales
+                            option(value=mutual.nombre) #{mutual.nombre}
+                
+                .grupo-formulario 
+                    label(for="codigo_mutual") Credencial Nº
+                    input(type="text" placeholder="Ingrese el codigo de la credencial" name="codigo_mutual" minlength="5" maxlength="5" )#codigo_mutual
+                        
+                .grupo-formulario   
+                    label(for="tipo_cobertura") Tipo de Cobertura 
+                    select#tipo_cobertura(name="tipo_cobertura")
+                            option(value="") Seleccione...
+                            option(value="Basico") Básico
+                            option(value="Completo") Completo
+                            option(value="Premium") Premium
+
+                .grupo-formulario 
+                    label(for="activa") Mutual Activa
+                    select#mutual_activa(name="activa")
+                            option(value="") Seleccione...
+                             option(value="Activa") Activa
+                                option(value="Inactiva") Inactiva
+                         
+                h3 Doctor y Motivo
+                span
+                .grupo-formulario 
+                    label(for="doctor") Doctor
+                    input(type="text" placeholder="Ingrese el nombre del doctor" name="doctor" required)#doctor
+                
+                .grupo-formulario 
+                    label(for="fecha_turno") Fecha del Turno
+                    input(type="date" name="fecha_turno" required)#fecha_turno
+                
+                .grupo-formulario 
+                    label(for="hora") Hora
+                    select(name="hora" required)#hora
+                        option(value="") Seleccione...
+                        - for (var i = 0; i < 24; i++)
+                            - var hora = (i < 10 ? '0' : '') + i + ':00';
+                            option(value=hora) #{hora}
+
+                .grupo-formulario 
+                    label(for="detalle_motivo") Detalle de la asignacion del Turno
+                    textarea(rows="3" placeholder="Ingrese detalles del motivo de la internacion" name="detalle_motivo" required)#detalle_motivo
+                
+            .botones-accion             
+                span 
+                button(type="submit" class="boton boton-primario") Generar Turno 
+
+        script(src="/scriptTurno.js")

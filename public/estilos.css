@@ -83,6 +83,47 @@ header {
   font-size: 1rem;
 }
 
+/* Ajuste para el contenido principal para que no quede oculto por el navbar fijo */
+.contenido-logo {    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding-top: 20px; 
+    box-sizing: border-box;
+}
+
+/* Estilos para el logo centrado */
+.logo-central {
+    width: 700px; /* Tamaño del logo, ajústalo a tu gusto */
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: linear-gradient(rgba(25, 118, 210, 0.5), rgba(227, 242, 253, 0.5)), url('/img/background-hospital.jpg');
+    background-size: cover;
+    background-position: center;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    /* Aplicamos la animación */
+    animation: fadeInZoom 1.2s ease-out forwards;
+}
+
+/* Definición de la animación (Keyframes) */
+@keyframes fadeInZoom {
+  /* Estado inicial (invisible y ligeramente más pequeño) */
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  /* Estado final (totalmente visible y en su tamaño normal) */
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .info-usuario span {
   background: #fff;
   color: #1976d2;
@@ -127,6 +168,20 @@ header {
     background: white;
     font-weight: bold;    
     border-left: 2px solid #1976d2;                    
+}
+.pestana.activa4 {
+    border-bottom: 3px solid #1976d2;
+    background: white;
+    font-weight: bold;   
+}
+.separator {
+    display: inline-block;
+    width: 2px;
+    height: 52px;
+    background: #1976d2;
+    margin: 0 8px;
+    border-radius: 2px;
+    align-self: center;   
 }
 
 #texto{
@@ -305,5 +360,22 @@ input:focus, select:focus, textarea:focus {
     color: rgb(97, 191, 97);
     font-weight: bold;
     margin-top: 1rem;
+}
+
+.mensaje-error {
+    display: none;
+    color: #d32f2f;
+    font-size: 0.95em;
+    font-weight: bold;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    min-height: 18px;
+    transition: all 0.2s;
+}
+.mensaje-error.visible {
+    display: block;
+}
+.input-error {
+    border: 2px solid #d32f2f !important;
 }
 

@@ -1,11 +1,5 @@
 
-/*
-async function validarUsuario(req, res) {
-  // Aquí podrías agregar la lógica para validar el usuario
-  const { usuario, password } = req.body;
-  req.session.nombreUsuario = usuario; 
-  res.status(200).render('recepcion/recepcion',{usuario});
-}*/
+
 async function validarUsuario(req, res) {
   // Aquí podrías agregar la lógica para validar el usuario
   const { usuario, password } = req.body;

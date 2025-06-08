@@ -7,7 +7,7 @@ const Motivo = require('../models/Motivo');
 const Cama = require('../models/Cama');
 const Habitacion = require('../models/Habitacion');
 const Ala = require('../models/Ala');
- const { Op, EagerLoadingError } = require('sequelize');
+const { Op, EagerLoadingError } = require('sequelize');
 
 async function inicioRecepcion(req, res) {
     const usuario= req.session.nombreUsuario;
@@ -385,7 +385,7 @@ async function ingresarHabitacion(req, res) {
             where: { 
                 id: idCama,               
             }
-        });
+         });
 
     
     

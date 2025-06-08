@@ -25,6 +25,11 @@ Turno.init(
         allowNull: false,
         comment: `Horario del turno`                
     }, 
+    detalle: {
+        type: DataTypes.STRING,
+        allowNull: true,        
+        comment: `Detalle del turno`                
+    } 
   }, {
   sequelize,
   modelName: "Turno",
@@ -33,6 +38,6 @@ Turno.init(
 );
 
 Turno.belongsTo(Paciente, { foreignKey: 'id_paciente' }); 
-
+Paciente.hasMany(Turno, { foreignKey: 'id_paciente' });
 
 module.exports = Turno;

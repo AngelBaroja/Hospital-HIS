@@ -39,7 +39,7 @@ app.use('/', indexRoutes);
 app.use('/login', loginRoutes);
 app.use('/home', homeRutes);
 app.use('/recepcion', recepcionRoutes);
-//app.use('/turnos', turnosRoutes);
+app.use('/turno', turnosRoutes);
 //app.use('/habitacion', habitacionRoutes);
 
 // Inicio del servidor
