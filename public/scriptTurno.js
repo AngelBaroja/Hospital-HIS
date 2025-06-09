@@ -76,7 +76,10 @@ function limpiarCampos() {
     document.querySelector('#tipo_cobertura').value = '';
     document.querySelector('#mutual_activa').value = '';
     
-    // Limpiar motivo
+    // Limpiar doctor y motivo
+    document.querySelector('#doctor').value = '';
+    document.querySelector('#fecha_turno').value = '';
+    document.querySelector('#hora').value = '';
     document.querySelector('#detalle_motivo').value = '';
     
     // Limpiar mensajes de error

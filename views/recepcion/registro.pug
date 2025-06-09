@@ -8,7 +8,7 @@ block content
     .contenido-pestana#recepcion
         h2 Datos Basicos del Paciente
         if paciente
-            h3 DNI: #{paciente.dni} | Tipo de Paciente: #{tipo}
+           h3 DNI: #{paciente.dni} | Tipo de Paciente: #{tipo}
         else 
            h3 DNI: #{dni} | Tipo de Paciente: #{tipo} 
         p#texto Complete la información inicial para comenzar el proceso de admisión.
@@ -16,7 +16,9 @@ block content
         form#formulario-registro(action="/recepcion/registro" method="POST")
             input(type="hidden" name="dni" value=dni)
             input(type="hidden" name="tipo" value=tipo)            
-            input(type="hidden" name="paciente" value=paciente)           
+            input(type="hidden" name="paciente" value=paciente)
+            h3 Datos del Paciente
+            span           
             .formulario-grid
                 .grupo-formulario
                     label(for="nombre") Nombre

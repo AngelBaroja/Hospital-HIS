@@ -172,23 +172,34 @@ header {
 .pestana.activa4 {
     border-bottom: 3px solid #1976d2;
     background: white;
-    font-weight: bold;   
+    font-weight: bold; 
+    text-decoration: none; 
+}
+.pestana.activa5 {
+    border-bottom: 3px solid #1976d2;   
+    background: white;
+    font-weight: bold; 
+    text-decoration: none; 
+}
+.pestana.activa5:hover {         
+    background: rgb(211, 219, 241);
+    font-size: 1.15em; 
+    color: #0d47a1;    
 }
 .separator {
     display: inline-block;
     width: 2px;
-    height: 52px;
-    background: #1976d2;
-    margin: 0 8px;
+    height: 62px;
+    background: #1976d2;    
     border-radius: 2px;
-    align-self: center;   
+    align-self: center;       
 }
 
 #texto{
     margin-bottom: 15px ;
 }   
 
-/* Contenido de cada paso */
+
 .contenido-pestana { 
     display: block;
     animation: fadeIn 0.5s;
@@ -350,6 +361,33 @@ input:focus, select:focus, textarea:focus {
     margin-top: 2rem;
 }
 
+/*Tablas*/
+.tabla-turnos {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.tabla-turnos th, .tabla-turnos td {
+    border: 2px solid #bbdefb;
+    padding: 8px;
+    text-align: left;
+}
+
+.tabla-turnos th {
+    background-color:  rgb(211, 219, 241);
+    font-weight: bold;
+}
+
+.tabla-turnos tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.tabla-turnos tr:hover {
+    background-color: #f1f1f1;
+} 
+
+/*Texto error y correcto en Recepcion*/
 #textoError {
     color: red;
     font-weight: bold;
@@ -361,7 +399,7 @@ input:focus, select:focus, textarea:focus {
     font-weight: bold;
     margin-top: 1rem;
 }
-
+/*Mensajes de error para generar turno*/
 .mensaje-error {
     display: none;
     color: #d32f2f;

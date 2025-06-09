@@ -72,23 +72,33 @@ async function buscarTurno(req, res) {
                     tipo                   
                 });
             }
-            // Buscar turno del paciente para el día de hoy
-            const today = new Date();           
+            // Buscar turno del paciente para el día de hoy y que la hora sea mayor a la hora actual
+            const today = new Date();
+            const horaActual = today.getHours();
+
             const turno = await Turno.findOne({
                 where: {
                     id_paciente: paciente.id,
-                    fecha_turno: today
-                }
-            });  
-
+                    fecha_turno: today,                    
+                },
+                 order: [
+                    ['hora', 'DESC'] // Ordena por hora en orden descendente (la más reciente primero)
+                ]
+            }); 
             // Si no encontramos el turno
             if (!turno) {
                 return res.status(404).render('recepcion/recepcion', {
                     dni,
                     tipo,
                     usuario,
-                    error: `Paciente ${paciente.nombre} ${paciente.apellido} no tiene turno programado para hoy.`,
-                    
+                    error: `Paciente ${paciente.nombre} ${paciente.apellido} no tiene turno programado para hoy`,                    
+                });
+            }else if( turno.hora < horaActual){
+                return res.status(404).render('recepcion/recepcion', {
+                    dni,
+                    tipo,
+                    usuario,
+                    error: `El paciente ${paciente.nombre} ${paciente.apellido} llego tarde para su cita hoy`,                    
                 });
             }  
             // Si encontramos el turno
@@ -211,29 +221,28 @@ async function crearPaciente(req, res) {
     }
     
     
-    if (paciente.dni == "Sin DNI") {
-        req.session.PacienteEmergencia = paciente; 
+    if (paciente.dni == "Sin DNI") {         
         console.log("El paciente ingreso por Emergencia");        
         
         // Obtener habitaciones disponibles para emergencia
         const habitacionesDisponibles = await Habitacion.findAll({
-    where: { activa: true },
-    include: [{
-        model: Cama,  // <-- Elimina el where: { estado: 'Libre' }
-        include: [{
-            model: Recepcion,
-            where: { fecha_salida: null },
-            required: false,  // <-- Importante para incluir camas sin recepción
-            include: [{
-                model: Paciente,
-                attributes: ['id', 'genero']
+                where: { activa: true },
+                include: [{
+                model: Cama,  
+                include: [{
+                    model: Recepcion,
+                    where: { fecha_salida: null },
+                    required: false,  
+                    include: [{
+                        model: Paciente,
+                        attributes: ['id', 'genero']
+                    }]
+                }]
+            },
+            {
+                model: Ala 
             }]
-        }]
-    },
-    {
-        model: Ala 
-    }]
-    });
+            });
         
         return res.status(200).render('recepcion/asignacion', {            
             tipo,
@@ -245,7 +254,8 @@ async function crearPaciente(req, res) {
             recepciones 
         });
     }
-   
+
+    //Transformo la variable activa a boolean para comparar en la BD
     const activaBoolean = activa === "Activa" ? true : false;
 
     // Compara los campos relevantes de paciente (ignorando id, createdAt, updatedAt)
@@ -263,7 +273,7 @@ async function crearPaciente(req, res) {
         console.log('El paciente ya existe en la base de datos');  
     } else {
         console.log('El paciente no existe, se creará uno nuevo o se actualizará el existente');
-        // Buscar el paciente haber si existe por DNI
+        // Buscar el paciente haber si existe 
         const pacienteExistente = await Paciente.findOne({ where: { dni } });
         if (pacienteExistente) {
             // Actualizar los campos del paciente
@@ -378,7 +388,15 @@ async function ingresarHabitacion(req, res) {
  
     const { tipo, idMotivo, detalle_motivo, idCama } = req.body;
     const usuario = req.session.nombreUsuario;
-    const paciente = JSON.parse(req.body.paciente);
+    let paciente = JSON.parse(req.body.paciente);
+    
+    //Generamos al paciente si viene por emergencia
+    if (paciente.id==null) {
+        paciente= await Paciente.create();
+    }
+    console.log(paciente);
+    
+    
 
     //Busco la cama 
     const cama = await Cama.findOne({
@@ -402,7 +420,7 @@ async function ingresarHabitacion(req, res) {
             fecha_entrada: new Date(),
             hora: new Date().getHours()
         });
-    console.log(`Recepcion creada, Paciente: ${paciente.nombre}, cama nº ${cama.numero}, habitacion nº ${cama.id_habitacion}`);
+    console.log(`Recepcion ${recepcion.id} creada, Paciente: ${paciente.nombre}, cama nº ${cama.numero}, habitacion nº ${cama.id_habitacion}`);
         
 
        res.status(200).render('home',{usuario});

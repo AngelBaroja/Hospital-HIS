@@ -1,0 +1,27 @@
+extends ../layout
+
+block content   
+    .pestanas 
+        .pestana.activa4 Pacientes Internados             
+    .contenido-pestana#recepcion
+        table.tabla-turnos
+            thead
+                tr
+                    th Dni
+                    th Nombre y Apellido
+                    th Habitacion
+                    th Cama
+                    th Fecha de Ingreso
+                    th                    
+            tbody
+                each turno in turnos
+                    tr
+                        td= turno.doctor
+                        td= turno.fecha_turno  
+                        td= `${turno.hora}:00`
+                        - function truncarTexto(texto, largo = 20) {
+                        -   if (!texto) return 'Sin detalle';
+                        -   return texto.length > largo ? texto.substring(0, largo) + '...' : texto;
+                        - }
+                        td= truncarTexto(turno.detalle)                        
+                        td=`${turno.Paciente.nombre} ${turno.Paciente.apellido}` 

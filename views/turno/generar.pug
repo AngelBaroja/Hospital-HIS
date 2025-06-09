@@ -6,24 +6,29 @@ block content
     .contenido-pestana#recepcion
         h2 Asignación de Turno 
         p#texto Complete la información del paciente para generar un turno. 
-        .formulario-grid           
-            .grupo-formulario
-                label(for="dni") DNI 
-                input(type="text" placeholder="Ingrese su DNI" name="dni" minlength="8" maxlength="8" required)#dni
-                .mensaje-error#dni-error
-                .mensaje-error#paciente-no-encontrado-error
-            .grupo-formulario
-                script#pacientes-data(type="application/json").
-                    !{JSON.stringify(pacientes)}
-                script#mutual-pacientes-data(type="application/json").
-                    !{JSON.stringify(mutualPacientes)}
-                script#mutuales-data(type="application/json").
-                    !{JSON.stringify(mutuales)}
-                label(for="nada" style="visibility:hidden") a
-                button.boton.boton-primario(type="button" onclick="buscarPaciente()") Buscar
+                  
+            
+            
+        script#pacientes-data(type="application/json").
+            !{JSON.stringify(pacientes)}
+        script#mutual-pacientes-data(type="application/json").
+            !{JSON.stringify(mutualPacientes)}
+        script#mutuales-data(type="application/json").
+            !{JSON.stringify(mutuales)}
+                
                 
         form#formulario-registro(action="/turno/generar" method="POST")                      
             .formulario-grid
+                h3 Datos del Paciente
+                span
+                .grupo-formulario
+                    label(for="dni") DNI 
+                    input(type="text" placeholder="Ingrese su DNI" name="dni" minlength="8" maxlength="8" required)#dni
+                    .mensaje-error#dni-error
+                    .mensaje-error#paciente-no-encontrado-error
+                .grupo-formulario 
+                    label(for="nada" style="visibility:hidden") a
+                    button.boton.boton-primario(type="button" onclick="buscarPaciente()") Buscar
                 .grupo-formulario
                     label(for="nombre") Nombre
                     input(type="text" placeholder="Ingrese el nombre" name="nombre" minlength="3" maxlength="20" required)#nombre
@@ -102,9 +107,10 @@ block content
                     label(for="hora") Hora
                     select(name="hora" required)#hora
                         option(value="") Seleccione...
-                        - for (var i = 0; i < 24; i++)
-                            - var hora = (i < 10 ? '0' : '') + i + ':00';
-                            option(value=hora) #{hora}
+                        - for (var i = 7; i < 21; i++)
+                            - var horaEntera = (i < 10 ? '0' : '') + i + ':00';
+                            option(value=i) #{horaEntera}
+                            
 
                 .grupo-formulario 
                     label(for="detalle_motivo") Detalle de la asignacion del Turno

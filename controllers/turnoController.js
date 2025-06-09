@@ -3,11 +3,10 @@ const Paciente = require('../models/Paciente');
 const Turno = require('../models/Turno');
 const Mutual_Paciente = require('../models/Mutual_Paciente');
 const Mutual = require('../models/Mutual');
-
-
 const Habitacion = require('../models/Habitacion');
+const Cama = require('../models/Cama');
 const Ala = require('../models/Ala');
-const { Op, EagerLoadingError } = require('sequelize');
+
 
 async function vistaGenerarTurno(req, res) {     
     const usuario = req.session.nombreUsuario
@@ -66,17 +65,93 @@ async function generarTurno(req, res) {
         activa
       });
     }
+  }else{
+    //El paciente existe hay que revisar si no actualizaron sus datos
+    // Compara los campos relevantes de paciente (ignorando id, createdAt, updatedAt)    
+    if (paciente.nombre === nombre &&
+        paciente.apellido === apellido && 
+        String(paciente.fecha_nacimiento) === String(fecha_nacimiento) &&
+        paciente.genero === genero &&  
+        paciente.direccion === direccion &&
+        paciente.contacto_emergencia === contacto_emergencia &&
+        paciente.provincia === provincia &&
+        paciente.localidad === localidad) 
+    {
+        console.log('El paciente no actualizo sus de datos personales');  
+    } else {
+        console.log('Actualizar los datos personales del paciente');
+            // Actualizar los campos del paciente
+            await paciente.update({
+                nombre,
+                apellido,
+                fecha_nacimiento,
+                genero,
+                direccion,
+                contacto_emergencia,
+                provincia,
+                localidad
+            });
+            console.log('Paciente actualizado correctamente');
+      }
   }
+   //Transformo la variable activa de Mutual a boolean para comparar en la BD
+    const activaBoolean = activa === "Activa" ? true : false;
+   // Buscamos la mutual por su nombre
+    const mutualExistente = await Mutual.findOne({ where: { nombre: seguro } });
+
+    const Elpaciente = await Paciente.findOne({ where: { dni } });
+    
+    // Buscamos que mutual tiene el paciente
+    const pacienteMutual = await Mutual_Paciente.findOne({
+        where: { id_paciente: Elpaciente.id }
+    });
+
+    // Verificar si ya existe una mutual para el paciente 
+    if (pacienteMutual) {
+        if (pacienteMutual.id_mutual != mutualExistente?.id ||
+            pacienteMutual.codigo_mutual != codigo_mutual ||
+            pacienteMutual.tipo_cobertura != tipo_cobertura ||
+            pacienteMutual.activa != activaBoolean) {
+                await pacienteMutual.update({
+                    id_mutual: mutualExistente?.id,
+                    codigo_mutual,
+                    tipo_cobertura,
+                    activa: activaBoolean
+                });
+                console.log('Mutual del paciente actualizada correctamente');
+        } else {
+            console.log("El Paciente no modifico su Mutual");                
+        } 
+    } else {
+        // Si no se cargaron datos de la mutual, no se crea una mutual al paciente
+        // Si se cargaron datos de la mutual y no existe una Mutual_Paciente, se crea una al paciente
+        if (codigo_mutual && tipo_cobertura) {        
+            await Mutual_Paciente.create({
+                id_paciente: Elpaciente.id,
+                id_mutual: mutualExistente?.id,
+                codigo_mutual,
+                tipo_cobertura,
+                activa: activaBoolean
+            });
+            console.log('Nueva mutual creada para el paciente');
+        } else {
+            console.log('Este paciente no tiene mutual, no se crea una nueva');
+        }
+    }
+
+  paciente=Elpaciente;
   
   await Turno.create({
     id_paciente: paciente.id,
     doctor,
     fecha_turno,
     hora,
-    detalle_motivo,
+    detalle:detalle_motivo,
   });
   console.log(`Turno generado para el paciente DNI: ${paciente.nombre} ${paciente.apellido}`);
- 
+
+  //Redirijo la pestaña al home
+  res.redirect('/home');
 }
 
 async function elegirVistaTurno(req, res) { 
@@ -84,8 +159,24 @@ async function elegirVistaTurno(req, res) {
     res.status(200).render('turno/elegir',{usuario});
 }
 
+async function vistaListarTurno(req, res) { 
+    const usuario = req.session.nombreUsuario;
+    const hoy=new Date();
+    //Buscamos todos los turnos para listarlos
+    const turnos = await Turno.findAll({
+        where:{fecha_turno:hoy},
+        include: [{
+            model: Paciente,
+            attributes: ['nombre', 'apellido'] // solo necesito estos campos del paciente
+        }]
+    });
+
+    res.status(200).render('turno/lista', {usuario, turnos});
+}
+
 module.exports = {
   generarTurno,
   vistaGenerarTurno,
-  elegirVistaTurno
+  elegirVistaTurno,
+  vistaListarTurno
 };

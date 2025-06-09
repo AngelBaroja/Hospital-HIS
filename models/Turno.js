@@ -5,36 +5,36 @@ const Paciente = require('./Paciente');
 class Turno extends Model { }
 
 Turno.init(
-  {
-    doctor: {
-        type: DataTypes.STRING,
-        allowNull: false,        
-        comment: `Nombre del doctor`                
-    },
-    fecha_turno: {
-        type: DataTypes.DATEONLY, // Solo fecha, sin hora        
-        allowNull: false,        
-        defaultValue: DataTypes.NOW,  
-        validate: {
-            isDate: true
+    {
+        doctor: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            comment: `Nombre del doctor`
         },
-        comment: `Fecha del turno`
-    },
-    hora : {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        comment: `Horario del turno`                
-    }, 
-    detalle: {
-        type: DataTypes.STRING,
-        allowNull: true,        
-        comment: `Detalle del turno`                
-    } 
-  }, {
-  sequelize,
-  modelName: "Turno",
-  tableName: "turnos",
-}
+        fecha_turno: {
+            type: DataTypes.DATEONLY,
+            allowNull: false,
+            defaultValue: DataTypes.NOW,
+            validate: {
+                isDate: true
+            },
+            comment: `Fecha del turno`
+        },
+       hora: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            comment: "Hora del turno",            
+        },
+        detalle: {
+            type: DataTypes.STRING,
+            allowNull: true,
+            comment: `Detalle del turno`
+        }
+    }, {
+        sequelize,
+        modelName: "Turno",
+        tableName: "turnos",
+    }
 );
 
 Turno.belongsTo(Paciente, { foreignKey: 'id_paciente' }); 

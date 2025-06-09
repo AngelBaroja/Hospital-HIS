@@ -115,11 +115,11 @@ console.log('Mutuales_Pacientes creados:', mutualesPacientes.length);
 
 // Turnos
 const turnos = await Turno.bulkCreate([
-    { doctor: 'Dr. Smith', fecha_turno: new Date('2025-06-03'), hora: 9, id_paciente: 1 },
-    { doctor: 'Dra. Johnson', fecha_turno: new Date('2025-06-03'), hora: 10, id_paciente: 2 },
-    { doctor: 'Dr. Brown', fecha_turno: new Date('2025-06-03'), hora: 11, id_paciente: 3 },
-    { doctor: 'Dra. Davis', fecha_turno: new Date('2025-06-03'), hora: 12, id_paciente: 4 },
-    { doctor: 'Dr. Wilson', fecha_turno: new Date('2025-06-03'), hora: 13, id_paciente: 5 }
+  { doctor: 'Dr. Smith', fecha_turno: new Date('2025-06-03'), hora: '9', id_paciente: 1 },
+  { doctor: 'Dra. Johnson', fecha_turno: new Date('2025-06-03'), hora: '19', id_paciente: 2 },
+  { doctor: 'Dr. Brown', fecha_turno: new Date('2025-06-03'), hora: '20', id_paciente: 3 },
+  { doctor: 'Dra. Davis', fecha_turno: new Date('2025-06-03'), hora: '15', id_paciente: 4 },
+  { doctor: 'Dr. Wilson', fecha_turno: new Date('2025-06-03'), hora: '10', id_paciente: 5 }
 ]);
 console.log('Turnos creados:', turnos.length);
 

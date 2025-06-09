@@ -12,7 +12,7 @@ const homeRutes = require('./routes/home');
 const loginRoutes = require('./routes/login');
 const recepcionRoutes = require('./routes/recepcion');
 const turnosRoutes = require('./routes/turno');
-const habitacionRoutes = require('./routes/habitacion');
+const pacienteRoutes = require('./routes/paciente');
 
 // Middleware para obtener datos del formulario
 app.use(express.json());
