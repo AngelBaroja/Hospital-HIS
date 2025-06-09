@@ -1,58 +1,44 @@
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../config/conexion");
-const Paciente = require("./Paciente");
+const bcrypt = require('bcrypt');
 
-class Usuario extends Model { }
+class Usuario extends Model {
+  async validarContraseña(contraseña) {
+    return await bcrypt.compare(contraseña, this.contraseña);
+  }
+}
 
 Usuario.init(
   {    
     usuario: {
         type: DataTypes.STRING,
         allowNull: false,  
-        unique: true,        
-        validate: {
-            len: [7, 8],  
-            is: /^[0-9]+$/i,   // Solo números
-            isNumeric: true // Solo números
-        },
-        comment: `Usuario del personal del hospital relacionado con el DNI del personal`                
+        unique: true,
+        comment: `Usuario del personal del hospital`                
     },
     contraseña: {
         type: DataTypes.STRING,
-        allowNull: false,
-        unique: false,        
-        validate: {               
-            len: [3,10],     
-            isAlphanumeric: true, // Solo alfanumérico
-            is: /^[a-zA-Z0-9]+$/i // Solo letras y números    
-        },
+        allowNull: false,       
         comment: `Contraseña del personal del hospital`
-    },
-    cargo: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: false,        
-        validate: {
-            isIn: [[`Recepcionista`, `Medido`, `Enfermero`, `Administrativo`]]
-        },
-        comment: `Cargo del personal del hospital`
-    },
-    activo: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        unique: false,
-        defaultValue: true,
-        validate: {
-            isIn: [[true, false]]
-        },
-        comment: `Indica si el usuario del personal del hospital esta activo o no`
-    }    
+    }         
   }, {
   sequelize,
   modelName: "Usuario",
-  tableName: "usuarios", 
-}
-);
-
+  tableName: "usuarios",
+  hooks: {  
+    beforeCreate: async (usuario) => {
+      if (usuario.contraseña) {
+        const salt = await bcrypt.genSalt(10);
+        usuario.contraseña = await bcrypt.hash(usuario.contraseña, salt);
+      }
+    },
+    beforeUpdate: async (usuario) => {
+      if (usuario.changed('contraseña')) {
+        const salt = await bcrypt.genSalt(10);
+        usuario.contraseña = await bcrypt.hash(usuario.contraseña, salt);
+      }
+    }
+  }
+});
 
 module.exports = Usuario;

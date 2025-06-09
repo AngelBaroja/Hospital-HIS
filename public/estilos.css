@@ -62,6 +62,16 @@ header {
   gap: 2rem;
 }
 
+#home{
+  color: #fff;
+  margin-left: -18px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+}
+
 .navbar-center a {
   color: #fff;
   text-decoration: none;
@@ -361,6 +371,19 @@ input:focus, select:focus, textarea:focus {
     margin-top: 2rem;
 }
 
+.boton-eliminar {   
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.boton-eliminar:hover {
+    background-color: #d32f2f;
+}
+
 /*Tablas*/
 .tabla-turnos {
     width: 100%;
@@ -416,4 +439,6 @@ input:focus, select:focus, textarea:focus {
 .input-error {
     border: 2px solid #d32f2f !important;
 }
+
+
 

@@ -19,9 +19,14 @@
   },
   "homepage": "https://github.com/AngelBaroja/Hospital-HIS#readme",
   "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "express-session": "^1.18.1",
     "mysql2": "^3.14.1",
+    "passport": "^0.7.0",
+    "passport-github": "^1.1.0",
+    "passport-local": "^1.0.0",
     "pug": "^3.0.3",
     "sequelize": "^6.37.7",
     "sequelize-cli": "^6.6.3"

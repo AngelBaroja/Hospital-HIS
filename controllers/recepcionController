@@ -10,8 +10,16 @@ const Ala = require('../models/Ala');
 const { Op, EagerLoadingError } = require('sequelize');
 
 async function inicioRecepcion(req, res) {
+    try{
     const usuario= req.session.nombreUsuario;
     res.status(200).render('recepcion/recepcion',{usuario})
+    }catch (error) {
+        console.error('Error en inicioRecepcion:', error);
+        res.status(500).render('error', { 
+            mensaje: 'Error al cargar la página de recepción',
+            error
+        });
+    }
 }
 
 async function buscarTurno(req, res) {
@@ -150,16 +158,18 @@ async function buscarTurno(req, res) {
             motivos,                       
         });
 
-    } catch (error) {
+     } catch (error) {
         console.error('Error en buscarTurno:', error);
         return res.status(500).render('recepcion/recepcion', {
-            error: 'Error al buscar turno',            
-            usuario,           
+            mensaje: 'Error al buscar el turno del paciente en recepción',
+            error            
+                      
         });
     }
 }
 
-async function atrasRegistro(req, res) {    
+async function atrasRegistro(req, res) { 
+    try{   
     const {  dni, tipo, paciente } = req.body;
     const usuario = req.session.nombreUsuario;
 
@@ -169,12 +179,18 @@ async function atrasRegistro(req, res) {
         tipo,
         paciente       
     });
+    } catch (error) {
+        console.error('Error en atrasRegistro:', error);
+        res.status(500).render('error', {
+            mensaje: 'Error al volver atrás en el registro',
+            error
+        });
+    }
 
 }
 
-
-
 async function crearPaciente(req, res) {
+    try {
     // Extraer todos los campos del formulario de registro
     const {
         dni,
@@ -348,42 +364,51 @@ async function crearPaciente(req, res) {
         }
     }
     
-    paciente = Elpaciente;
+        paciente = Elpaciente;
     
-    // Obtener habitaciones disponibles con sus camas libres
-    const habitacionesDisponibles = await Habitacion.findAll({
-    where: { activa: true },
-    include: [{
-        model: Cama,  // <-- Elimina el where: { estado: 'Libre' }
+      // Obtener habitaciones disponibles con sus camas libres
+        const habitacionesDisponibles = await Habitacion.findAll({
+        where: { activa: true },
         include: [{
-            model: Recepcion,
-            where: { fecha_salida: null },
-            required: false,  // <-- Importante para incluir camas sin recepción
+            model: Cama,  // <-- Elimina el where: { estado: 'Libre' }
             include: [{
-                model: Paciente,
-                attributes: ['id', 'genero']
+                model: Recepcion,
+                where: { fecha_salida: null },
+                required: false,  // <-- Importante para incluir camas sin recepción
+                include: [{
+                    model: Paciente,
+                    attributes: ['id', 'genero']
+                }]
             }]
-        }]
-    },
-    {
-        model: Ala 
-    }]
-});
+        },
+            {
+                model: Ala 
+            }]
+        });
 
-    // Renderizar la vista de asignación
-    res.status(200).render('recepcion/asignacion', {         
-        tipo,
-        usuario,
-        habitaciones: habitacionesDisponibles, 
-        paciente, 
-        pacienteMutual,
-        idMotivo,
-        detalle_motivo,
-        recepciones       
-    });
+        // Renderizar la vista de asignación
+        res.status(200).render('recepcion/asignacion', {         
+            tipo,
+            usuario,
+            habitaciones: habitacionesDisponibles, 
+            paciente, 
+            pacienteMutual,
+            idMotivo,
+            detalle_motivo,
+            recepciones       
+        });
+    } catch (error) {
+        console.error('Error en crearPaciente:', error);
+        res.status(500).render('error', {
+            mensaje: 'Error al crear/actualizar paciente',
+            error
+        });
+    }
 }
 
-async function ingresarHabitacion(req, res) {  
+async function ingresarHabitacion(req, res) {
+try {
+
   console.log('Ingresando a la habitacion');
  
     const { tipo, idMotivo, detalle_motivo, idCama } = req.body;
@@ -393,11 +418,7 @@ async function ingresarHabitacion(req, res) {
     //Generamos al paciente si viene por emergencia
     if (paciente.id==null) {
         paciente= await Paciente.create();
-    }
-    console.log(paciente);
-    
-    
-
+    } 
     //Busco la cama 
     const cama = await Cama.findOne({
             where: { 
@@ -420,11 +441,81 @@ async function ingresarHabitacion(req, res) {
             fecha_entrada: new Date(),
             hora: new Date().getHours()
         });
-    console.log(`Recepcion ${recepcion.id} creada, Paciente: ${paciente.nombre}, cama nº ${cama.numero}, habitacion nº ${cama.id_habitacion}`);
+        console.log(`Recepcion ${recepcion.id} creada, Paciente: ${paciente.nombre}, cama nº ${cama.numero}, habitacion nº ${cama.id_habitacion}`);
         
 
        res.status(200).render('home',{usuario});
+    } catch (error) {
+        console.error('Error en ingresarHabitacion:', error);
+        res.status(500).render('error', {
+            mensaje: 'Error al ingresar paciente a la habitacion',
+            error
+        });
+    }
+}
 
+async function vistaPacientesConRecepcion(req, res) { 
+try {
+    const usuario = req.session.nombreUsuario;
+    // Traigo las recepciones activas y sus pacientes, camas y habitaciones
+    const recepciones = await Recepcion.findAll({
+        where: { fecha_salida: null },
+        include: [
+        { model: Paciente },
+        { 
+            model: Cama,
+            include: [
+            { model: Habitacion }
+            ]
+        }
+        ]
+    });
+    res.status(200).render('recepcion/lista', { usuario, recepciones });
+  } catch (error) {
+        console.error('Error en vistaPacientesConRecepcion:', error);
+        res.status(500).render('error', {
+            mensaje: 'Error al cargar la lista de pacientes',
+            error
+        });
+    }
+}
+
+async function retirarRecepcion(req, res) {
+  try {
+    const { id } = req.params; 
+
+    // Actualiza la recepción
+    await Recepcion.update(
+      {
+        fecha_salida: new Date(),
+        estado: "Retirado",        
+      },
+      { where: { id } }
+    );
+    const recepcion= await Recepcion.findOne({
+        where:{id}
+    })
+    console.log(`Recepcion nº ${recepcion.id} cambiada a ${recepcion.estado}` );
+    
+    
+    //Busco la cama 
+    const cama = await Cama.findOne({
+            where: { 
+                id: recepcion.id_cama,               
+            }
+         });
+    //Cambio el estado de la cama a Ocupada
+    await cama.update({ estado: 'Libre' });
+    
+    
+    res.redirect('/recepcion/lista');
+  } catch (error) {
+        console.error('Error al retirar recepción:', error);
+        res.status(500).render('error', {
+            mensaje: 'Error al actualizar la retirada del paciente en recepcion',
+            error
+        });
+    }
 }
 
 module.exports = {  
@@ -432,5 +523,7 @@ module.exports = {
  buscarTurno,  
  crearPaciente,
  ingresarHabitacion,
- atrasRegistro
+ atrasRegistro,
+ vistaPacientesConRecepcion,
+ retirarRecepcion
 };

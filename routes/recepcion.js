@@ -13,4 +13,8 @@ router.post('/registro', recepcionController.crearPaciente);//Aqui creo al pacie
 
 router.post('/asignacion', recepcionController.ingresarHabitacion);//Aqui le asigno una habitacion al paciente
 
+router.get(`/lista`, recepcionController.vistaPacientesConRecepcion);//Aqui muestro la tabla de paciente con recepcion
+
+router.post(`/retirar/:id`, recepcionController.retirarRecepcion);//Aqui cambio una recepcion a retirado y le coloco fecha de salida
+
 module.exports = router;

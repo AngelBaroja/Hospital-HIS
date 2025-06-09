@@ -1,0 +1,32 @@
+extends ../layout
+
+block content   
+    .pestanas 
+        .pestana.activa4 Pacientes Internados             
+    .contenido-pestana#recepcion
+        table.tabla-turnos
+            thead
+                tr
+                    th DNI
+                    th Nombre y Apellido
+                    th Habitación Nº
+                    th Cama Nº
+                    th Fecha de Ingreso
+                    th Hora
+                    th Acciones
+            tbody
+                if recepciones.length
+                    each recepcion in recepciones
+                        tr
+                            td= recepcion.Paciente.dni
+                            td= `${recepcion.Paciente.nombre} ${recepcion.Paciente.apellido}`
+                            td= recepcion.Cama.Habitacion.id
+                            td= recepcion.Cama.numero
+                            td= recepcion.fecha_entrada
+                            td= recepcion.createdAt.toLocaleTimeString()
+                            td
+                                form(action=`/recepcion/retirar/${recepcion.id}` method="POST" style="display: inline;")
+                                    button.boton-eliminar(type="submit") Retirar
+                else
+                    tr
+                        td(colspan="7") No hay pacientes internados en HIS Hospital

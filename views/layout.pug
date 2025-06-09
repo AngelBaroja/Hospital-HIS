@@ -12,12 +12,12 @@ html(lang="es")
         .navbar
           .navbar-left
             img(src="/img/Logo-Hospital.jpg" alt="Logo del Hospital")
-            .logo HIS Hospital
+            a#home(href="/home").logo HIS Hospital
           .navbar-center
             nav
               a#recepcion(href="/recepcion") Recepción
               a(href="/turno/elegir") Turno              
-              a(href="/pacientes/lista") Paciente
+              a(href="/recepcion/lista") Paciente
           .navbar-right
             .info-usuario
               span Recepcionista: #{usuario}

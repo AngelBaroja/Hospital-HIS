@@ -13,14 +13,18 @@ block content
                     th Detalle
                     th Paciente
             tbody
-                each turno in turnos
+                if turnos.length
+                    each turno in turnos
+                        tr
+                            td= turno.doctor
+                            td= turno.fecha_turno  
+                            td= `${turno.hora}:00`
+                            - function truncarTexto(texto, largo = 20) {
+                            -   if (!texto) return 'Sin detalle';
+                            -   return texto.length > largo ? texto.substring(0, largo) + '...' : texto;
+                            - }
+                            td= truncarTexto(turno.detalle)                        
+                            td=`${turno.Paciente.nombre} ${turno.Paciente.apellido}` 
+                else 
                     tr
-                        td= turno.doctor
-                        td= turno.fecha_turno  
-                        td= `${turno.hora}:00`
-                        - function truncarTexto(texto, largo = 20) {
-                        -   if (!texto) return 'Sin detalle';
-                        -   return texto.length > largo ? texto.substring(0, largo) + '...' : texto;
-                        - }
-                        td= truncarTexto(turno.detalle)                        
-                        td=`${turno.Paciente.nombre} ${turno.Paciente.apellido}` 
+                        td(colspan="7") No hay turnos para hoy en HIS Hospital

@@ -1,5 +1,6 @@
 const Modelos = require('../models/modelosBD');
 const { sequelize, Paciente, Recepcion, Motivo, Turno, Cama, Habitacion, Ala, Mutual, Empleado, Usuario, Mutual_Paciente } = Modelos;
+const bcrypt = require('bcrypt');
 
 async function seed() {
   await sequelize.sync({ force: true });
@@ -218,6 +219,97 @@ const camas = await Cama.bulkCreate([
 ]);
 
 console.log('Camas creadas:', camas.length);
+
+// Hashear contraseñas
+    const saltRounds = 10;
+    const passwordAdmin = await bcrypt.hash('Admin1234', saltRounds);
+    const passwordMedico = await bcrypt.hash('medico1', saltRounds);
+    const passwordEnfermero = await bcrypt.hash('enfermero1', saltRounds);
+    const passwordRecepcion = await bcrypt.hash('recepcion1', saltRounds);
+
+  // Crear usuarios
+  const usuarios = await Usuario.bulkCreate([
+    {
+      usuario: 'admin.hospital',
+      contraseña: passwordAdmin      
+    },
+    {
+      usuario: 'Dr.Lautaro',
+      contraseña: passwordMedico   
+    },
+    {
+      usuario: 'Enf.Perez',
+      contraseña: passwordEnfermero   
+    },
+    {
+      usuario: 'Rec.Angel',
+      contraseña: passwordRecepcion
+    }
+  ]);
+
+  console.log('Usuarios creados:', usuarios.length);
+
+  // Crear empleados asociados
+  const empleados = await Empleado.bulkCreate([
+    {
+      nombre: 'Carlos',
+      apellido: 'Administrador',
+      cargo: 'Admin',
+      especialidad: 'Ninguna',
+      dni: '33345678',
+      genero: 'Masculino',
+      direccion: 'Av. 25 de Mayo 1456',
+      telefono: '2657505550',
+      provincia: 'San Luis',
+      localidad: 'Villa Mercedes',
+      activo: true,
+      id_usuario: 1,     
+    },
+    {
+      nombre: 'Ana',
+      apellido: 'González',
+      cargo: 'Médico',
+      especialidad: 'Cardiología',
+      dni: '33356789',
+      genero: 'Femenino',
+      direccion: 'Sucre 1254',
+      telefono: '2657111050',
+      provincia: 'San Luis',
+      localidad: 'Villa Mercedes',
+      activo: true,
+      id_usuario: 2,     
+    },
+    {
+      nombre: 'Juan',
+      apellido: 'Pérez',
+      cargo: 'Enfermero',
+      especialidad: 'Ninguna',
+      dni: '34567890',
+      genero: 'Masculino',
+      direccion: 'Belgrano 500',
+      telefono: '2664522325',
+      provincia: 'Buenos Aires',
+      localidad: 'Quilmes',
+      activo: true,
+      id_usuario: 3
+    },
+    {
+      nombre: 'Angel',
+      apellido: 'Baroja',
+      cargo: 'Recepcionista',
+      especialidad: 'Ninguna',
+      dni: '39137714',
+      genero: 'Masculino',
+      direccion: 'Belgrano 1200',
+      telefono: '2657507376',
+      provincia: 'San Luis',
+      localidad: 'Villa Mercedes',
+      activo: true,
+      id_usuario: 4
+    }
+  ]);
+  console.log('Empleados creados:', empleados.length);
+
 process.exit(); 
 }
 

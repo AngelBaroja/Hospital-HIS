@@ -1,0 +1,84 @@
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: rgb(153, 146, 146);
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        color: #343a40;
+    }
+
+    .error-todo {
+        display: flex;
+        border: 4px solid #bbdefb;
+        background-color: white;
+        border-radius: 18px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        max-width: 800px;
+        width: 90%;
+    }
+
+    .error-imagen {
+        background-color: #fff5f5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px;
+        flex: 1;
+    }
+
+    .error-imagen img {
+        width: 150px;
+        height: 150px;
+    }
+
+    .error-contenedor {
+        padding: 40px;
+        flex: 2;
+    }
+
+    h1 {
+        color: #dc3545;
+        font-size: 2.5rem;
+        margin-top: 0;
+        margin-bottom: 20px;
+    }
+
+    .error-mensaje {
+        font-size: 1.2rem;
+        line-height: 1.6;
+        margin-bottom: 30px;
+    }
+
+    .login-boton {
+        display: inline-block;
+        background-color: #dc3545;
+        color: white;
+        padding: 12px 25px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background-color 0.3s;
+    }
+
+    .login-boton:hover {
+        background-color: #c82333;
+    }
+
+    @media (max-width: 768px) {
+        .error-todo {
+            flex-direction: column;
+        }
+        
+        .error-imagen {
+            padding: 20px;
+        }
+        
+        .error-imagen img {
+            width: 100px;
+            height: 100px;
+        }
+    }

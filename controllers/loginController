@@ -1,14 +1,33 @@
-
+const Usuario = require('../models/Usuario');
+const Empleado = require('../models/Empleado');
 
 async function validarUsuario(req, res) {
-  // Aquí podrías agregar la lógica para validar el usuario
-  const { usuario, password } = req.body;
-  req.session.nombreUsuario = usuario; 
-  res.status(200).render('home',{usuario});
+  try{
+    // Aquí podrías agregar la lógica para validar el usuario
+    let {usuario} = req.body;
+
+    
+    req.session.nombreUsuario = usuario; 
+    res.status(200).render('home',{usuario});
+  }catch (error) {
+        console.error('Error al validarUsuario:', error);
+        res.status(500).render('error', {
+            mensaje: 'Error al validar el Usuario de login',
+            error
+        });
+  }
 }
 
 async function formularioLogin(req, res) { 
+  try{    
    res.render('login');
+  }catch (error) {
+    console.error('Error al validarUsuario:', error);
+    res.status(500).render('error', {
+      mensaje: 'Error al cargar el formulario de login',
+      error
+    });
+  }
 }
 
 module.exports = {

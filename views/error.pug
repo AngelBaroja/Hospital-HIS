@@ -1,0 +1,20 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title Error - Fallo al Navegar
+    link(rel="stylesheet" href="/error.css")
+  
+  body
+    .error-todo
+      .error-imagen
+        img(src="/img/exclamacion.png" alt="Error")
+      
+      .error-contenedor
+        h1 Error en el Sistema
+        .error-mensaje
+          p Lo sentimos, ha ocurrido un error en el sistema.
+          if error
+            p Detalles del error: #{error.message}
+        a.login-boton(href="/login") Volver al Login

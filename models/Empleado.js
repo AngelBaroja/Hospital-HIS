@@ -111,8 +111,8 @@ Empleado.init(
     }    
   },{
   sequelize,
-  modelName: "Empleado",   // Nombre del modelo
-  tableName: "empleados",  // Nombre de la tabla en la base de datos
+  modelName: "Empleado",   
+  tableName: "empleados",  
 }
 );
 

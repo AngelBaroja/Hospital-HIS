@@ -8,15 +8,24 @@ const Cama = require('../models/Cama');
 const Ala = require('../models/Ala');
 
 
-async function vistaGenerarTurno(req, res) {     
+async function vistaGenerarTurno(req, res) { 
+  try{ 
     const usuario = req.session.nombreUsuario
     const mutuales = await Mutual.findAll();
     const pacientes = await Paciente.findAll();
     const mutualPacientes = await Mutual_Paciente.findAll();
 
     res.status(200).render('turno/generar',{mutuales,pacientes,mutualPacientes,usuario});
+  }catch (error) {
+    console.error('Error en vistaGenerarTurno:', error);
+    res.status(500).render('error', {
+      mensaje: 'Error al cargar el formulario de Generar Turno',
+      error
+    });
+  }
 }
 async function generarTurno(req, res) { 
+  try{
     const {
     dni,
     nombre,
@@ -98,7 +107,8 @@ async function generarTurno(req, res) {
     const activaBoolean = activa === "Activa" ? true : false;
    // Buscamos la mutual por su nombre
     const mutualExistente = await Mutual.findOne({ where: { nombre: seguro } });
-
+    
+    //Llamo al paciente de vuelta por si se genero uno
     const Elpaciente = await Paciente.findOne({ where: { dni } });
     
     // Buscamos que mutual tiene el paciente
@@ -152,14 +162,31 @@ async function generarTurno(req, res) {
 
   //Redirijo la pestaña al home
   res.redirect('/home');
+
+  }catch (error) {
+    console.error('Error al generarTurno:', error);
+    res.status(500).render('error', {
+      mensaje: 'Error al generar un turno a un paciente',
+      error
+    });
+  }
 }
 
 async function elegirVistaTurno(req, res) { 
+  try{
     const usuario = req.session.nombreUsuario
     res.status(200).render('turno/elegir',{usuario});
+  }catch (error) {
+    console.error('Error al elegirVistaTurno:', error);
+    res.status(500).render('error', {
+      mensaje: 'Error al mostrar la vista de crear turno | listar turno',
+      error
+    });
+  }
 }
 
 async function vistaListarTurno(req, res) { 
+  try{
     const usuario = req.session.nombreUsuario;
     const hoy=new Date();
     //Buscamos todos los turnos para listarlos
@@ -172,6 +199,13 @@ async function vistaListarTurno(req, res) {
     });
 
     res.status(200).render('turno/lista', {usuario, turnos});
+  }catch (error) {
+    console.error('Error en vistaListarTurno:', error);
+    res.status(500).render('error', {
+      mensaje: 'Error al cargar la tabla con todos los turnos',
+      error
+    });
+  }
 }
 
 module.exports = {

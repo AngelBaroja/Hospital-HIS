@@ -49,6 +49,16 @@ Recepcion.init(
             },
             comment: `Fecha de salida`
         },
+        estado:{
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: false,
+            defaultValue:'Internado',        
+            validate: {
+                isIn: [['Internado', `Retirado`]]   
+            },        
+            comment: `El estado de la recepcion` 
+        }
     }, {
     sequelize,
     modelName: "Recepcion",
