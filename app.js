@@ -61,7 +61,7 @@ app.use('/turno', turnosRoutes);
 app.use('/', authRoutes);
 
 // Inicio del servidor
-modelos.sequelize.sync({ force: true })
+modelos.sequelize.sync({ alter: true })
   .then(() => {
     console.log('Modelos sincronizados');
     app.listen(PORT, () => {
