@@ -42,6 +42,8 @@ app.use('/img', express.static('img'));
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
+//Al usuar Express debo configurar proxy oara que req.secure funcione
+app.set('trust proxy', 1);
 // Middleware para session
 app.use(session({
   secret: process.env.SESSION_SECRET,
