@@ -44,10 +44,14 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Middleware para session
 app.use(session({
-  secret: 'angel',
+  secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false } 
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production', // true en Railway
+    sameSite: 'lax',
+    maxAge: 24 * 60 * 60 * 1000
+  }
 }));
 
 // Rutas
