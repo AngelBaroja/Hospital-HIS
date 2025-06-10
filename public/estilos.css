@@ -10,12 +10,13 @@ body {
     background: linear-gradient(135deg, #e3f2fd, #bbdefb);
     color: #333;
     line-height: 1.6;
+    padding-top: 20px;       
 }
 
 .contenedor {  
-    max-width: 1000px;
-    margin: 2rem auto;
-    padding: 0 1rem;           
+    max-width: 1000px;   
+    margin: 0.5rem auto;
+    padding: 0.1rem;           
 }
 
 header {

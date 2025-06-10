@@ -1,8 +1,6 @@
 require('dotenv').config();
 const { Sequelize } = require('sequelize');
 
-console.log();
-
 const sequelize = new Sequelize(
   process.env.DB_NAME,
   process.env.DB_USER,
@@ -14,5 +12,16 @@ const sequelize = new Sequelize(
     logging: false
   }
 );
+/*
+const sequelize = new Sequelize(
+  "hishospital",
+  "root",
+  "",
+  {
+    host: "localhost",   
+    dialect: 'mysql',
+    logging: false
+  }
+);*/
 
 module.exports = sequelize;
