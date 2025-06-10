@@ -18,13 +18,13 @@ const turnosRoutes = require('./routes/turno');
 //const pacienteRoutes = require('./routes/paciente');
 const authRoutes = require('./routes/auth');
 
-// Configuración de sesión
+/*/ Configuración de sesión
 app.use(session({
   secret: process.env.SESSION_SECRET || 'tu_secreto_super_seguro',
   resave: false,
   saveUninitialized: false,
   cookie: { secure: process.env.NODE_ENV === 'production' }
-}));
+}));*/
 
 // Inicializar Passport
 app.use(passport.initialize());
