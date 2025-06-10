@@ -8,7 +8,6 @@ const passport = require('./config/passport');
 
 const app = express();
 
-const PORT = 3000;
 
 // Importar las rutas
 const indexRoutes = require('./routes/index');
@@ -64,8 +63,8 @@ app.use('/', authRoutes);
 modelos.sequelize.sync({ alter: true })
   .then(() => {
     console.log('Modelos sincronizados');
-    app.listen(PORT, () => {
-      console.log(`Servidor iniciado en http://localhost:${PORT}`);
+    app.listen(process.env.PORT, () => {
+      console.log(`Servidor iniciado en http://localhost:${process.env.PORT}`);
     });
   })
   .catch((err) => {
