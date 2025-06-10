@@ -18,13 +18,19 @@ const turnosRoutes = require('./routes/turno');
 //const pacienteRoutes = require('./routes/paciente');
 const authRoutes = require('./routes/auth');
 
-/*/ Configuración de sesión
+//Al usuar Express debo configurar proxy oara que req.secure funcione
+app.set('trust proxy', 1);
+// Middleware para session
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'tu_secreto_super_seguro',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: process.env.NODE_ENV === 'production' }
-}));*/
+  cookie: {
+    secure: process.env.NODE_ENV === 'production', // true en Railway
+    sameSite: 'lax',
+    maxAge: 24 * 60 * 60 * 1000
+  }
+}));
 
 // Inicializar Passport
 app.use(passport.initialize());
@@ -41,20 +47,6 @@ app.use('/img', express.static('img'));
 // Configuracion del motor de plantillas - PUG
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
-
-//Al usuar Express debo configurar proxy oara que req.secure funcione
-app.set('trust proxy', 1);
-// Middleware para session
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production', // true en Railway
-    sameSite: 'lax',
-    maxAge: 24 * 60 * 60 * 1000
-  }
-}));
 
 // Rutas
 app.use('/', indexRoutes);
