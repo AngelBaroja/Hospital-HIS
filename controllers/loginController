@@ -1,6 +1,4 @@
-const Usuario = require('../models/Usuario');
 const Empleado = require('../models/Empleado');
-const bcrypt = require('bcrypt');
 const passport = require('passport');
 
 function validarUsuario(req, res, next) {

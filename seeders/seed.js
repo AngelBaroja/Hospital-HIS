@@ -222,7 +222,7 @@ console.log('Camas creadas:', camas.length);
 
 // Hashear contraseñas
     const saltRounds = 10;
-    const passwordAdmin = await bcrypt.hash('Admin1234', saltRounds);
+    const passwordAdmin = await bcrypt.hash('admin1', saltRounds);
     const passwordMedico = await bcrypt.hash('medico1', saltRounds);
     const passwordEnfermero = await bcrypt.hash('enfermero1', saltRounds);
     const passwordRecepcion = await bcrypt.hash('recepcion1', saltRounds);
@@ -230,7 +230,7 @@ console.log('Camas creadas:', camas.length);
   // Crear usuarios
   const usuarios = await Usuario.bulkCreate([
     {
-      usuario: 'admin.hospital',
+      usuario: 'Admin',
       contraseña: passwordAdmin      
     },
     {
