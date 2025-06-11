@@ -9,7 +9,7 @@ Paciente.init(
         type: DataTypes.STRING,     // Definimos el tipo de dato como STRING
         allowNull: false,           // El campo 'nombre' NO es obligatorio
         unique: false,              // No es único, puede haber varios pacientes con el mismo nombre
-        defaultValue: 'Sin nombre', // Valor por defecto si no se proporciona un Nombre
+        defaultValue: 'Sin Nombre', // Valor por defecto si no se proporciona un Nombre
         comment: 'Nombre del paciente' // Comentario para el campo
     },
     apellido: {

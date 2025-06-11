@@ -441,11 +441,12 @@ try {
             tipo,
             fecha_entrada: new Date(),
             hora: new Date().getHours()
-        });
-        console.log(`Recepcion ${recepcion.id} creada, Paciente: ${paciente.nombre}, cama nº ${cama.numero}, habitacion nº ${cama.id_habitacion}`);
-        
+        });        
+        console.log(`Recepcion ${recepcion.id} creada, Paciente: ${paciente.nombre} ${paciente.apellido}, cama nº ${cama.numero}, habitacion nº ${cama.id_habitacion}, motivo : ${recepcion.motivo}`);
+        const motivo = await Motivo.findOne({where: {id: idMotivo}})
+        datosRecepcion={recepcion,paciente,cama,motivo};
 
-       res.status(200).render('home',{usuario});
+       res.status(200).render('home',{usuario, mostrarExito: true,  datosRecepcion});
     } catch (error) {
         console.error('Error en ingresarHabitacion:', error);
         res.status(500).render('error', {

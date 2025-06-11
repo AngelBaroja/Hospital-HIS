@@ -32,8 +32,7 @@ Empleado.init(
             isIn: [['Médico', 'Enfermero', 'Recepcionista']] 
         },
         comment: `Cargo del Empleado`                
-    }
-    ,
+    },
     especialidad: {
         type: DataTypes.STRING,
         allowNull: false,

@@ -1,40 +1,24 @@
 const Usuario = require('../models/Usuario');
 const Empleado = require('../models/Empleado');
 const bcrypt = require('bcrypt');
+const passport = require('passport');
 
-async function validarUsuario(req, res) {
-  try {
-    const { usuario: usuarioInput } = req.body;
-
-    // Busca el usuario y su empleado
-   const usuario = await Usuario.findOne({
-      where: { usuario: usuarioInput },
-      include: [Empleado]
+function validarUsuario(req, res, next) {
+  passport.authenticate('local', async (err, user, info) => {
+    if (err) { return next(err); }
+    if (!user) { return res.redirect('/login'); }
+    req.logIn(user, async (err) => {
+      if (err) { return next(err); }
+      // Buscar el empleado asociado al usuario autenticado
+      const empleado = await Empleado.findOne({ where: { id_usuario: user.id } });
+      if (empleado) {
+        req.session.nombreUsuario = `${empleado.nombre} ${empleado.apellido}`;
+      }
+      return res.redirect('/home');
     });
-
-    if (!usuario) {
-      // Usuario no existe
-      return res.status(401).render('login', { error: 'Usuario no encontrado' });
-    }
-
-    // Validar contraseña
-    const passwordValida = await bcrypt.compare(req.body.password, usuario.contraseña);
-    if (!passwordValida) {
-      //Contraseña Incorrecta
-      return res.status(401).render('login', { error: 'Contraseña incorrecta' });
-    }
-    let nombreCompleto=`${usuario.Empleado.nombre} ${usuario.Empleado.apellido}`;
-
-    req.session.nombreUsuario = nombreCompleto;
-    res.status(200).render('home', { usuario: nombreCompleto });
-  } catch (error) {
-    console.error('Error al validarUsuario:', error);
-    res.status(500).render('error', {
-      mensaje: 'Error al validar el Usuario de login',
-      error
-    });
-  }
+  })(req, res, next);
 }
+
 
 async function formularioLogin(req, res) { 
   try{    
@@ -48,7 +32,7 @@ async function formularioLogin(req, res) {
   }
 }
 
-module.exports = {
+module.exports = {  
   validarUsuario,
   formularioLogin 
 };

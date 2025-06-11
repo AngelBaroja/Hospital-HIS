@@ -10,7 +10,7 @@ const Ala = require('../models/Ala');
 
 async function vistaGenerarTurno(req, res) { 
   try{ 
-    const usuario = req.session.nombreUsuario
+       const usuario = req.session.nombreUsuario
     const mutuales = await Mutual.findAll();
     const pacientes = await Paciente.findAll();
     const mutualPacientes = await Mutual_Paciente.findAll();
@@ -45,6 +45,7 @@ async function generarTurno(req, res) {
     hora,
     detalle_motivo
   } = req.body;
+  const usuario = req.session.nombreUsuario;
   //Busco al paciente
   let paciente = await Paciente.findOne({ where: { dni } });
 
@@ -151,7 +152,7 @@ async function generarTurno(req, res) {
 
   paciente=Elpaciente;
   
-  await Turno.create({
+  const turno= await Turno.create({
     id_paciente: paciente.id,
     doctor,
     fecha_turno,
@@ -161,7 +162,7 @@ async function generarTurno(req, res) {
   console.log(`Turno generado para el paciente DNI: ${paciente.nombre} ${paciente.apellido}`);
 
   //Redirijo la pestaña al home
-  res.redirect('/home');
+  res.render('home', {usuario, mostrarTurno: true, paciente, turno});
 
   }catch (error) {
     console.error('Error al generarTurno:', error);

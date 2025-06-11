@@ -16,7 +16,6 @@ const loginRoutes = require('./routes/login');
 const recepcionRoutes = require('./routes/recepcion');
 const turnosRoutes = require('./routes/turno');
 //const pacienteRoutes = require('./routes/paciente');
-const authRoutes = require('./routes/auth');
 
 //Al usuar Express debo configurar proxy oara que req.secure funcione
 app.set('trust proxy', 1);
@@ -55,7 +54,6 @@ app.use('/home', homeRutes);
 app.use('/recepcion', recepcionRoutes);
 app.use('/turno', turnosRoutes);
 //app.use('/paciente', pacienteRoutes);
-app.use('/', authRoutes);
 
 // Inicio del servidor
 modelos.sequelize.sync({ alter: true })

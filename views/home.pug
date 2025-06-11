@@ -1,7 +1,70 @@
 extends layout
 
-block content
-    
-    .contenido-logo        
-        // Contenedor para la imagen de fondo y el logo 
-        img(src="/img/HospitalCartel.png" alt="Logo del Hospital").logo-central 
+block content    
+    .contenido-logo
+        img(src="/img/HospitalCartel.png" alt="Logo del Hospital").logo-central
+    if mostrarTurno
+        .modal-exito#modalExito
+            .modal-contenido
+                img(src="/img/aceptar.ico" alt="Éxito")
+                h2 ¡Turno creado con éxito!
+                p
+                    | Paciente:                    
+                    b #{paciente.nombre}  #{paciente.apellido}
+                p
+                    | Doctor:                    
+                    b #{turno.doctor}                    
+                p
+                    | Fecha:
+                    b #{turno.fecha_turno}
+                    |  | Hora:
+                    b #{turno.hora}:00
+                p
+                    | Motivo:
+                    b #{turno.detalle}                
+                button(type="button" class="btn-cerrar-modal") Aceptar
+    if mostrarExito
+        .modal-exito#modalExito
+            .modal-contenido
+                img(src="/img/aceptar.ico" alt="Éxito")
+                h2 ¡Recepción creada con éxito!
+                p
+                    | Paciente: 
+                    if datosRecepcion.paciente.nombre == 'Sin Nombre'
+                        b De Emergencia - Sin Datos
+                    else
+                        b #{datosRecepcion.paciente.nombre}  #{datosRecepcion.paciente.apellido}
+                   
+                p
+                    | Habitación:
+                    b #{datosRecepcion.cama.id_habitacion}
+                    |  | Cama:
+                    b #{datosRecepcion.cama.numero}
+                p
+                    | Motivo:
+                    b #{datosRecepcion.motivo.tipos}
+                if datosRecepcion.recepcion.detalle_motivo
+                    p
+                        | Detalle:
+                        b #{datosRecepcion.recepcion.detalle_motivo}
+                button(type="button" class="btn-cerrar-modal") Aceptar
+
+    script.
+        // Mostrar modal si existe
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('modalExito');
+            if (modal) {
+                modal.classList.add('visible');
+                
+                document.querySelector('.btn-cerrar-modal').addEventListener('click', () => {
+                    modal.style.display = 'none';
+                });
+                
+                // Cerrar al hacer clic fuera del contenido
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            }
+        });

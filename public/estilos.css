@@ -441,5 +441,72 @@ input:focus, select:focus, textarea:focus {
     border: 2px solid #d32f2f !important;
 }
 
+/*HOME*/
+.modal-exito {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;    
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s;    
+}
+.modal-exito.visible {
+    visibility: visible;
+    opacity: 1;
+}
+.modal-contenido img {
+    width: 100px;
+    height: 100px;    
+}
+
+.modal-contenido {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 500px;
+    text-align: center;
+    border: 3px solid black;   
+}
+
+.modal-contenido p { 
+    font-weight: bold;
+    font-size: 1.10rem;
+    color: #333;
+   
+}
+
+.modal-contenido b { 
+    font-weight: bold;
+    font-size: 1.15rem;
+    color: #1976d2;    
+    margin-left: 3px;
+    
+}
+
+.btn-cerrar-modal {
+    width: auto;
+    height: auto;
+    margin-top: 20px;
+    padding: 8px 20px;
+    background: #4CAF50;
+    color: white;
+    border: 2 solid black;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-cerrar-modal:hover {
+    background: #388e3c;
+    font-weight: bold;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(56, 142, 60, 0.15);
+}
 
 
