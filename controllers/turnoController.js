@@ -105,7 +105,7 @@ async function generarTurno(req, res) {
       }
   }
    //Transformo la variable activa de Mutual a boolean para comparar en la BD
-    const activaBoolean = activa === "Activa" ? true : false;
+    const activaBoolean = activa === "Activa"? 1 : 0;
    // Buscamos la mutual por su nombre
     const mutualExistente = await Mutual.findOne({ where: { nombre: seguro } });
     

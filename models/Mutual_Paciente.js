@@ -17,7 +17,7 @@ Mutual_Paciente.init(
         type: DataTypes.STRING, 
         enableNull: false, 
         defaultValue: "Basico", 
-        validar: { isIn: [["Basico", "Completo", "Premium"]]            
+        validate: { isIn: [["Basico", "Completo", "Premium"]]            
          }, 
         comment: "Tipo de cobertura que tiene el paciente en la mutua"
      },
