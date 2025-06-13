@@ -24,7 +24,14 @@ Mutual_Paciente.init(
      activa: { 
         type: DataTypes.BOOLEAN, 
         enableNull: false, 
-        defaultValue: true,        
+        defaultValue: true,
+        set(value) { // Setter personalizado
+          if (typeof value === 'string') {
+            this.setDataValue('activa', value === "Activa");
+          } else {
+            this.setDataValue('activa', !!value); // Convierte a booleano
+          }
+        },        
         comment: "Indica si la mutua del paciente esta activa o no"
      },
   
