@@ -103,12 +103,10 @@ async function generarTurno(req, res) {
             });
             console.log('Paciente actualizado correctamente');
       }
-  }
-  console.log("LLEGO ACA");
+  }  
   
    //Transformo la variable activa de Mutual a boolean para comparar en la BD
-    let activaBoolean = activa === "Activa";
-    console.log("Activa Boolean =", activaBoolean);
+    const activaBoolean = activa === "Activa";    
     
    // Buscamos la mutual por su nombre
     const mutualExistente = await Mutual.findOne({ where: { nombre: seguro } });
