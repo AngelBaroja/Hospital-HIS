@@ -19,7 +19,7 @@ Recepcion.init(
         },
         detalle_motivo: {
             type: DataTypes.STRING,
-            allowNull: false,            
+            allowNull: true,            
             comment: `Motivo detallado del porque de la recepcion del paciente`                
         },
         hora: {
@@ -68,18 +68,18 @@ Recepcion.init(
 
 
 // Un Paciente puede tener muchas Recepciones
-Paciente.hasMany(Recepcion, { foreignKey: 'id_paciente' });
-
 // Una Recepción tiene a un Paciente (y lleva la clave foránea)
+Paciente.hasMany(Recepcion, { foreignKey: 'id_paciente' });
 Recepcion.belongsTo(Paciente, { foreignKey: 'id_paciente' });
 
+// Una Cama puede estar en muchas Recepciones
 // Una Recepción tiene a una Cama (y lleva la clave foránea)
+Cama.hasMany(Recepcion, { foreignKey: 'id_cama' });
 Recepcion.belongsTo(Cama, { foreignKey: 'id_cama' });
 
 // Un Motivo puede estar en muchas Recepciones
-Motivo.hasMany(Recepcion, { foreignKey: 'id_motivo' });
-
 // Una Recepción tiene a un Motivo (y lleva la clave foránea)
+Motivo.hasMany(Recepcion, { foreignKey: 'id_motivo' });
 Recepcion.belongsTo(Motivo, { foreignKey: 'id_motivo' });
 
 module.exports = Recepcion;

@@ -1,5 +1,5 @@
 const Modelos = require('../models/modelosBD');
-const { sequelize, Paciente, Recepcion, Motivo, Turno, Cama, Habitacion, Ala, Mutual, Empleado, Usuario, Mutual_Paciente } = Modelos;
+const { sequelize, Paciente, Doctor, Enfermero, Recepcionista, Especialidad, Recepcion, Motivo, Turno, Cama, Habitacion, Ala, Mutual, Empleado, Usuario, Mutual_Paciente } = Modelos;
 const bcrypt = require('bcrypt');
 
 async function seed() {
@@ -114,16 +114,6 @@ const mutualesPacientes = await Mutual_Paciente.bulkCreate([
 ]);
 console.log('Mutuales_Pacientes creados:', mutualesPacientes.length);
 
-// Turnos
-const turnos = await Turno.bulkCreate([
-  { doctor: 'Dr. Smith', fecha_turno: new Date('2025-06-03'), hora: '9', id_paciente: 1 },
-  { doctor: 'Dra. Johnson', fecha_turno: new Date('2025-06-03'), hora: '19', id_paciente: 2 },
-  { doctor: 'Dr. Brown', fecha_turno: new Date('2025-06-03'), hora: '20', id_paciente: 3 },
-  { doctor: 'Dra. Davis', fecha_turno: new Date('2025-06-03'), hora: '15', id_paciente: 4 },
-  { doctor: 'Dr. Wilson', fecha_turno: new Date('2025-06-03'), hora: '10', id_paciente: 5 }
-]);
-console.log('Turnos creados:', turnos.length);
-
 // Motivos de internación generales
 const motivos = await Motivo.bulkCreate([
     { tipos: 'ACV' },
@@ -152,6 +142,16 @@ const motivos = await Motivo.bulkCreate([
     { tipos: 'Tratamiento oncológico' }
 ]);
 console.log('Motivos creados:', motivos.length);
+
+// Turnos
+const turnos = await Turno.bulkCreate([
+  { doctor: 'Dr. Smith', fecha_turno: new Date('2025-06-03'), hora: '9', id_paciente: 1 },
+  { doctor: 'Dra. Johnson', fecha_turno: new Date('2025-06-03'), hora: '19', id_paciente: 2 },
+  { doctor: 'Dr. Brown', fecha_turno: new Date('2025-06-03'), hora: '20', id_paciente: 3 },
+  { doctor: 'Dra. Davis', fecha_turno: new Date('2025-06-03'), hora: '15', id_paciente: 4 },
+  { doctor: 'Dr. Wilson', fecha_turno: new Date('2025-06-03'), hora: '10', id_paciente: 5 }
+]);
+console.log('Turnos creados:', turnos.length);
 
 // Alas
 const alas = await Ala.bulkCreate([
@@ -198,17 +198,17 @@ const camas = await Cama.bulkCreate([
     { numero: 1, tipo: 'Pediátrica', estado: 'Libre', electrica: false, oxigeno: false, id_habitacion: 5 },
     { numero: 1, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: true, id_habitacion: 6},
     { numero: 1, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: false, id_habitacion: 7 },
-    { numero: 2, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: false, id_habitacion: 7 },
+    { numero: 2, tipo: 'Normal', estado: 'Ocupada', electrica: false, oxigeno: false, id_habitacion: 7 },
     { numero: 1, tipo: 'Reanimacion', estado: 'Libre', electrica: true, oxigeno: true, id_habitacion: 8 },
     { numero: 1, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: true, id_habitacion: 9},
     { numero: 2, tipo: 'UCI', estado: 'Libre', electrica: true, oxigeno: true, id_habitacion: 9 },
     { numero: 1, tipo: 'UCI', estado: 'Libre', electrica: true, oxigeno: true, id_habitacion: 10},
-    { numero: 1, tipo: 'Reanimacion', estado: 'Libre', electrica: true, oxigeno: true, id_habitacion: 11},
+    { numero: 1, tipo: 'Reanimacion', estado: 'Ocupada', electrica: true, oxigeno: true, id_habitacion: 11},
     { numero: 1, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: false, id_habitacion: 12 },
     { numero: 2, tipo: 'Pediátrica', estado: 'Libre', electrica: false, oxigeno: false, id_habitacion: 12},
     { numero: 1, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: true, id_habitacion: 13 },
     { numero: 1, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: false, id_habitacion: 14},
-    { numero: 2, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: false, id_habitacion: 14 },
+    { numero: 2, tipo: 'Normal', estado: 'Ocupada', electrica: false, oxigeno: false, id_habitacion: 14 },
     { numero: 1, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: false, id_habitacion: 15 },
     { numero: 1, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: false, id_habitacion: 16 },
     { numero: 1, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: false, id_habitacion: 17 },
@@ -217,25 +217,82 @@ const camas = await Cama.bulkCreate([
     { numero: 1, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: false, id_habitacion: 20 },
     { numero: 1, tipo: 'UCI', estado: 'Libre', electrica: true, oxigeno: true, id_habitacion: 20 }
 ]);
-
 console.log('Camas creadas:', camas.length);
+
+// Recepciones
+const recepciones = await Recepcion.bulkCreate([
+  {
+    tipo: 'Cita Programada',
+    detalle_motivo: 'Consulta de rutina',
+    hora: 10,
+    fecha_entrada: new Date('2025-06-01'),
+    estado: 'Internado',
+    id_paciente: 3,
+    id_cama: 20,
+    id_motivo: 12
+  },
+  {
+    tipo: 'Emergencia',
+    detalle_motivo: 'Dolor agudo en el pecho',
+    hora: 12,
+    fecha_entrada: new Date('2025-06-02'),
+    estado: 'Internado',
+    id_paciente: 4,
+    id_cama: 15,
+    id_motivo: 2
+  },
+  {
+    tipo: 'Derivacion',
+    detalle_motivo: 'Mareaos y desmayos',
+    hora: 14,
+    fecha_entrada: new Date('2025-06-03'),
+    estado: 'Internado',
+    id_paciente: 5,
+    id_cama: 10,
+    id_motivo: 6
+  }
+]);
+console.log('Recepciones creadas:', recepciones.length);
+
+
+// Especialidades
+const especialidades = await Especialidad.bulkCreate([
+    { tipo: 'Cardiologia' },
+    { tipo: 'Pediatria' },
+    { tipo: 'Traumatologia' },
+    { tipo: 'Ginecologia' },
+    { tipo: 'Neurologia' },
+    { tipo: 'Oncologia' },
+    { tipo: 'Psiquiatria' },
+    { tipo: 'Dermatologia' },
+    { tipo: 'Oftalmologia' },
+    { tipo: 'Otorrinolaringologia' },
+    { tipo: 'Endocrinologia' },
+    { tipo: 'Gastroenterologia' },
+    { tipo: 'Nefrologia' },
+    { tipo: 'Infectologia' },
+    { tipo: 'Reumatologia' },
+    { tipo: 'Medicina General' },
+    { tipo: 'Enfermeria pediatrica' },
+    { tipo: 'Enfermeria geriatrica' },
+    { tipo: 'Enfermeria obstetrica' },
+    { tipo: 'Enfermeria quirurgica' },
+    { tipo: 'Enfermeria en cuidados intensivos' },
+    { tipo: 'Enfermeria en emergencias' }
+]);
+console.log('Especialidades creadas:', especialidades.length);
 
 // Hashear contraseñas
     const saltRounds = 10;
-    const passwordAdmin = await bcrypt.hash('admin1', saltRounds);
-    const passwordMedico = await bcrypt.hash('medico1', saltRounds);
+    const passwordDoctor = await bcrypt.hash('doctor1', saltRounds);
     const passwordEnfermero = await bcrypt.hash('enfermero1', saltRounds);
     const passwordRecepcion = await bcrypt.hash('recepcion1', saltRounds);
 
   // Crear usuarios
   const usuarios = await Usuario.bulkCreate([
     {
-      usuario: 'Admin',
-      contraseña: passwordAdmin      
-    },
-    {
       usuario: 'Dr.Lautaro',
-      contraseña: passwordMedico   
+      contraseña: passwordDoctor   
     },
     {
       usuario: 'Enf.Perez',
@@ -246,58 +303,50 @@ console.log('Camas creadas:', camas.length);
       contraseña: passwordRecepcion
     }
   ]);
-
   console.log('Usuarios creados:', usuarios.length);
 
   // Crear empleados asociados
-  const empleados = await Empleado.bulkCreate([
+  // Doctores
+  const doctores = await Doctor.bulkCreate([
     {
-      nombre: 'Carlos',
-      apellido: 'Administrador',
-      cargo: 'Admin',
-      especialidad: 'Ninguna',
-      dni: '33345678',
-      genero: 'Masculino',
-      direccion: 'Av. 25 de Mayo 1456',
-      telefono: '2657505550',
-      provincia: 'San Luis',
-      localidad: 'Villa Mercedes',
-      activo: true,
-      id_usuario: 1,     
-    },
-    {
-      nombre: 'Ana',
-      apellido: 'González',
-      cargo: 'Médico',
-      especialidad: 'Cardiología',
+      nombre: 'Lautaro',
+      apellido: 'González',    
       dni: '33356789',
-      genero: 'Femenino',
+      genero: 'Masculino',
       direccion: 'Sucre 1254',
       telefono: '2657111050',
       provincia: 'San Luis',
       localidad: 'Villa Mercedes',
       activo: true,
-      id_usuario: 2,     
-    },
+      id_usuario: 1,
+      id_especialidad: 1     
+    }
+  ]);
+  console.log('Doctores creados:', doctores.length);
+
+  // Enfermeros
+  const enfermero = await Enfermero.bulkCreate([
     {
-      nombre: 'Juan',
-      apellido: 'Pérez',
-      cargo: 'Enfermero',
-      especialidad: 'Ninguna',
+      nombre: 'Fernanda',
+      apellido: 'Pérez',    
       dni: '34567890',
-      genero: 'Masculino',
+      genero: 'Femenino',
       direccion: 'Belgrano 500',
       telefono: '2664522325',
       provincia: 'Buenos Aires',
       localidad: 'Quilmes',
       activo: true,
-      id_usuario: 3
-    },
+      id_usuario: 2,
+      id_especialidad: 16
+    }
+  ]);
+  console.log('Enfermero creados:', enfermero.length);
+
+  // Recepcionistas
+  const recepcionista = await Recepcionista.bulkCreate([
     {
       nombre: 'Angel',
       apellido: 'Baroja',
-      cargo: 'Recepcionista',
-      especialidad: 'Ninguna',
       dni: '39137714',
       genero: 'Masculino',
       direccion: 'Belgrano 1200',
@@ -305,10 +354,10 @@ console.log('Camas creadas:', camas.length);
       provincia: 'San Luis',
       localidad: 'Villa Mercedes',
       activo: true,
-      id_usuario: 4
+      id_usuario: 3,
     }
   ]);
-  console.log('Empleados creados:', empleados.length);
+  console.log('Recepcionista creados:', recepcionista.length);
 
 process.exit(); 
 }

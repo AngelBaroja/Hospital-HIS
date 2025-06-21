@@ -22,7 +22,7 @@ block content
                             td= `${recepcion.Paciente.nombre} ${recepcion.Paciente.apellido}`
                             td= recepcion.Cama.Habitacion.id
                             td= recepcion.Cama.numero
-                            td= recepcion.fecha_entrada
+                            td= recepcion.fecha_entrada_formateada
                             td= recepcion.createdAt.toLocaleTimeString()
                             td
                                 form(action=`/recepcion/retirar/${recepcion.id}` method="POST" style="display: inline;")

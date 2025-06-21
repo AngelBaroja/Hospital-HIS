@@ -1,0 +1,100 @@
+//- pacientesInternados.pug
+extends ../layout
+
+block content
+    .pestanas
+        .pestana.activa1 1. Pacientes Internados
+        .pestana 2. Registro
+        .pestana 3. Historial Médico
+    .contenido-pestana#asignacion
+        h2 Pacientes Internados
+        p#texto Aquí puedes ver la lista de pacientes internados en el hospital, organizados por ala.
+        br  
+        if recepciones
+            h2 Ala Norte:
+                .grid-ala
+                    each recepcion in recepciones
+                        if recepcion.estado === 'Internado'
+                            if recepcion.Cama.Habitacion.Ala.sector == "Norte"
+                                .tarjeta-paciente(data-recepcion-id=recepcion.id)
+                                    if recepcion.Paciente.nombre == "Sin Nombre"
+                                        h3 Paciente de Emergencia 
+                                        p -Sin datos cargados-
+                                    else
+                                        h3 #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}
+                                        p DNI: #{recepcion.Paciente.dni}
+                                    h4 Habitación: #{recepcion.Cama.Habitacion.id}
+                                    p Cama: #{recepcion.Cama.numero}
+                                    p Motivo: #{recepcion.Motivo.tipos}
+                                    if recepcion.detalle_motivo
+                                        p Detalle: #{recepcion.detalle_motivo}
+                                    p Fecha de Ingreso: #{recepcion.fecha_entrada_formateada}
+            br 
+            h2 Ala Este:
+                .grid-ala
+                    each recepcion in recepciones
+                        if recepcion.estado === 'Internado' && recepcion.Cama.Habitacion.Ala.sector == "Este"           
+                            .tarjeta-paciente(data-recepcion-id=recepcion.id)
+                                if recepcion.Paciente.nombre == "Sin Nombre"
+                                    h3 Paciente de Emergencia 
+                                    p -Sin datos cargados-
+                                else
+                                    h3 #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}
+                                    p DNI: #{recepcion.Paciente.dni}
+                                p Habitación: #{recepcion.Cama.Habitacion.id}
+                                p Cama: #{recepcion.Cama.numero}
+                                p Motivo: #{recepcion.Motivo.tipos}
+                                if recepcion.detalle_motivo
+                                    p Detalle: #{recepcion.detalle_motivo}
+                                p Fecha de Ingreso: #{recepcion.fecha_entrada_formateada}
+            br 
+            h2 Ala Oeste:
+                .grid-ala
+                    each recepcion in recepciones
+                        if recepcion.estado === 'Internado' && recepcion.Cama.Habitacion.Ala.sector == "Oeste"
+                            .tarjeta-paciente(data-recepcion-id=recepcion.id)
+                                if recepcion.Paciente.nombre == "Sin Nombre"
+                                    h3 Paciente de Emergencia 
+                                    p -Sin datos cargados-
+                                else
+                                    h3 #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}
+                                    p DNI: #{recepcion.Paciente.dni}
+                                p Habitación: #{recepcion.Cama.Habitacion.id}
+                                p Cama: #{recepcion.Cama.numero}
+                                p Motivo: #{recepcion.Motivo.tipos}
+                                if recepcion.detalle_motivo
+                                    p Detalle: #{recepcion.detalle_motivo}
+                                p Fecha de Ingreso: #{recepcion.fecha_entrada_formateada}
+            br 
+            h2 Ala Sur:
+                .grid-ala
+                    each recepcion in recepciones
+                        if recepcion.estado === 'Internado' && recepcion.Cama.Habitacion.Ala.sector == "Sur"
+                            .tarjeta-paciente(data-recepcion-id=recepcion.id)
+                                if recepcion.Paciente.nombre == "Sin Nombre"
+                                    h3 Paciente de Emergencia 
+                                    p -Sin datos cargados-
+                                else
+                                    h3 #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}
+                                    p DNI: #{recepcion.Paciente.dni}
+                                p Habitación: #{recepcion.Cama.Habitacion.id}
+                                p Cama: #{recepcion.Cama.numero}
+                                p Motivo: #{recepcion.Motivo.tipos}
+                                if recepcion.detalle_motivo
+                                    p Detalle: #{recepcion.detalle_motivo}
+                                p Fecha de Ingreso: #{recepcion.fecha_entrada_formateada}
+        else
+            p No hay pacientes internados en este momento.
+        script.
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('.tarjeta-paciente').forEach(function(card) {
+                    card.addEventListener('click', function() {
+                        document.querySelectorAll('.tarjeta-paciente').forEach(c => c.classList.remove('seleccionada'));
+                        this.classList.add('seleccionada');
+                    });
+                    card.addEventListener('dblclick', function() {
+                        const recepcionId = this.getAttribute('data-recepcion-id');
+                        window.location.href = `/enfermeria/registro/${recepcionId}`;
+                    });
+                });
+            });

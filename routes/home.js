@@ -4,7 +4,9 @@ const { requiereSesion }  = require('../middlewares/auth');
 
 router.get('/', requiereSesion,(req, res) => {
     const usuario = req.session.nombreUsuario;
-    res.render('home', { usuario });
+    const cargo = req.session.tipoUsuario;
+
+    res.render('home', { usuario , cargo });
 });
 
 module.exports = router;

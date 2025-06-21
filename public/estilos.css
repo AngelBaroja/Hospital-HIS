@@ -337,6 +337,65 @@ input:focus, select:focus, textarea:focus {
     text-align: center;
 }
 
+/* Estilos para las tarjetas de pacientes internados */
+.grid-ala {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 1.2rem;
+    margin-top: 1rem;
+}
+
+.tarjeta-paciente {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1.2rem 1rem 1rem 1rem;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.10);
+    min-height: 170px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tarjeta-paciente:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.13);
+    border: 2px solid #ddd;
+    border-radius: 8px;
+}
+
+.tarjeta-paciente.seleccionada {
+    background-color: #e3f2fd;
+    border: 2px solid #1976d2;
+    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.13);
+}
+
+.tarjeta-paciente h3 {
+    color: #1976d2;
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;    
+    text-align: center;
+}
+.tarjeta-paciente h4 {
+    color: #1976d2;
+    margin-bottom: 0.4rem;
+    font-size: 1.1rem;    
+    text-align: center;
+}
+
+.tarjeta-paciente p {
+    margin: 0.2rem 0;
+    font-size: 0.8rem;
+    color: #444;
+}
+
+.tarjeta-paciente .motivo {
+    font-size: 0.97rem;
+    color: #1565c0;
+    margin-top: 0.5rem;
+    font-weight: 500;
+}
+
 /* Botones */
 .boton {
     padding: 0.8rem 1.5rem;

@@ -1,5 +1,5 @@
 const express = require('express');
-const recepcionController = require('../controllers/recepcionController');
+const recepcionController = require('../controllers/recepcionController.js');
 const {requiereSesion} = require('../middlewares/auth');
 
 const router = express.Router();

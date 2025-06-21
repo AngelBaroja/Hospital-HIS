@@ -15,12 +15,17 @@ html(lang="es")
             a#home(href="/home").logo HIS Hospital
           .navbar-center
             nav
-              a#recepcion(href="/recepcion") Recepción
-              a(href="/turno/elegir") Turno              
-              a(href="/recepcion/lista") Pacientes
+              if cargo == "Recepcionista"
+                a#recepcion(href="/recepcion") Recepción
+                a(href="/turno/elegir") Turno              
+                a(href="/recepcion/lista") Pacientes
+              if cargo == "Enfermera"
+                a#enfermero(href="/enfermeria/pacientesInternados") Pacientes Internados
+                a(href="/turno/elegir") Turno
+                a(href="/doctor/lista") Pacientes
           .navbar-right
-            .info-usuario
-              span Recepcionista: #{usuario}
+            .info-usuario              
+                span #{cargo}: #{usuario}
       block content      
       
         

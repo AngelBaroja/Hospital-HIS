@@ -1,5 +1,3 @@
-
-// Función principal modificada
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         const paciente = JSON.parse(document.querySelector('input[name="paciente"]').value);

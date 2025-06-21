@@ -43,12 +43,10 @@ Mutual_Paciente.init(
   }
 );
 
-Mutual_Paciente.belongsTo(Mutual, {
-  foreignKey: "id_mutual",
-});
+Mutual.hasMany(Mutual_Paciente, { foreignKey: "id_mutual", onDelete: 'CASCADE' });
+Mutual_Paciente.belongsTo(Mutual, {foreignKey: "id_mutual", onDelete: 'CASCADE'});
 
-Mutual_Paciente.belongsTo(Paciente, {
-  foreignKey: "id_paciente",
-});
+Paciente.hasMany(Mutual_Paciente, { foreignKey: 'id_paciente', onDelete: 'CASCADE' });
+Mutual_Paciente.belongsTo(Paciente, { foreignKey: 'id_paciente', onDelete: 'CASCADE' });
 
 module.exports = Mutual_Paciente;

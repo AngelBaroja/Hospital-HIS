@@ -7,16 +7,13 @@ const Habitacion = require('./Habitacion');
 const Cama = require('./Cama');
 const Ala = require('./Ala');
 const Mutual = require('./Mutual');
-const Empleado = require('./Empleado');
+const Especialidad = require('./Especialidad');
 const Usuario = require('./Usuario');
 const Mutual_Paciente = require('./Mutual_Paciente');
+const Doctor = require('./Doctor');
+const Enfermero = require('./Enfermero');
+const Recepcionista = require('./Recepcionista');
 
-
-Cama.hasMany(Recepcion, { foreignKey: 'id_cama' });
-Recepcion.belongsTo(Cama, { foreignKey: 'id_cama' });
-
-Usuario.hasOne(Empleado, { foreignKey: 'id_usuario' });
-Empleado.belongsTo(Usuario, { foreignKey: 'id_usuario' });
 
 module.exports = {
     sequelize,
@@ -28,7 +25,10 @@ module.exports = {
     Ala,     
     Mutual,
     Recepcion,
-    Usuario,
-    Empleado,
-    Mutual_Paciente
+    Especialidad,
+    Usuario,   
+    Mutual_Paciente,    
+    Doctor,
+    Enfermero,
+    Recepcionista,    
 }

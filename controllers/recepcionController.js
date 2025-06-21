@@ -13,7 +13,8 @@ const { Op, EagerLoadingError } = require('sequelize');
 async function inicioRecepcion(req, res) {
     try{
     const usuario= req.session.nombreUsuario;
-    res.status(200).render('recepcion/recepcion',{usuario})
+    const cargo = req.session.tipoUsuario;
+    res.status(200).render('recepcion/recepcion',{usuario,cargo})
     }catch (error) {
         console.error('Error en inicioRecepcion:', error);
         res.status(500).render('error', { 
@@ -27,7 +28,7 @@ async function buscarTurno(req, res) {
     try {
     const { dni,'tipo-paciente': tipo } = req.body;   
     const usuario = req.session.nombreUsuario;
-    
+    const cargo = req.session.tipoUsuario;
 
     // Buscar todas las mutuales
     const mutuales = await Mutual.findAll();
@@ -53,6 +54,7 @@ async function buscarTurno(req, res) {
                 return res.status(404).render('recepcion/recepcion', {  // Renderizar una vista de error si el paciente se encuentra internado
                     error: `El Paciente ${paciente.nombre} ${paciente.apellido} ya se encuentra internado detro del hospital`,
                     usuario,
+                    cargo,
                     dni,
                     tipo                   
                 });
@@ -77,6 +79,7 @@ async function buscarTurno(req, res) {
                 return res.status(404).render('recepcion/recepcion', {  // Renderizar una vista de error si no se encuentra el paciente
                     error: `El Paciente debe estar registrado para tener Cita Programada.`,
                     usuario,
+                    cargo,
                     dni,
                     tipo                   
                 });
@@ -100,6 +103,7 @@ async function buscarTurno(req, res) {
                     dni,
                     tipo,
                     usuario,
+                    cargo,
                     error: `Paciente ${paciente.nombre} ${paciente.apellido} no tiene turno programado para hoy`,                    
                 });
             }else if( turno.hora < horaActual){
@@ -107,6 +111,7 @@ async function buscarTurno(req, res) {
                     dni,
                     tipo,
                     usuario,
+                    cargo,
                     error: `El paciente ${paciente.nombre} ${paciente.apellido} llego tarde para su cita hoy`,                    
                 });
             }  
@@ -115,6 +120,7 @@ async function buscarTurno(req, res) {
                 dni,
                 tipo,
                 usuario,
+                cargo,
                 paciente,
                 mutuales,
                 mutualPacientes,
@@ -132,6 +138,7 @@ async function buscarTurno(req, res) {
             return res.status(404).render('recepcion/recepcion', {
             error: 'El DNI debe tener 8 dígitos.',
             usuario,
+            cargo,
             dni,
             tipo
             });
@@ -141,6 +148,7 @@ async function buscarTurno(req, res) {
             return res.status(404).render('recepcion/recepcion', {
             error: 'Los Pacientes con Derivacion deben registrar su DNI',
             usuario,
+            cargo,
             dni,
             tipo
             });
@@ -152,6 +160,7 @@ async function buscarTurno(req, res) {
             dni,
             tipo,
             usuario,
+            cargo,
             paciente,
             mutuales,
             mutualPacientes,
@@ -173,9 +182,11 @@ async function atrasRegistro(req, res) {
     try{   
     const {  dni, tipo, paciente } = req.body;
     const usuario = req.session.nombreUsuario;
+    const cargo = req.session.tipoUsuario;
 
     res.render('recepcion/recepcion', { 
         usuario,
+        cargo,
         dni,
         tipo,
         paciente       
@@ -214,6 +225,7 @@ async function crearPaciente(req, res) {
     
     let paciente = req.body.paciente;
     const usuario = req.session.nombreUsuario;
+    const cargo = req.session.tipoUsuario;
 
     // Obtener el id del Motivo para la Recepcion
     const idMotivo = await Motivo.findOne({
@@ -264,6 +276,7 @@ async function crearPaciente(req, res) {
         return res.status(200).render('recepcion/asignacion', {            
             tipo,
             usuario,
+            cargo,
             paciente,
             idMotivo,
             detalle_motivo,
@@ -391,6 +404,7 @@ async function crearPaciente(req, res) {
         res.status(200).render('recepcion/asignacion', {         
             tipo,
             usuario,
+            cargo,
             habitaciones: habitacionesDisponibles, 
             paciente, 
             pacienteMutual,
@@ -414,6 +428,7 @@ try {
  
     const { tipo, idMotivo, detalle_motivo, idCama } = req.body;
     const usuario = req.session.nombreUsuario;
+    const cargo = req.session.tipoUsuario;
     let paciente = JSON.parse(req.body.paciente);
     
     //Generamos al paciente si viene por emergencia
@@ -447,7 +462,7 @@ try {
         console.log(`Recepcion ${recepcion.id} creada, Paciente: ${paciente.nombre} ${paciente.apellido}, cama nº ${cama.numero}, habitacion nº ${cama.id_habitacion}, motivo : ${motivo.tipos}`);
        
 
-       res.status(200).render('home',{usuario, mostrarExito: true,  datosRecepcion});
+       res.status(200).render('home',{usuario, cargo, mostrarExito: true,  datosRecepcion});
     } catch (error) {
         console.error('Error en ingresarHabitacion:', error);
         res.status(500).render('error', {
@@ -460,8 +475,9 @@ try {
 async function vistaPacientesConRecepcion(req, res) { 
 try {
     const usuario = req.session.nombreUsuario;
+    const cargo = req.session.tipoUsuario;
     // Traigo las recepciones activas y sus pacientes, camas y habitaciones
-    const recepciones = await Recepcion.findAll({
+    let recepciones = await Recepcion.findAll({
         where: { fecha_salida: null },
         include: [
         { model: Paciente },
@@ -473,8 +489,17 @@ try {
         }
         ]
     });
-    res.status(200).render('recepcion/lista', { usuario, recepciones });
-  } catch (error) {
+    recepciones.forEach(recepcion => {
+            if (recepcion.fecha_entrada) {
+                const fecha = new Date(recepcion.fecha_entrada);
+                const dia = String(fecha.getDate()).padStart(2, '0');
+                const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+                const anio = fecha.getFullYear();
+                recepcion.fecha_entrada_formateada = `${dia}/${mes}/${anio}`;
+            }
+        });
+    res.status(200).render('recepcion/lista', { usuario, cargo, recepciones });
+    } catch (error) {
         console.error('Error en vistaPacientesConRecepcion:', error);
         res.status(500).render('error', {
             mensaje: 'Error al cargar la lista de pacientes',

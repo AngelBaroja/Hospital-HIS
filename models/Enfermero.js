@@ -1,10 +1,11 @@
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../config/conexion");
 const Usuario = require(`./Usuario`); 
+const Especialidad = require(`./Especialidad`);
 
-class Medico extends Model { }
+class Enfermero extends Model { }
 
-Medico.init(
+Enfermero.init(
   {
     nombre: {
         type: DataTypes.STRING,     
@@ -13,7 +14,7 @@ Medico.init(
         validate: {                 
             len: [3, 20]            
         },
-        comment: 'Nombre del Medico' 
+        comment: 'Nombre del Enfermero' 
     },
     apellido: {
        type: DataTypes.STRING,
@@ -22,16 +23,7 @@ Medico.init(
         validate: {
             len: [3, 20]
         },
-        comment: 'Apellido del Medico'
-    },
-    especialidad: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: false,             
-        validate: {
-           isIn: [['Cardiología', 'Pediatría', 'Neurología', 'Ginecología', 'Traumatología', 'Oftalmología', 'Otorrinolaringología', 'Dermatología', 'Psiquiatría', 'Medicina General']]             
-        },
-        comment: 'Especialidad del Medico'
+        comment: 'Apellido del Enfermero'
     },
     dni: {
         type: DataTypes.STRING,
@@ -40,7 +32,7 @@ Medico.init(
         validate: {
            len: [7, 8],              
         },
-        comment: 'DNI del Medico'
+        comment: 'DNI del Enfermero'
     },
     genero: {
         type: DataTypes.STRING,
@@ -49,7 +41,7 @@ Medico.init(
         validate: {
            isIn: [['Masculino', 'Femenino', 'Otro']] 
         },
-        comment: 'Género del Medico'
+        comment: 'Género del Enfermero'
     },
     direccion: {
         type: DataTypes.STRING,
@@ -58,7 +50,7 @@ Medico.init(
         validate: {
             len: [5, 50]  
         },
-        comment: 'Dirección del Medico'
+        comment: 'Dirección del Enfermero'
     },
     telefono: {
         type: DataTypes.STRING,
@@ -69,7 +61,7 @@ Medico.init(
             isNumeric: true,   
             len: [7, 15]         
         },
-        comment: `Teléfono del Medico`
+        comment: `Teléfono del Enfermero`
     },
     provincia:{
         type: DataTypes.STRING,
@@ -78,7 +70,7 @@ Medico.init(
         validate: {
             len: [3, 20]         
         },
-        comment: `Provincia del Medico`
+        comment: `Provincia del Enfermero`
     },
     localidad:{
         type: DataTypes.STRING,
@@ -87,7 +79,7 @@ Medico.init(
         validate: {
             len: [3,60]
         },
-        comment: `Localidad del Medico`
+        comment: `Localidad del Enfermero`
     },
     activo: {
         type: DataTypes.BOOLEAN,
@@ -97,14 +89,19 @@ Medico.init(
         validate: {
             isIn: [[true, false]]
         },
-        comment: `Indica si el Medico esta activo o no`
+        comment: `Indica si el Enfermero esta activo o no`
     }    
   },{
   sequelize,
-  modelName: "Medico",   // Nombre del modelo
-  tableName: "medicos",  // Nombre de la tabla en la base de datos
+  modelName: "Enfermero",   
+  tableName: "enfermeros",  
 }
 );
 
+Usuario.hasOne(Enfermero, { foreignKey: 'id_usuario', onDelete: 'CASCADE' });
+Enfermero.belongsTo(Usuario, { foreignKey: 'id_usuario', onDelete: 'CASCADE' });
 
-module.exports = Medico;
+Especialidad.hasMany(Enfermero, { foreignKey: 'id_especialidad', onDelete: 'CASCADE' });
+Enfermero.belongsTo(Especialidad, { foreignKey: 'id_especialidad', onDelete: 'CASCADE' });
+
+module.exports = Enfermero;
