@@ -9,10 +9,17 @@ block content
         h2 Datos Basicos del Paciente               
         p#texto Información inicial de la admisión del paciente.
 
-        form#formulario-registro(action="/enfermeria/registro" method="POST")            
+        form#formulario-registro(action="/enfermeria/registro" method="POST")
+            input(type="hidden" name="recepcion" value=recepciones)            
             h3 Datos del Paciente
             span           
             .formulario-grid
+                .grupo-formulario 
+                    label(for="dni") DNI
+                    input(type="text" value=recepciones.Paciente.dni placeholder="Ingrese el DNI" name="dni" minlength="7" maxlength="8" required)#dni
+                
+                .grupo-formulario 
+
                 .grupo-formulario
                     label(for="nombre") Nombre                    
                     input(type="text" value=recepciones.Paciente.nombre placeholder="Ingrese el nombre" name="nombre" minlength="3" maxlength="20" required)#nombre
@@ -44,7 +51,17 @@ block content
 
                 .grupo-formulario 
                     label(for="telefono") Numero de Celular
-                    input(type="text" value=recepciones.Paciente.contacto_emergencia placeholder="Ingrese el número de celular" name="contacto_emergencia" minlength="10" maxlength="10" )#contacto_emergencia                   
+                    input(type="text" value=recepciones.Paciente.contacto placeholder="Ingrese el número de celular" name="contacto" minlength="10" maxlength="10")#contacto                   
+                
+                .grupo-formulario 
+                    label(for="Contacto_emergencia") Contacto de Emergencia
+                    if recepciones.Paciente.Contacto_Emergencia && recepciones.Paciente.Contacto_Emergencia.length > 0
+                        each contacto in recepciones.Paciente.Contacto_Emergencia
+                            input(type="text" value=contacto.numero placeholder="Ingrese el contacto de emergencia" name="contacto_emergencia" minlength="10" maxlength="10" class="input-contacto-extra" style="margin-bottom:5px")
+                    input(type="text" placeholder="Ingrese el contacto de emergencia" name="contacto_emergencia" minlength="10" maxlength="10" style="margin-bottom:5px" id="contacto_emergencia")
+                    button(type="button" class="boton-agregar" onclick="agregarContactoEmergencia()") Agregar
+                    button(type="button" class="boton-quitar" onclick="quitarContactoEmergencia()") Quitar
+
                 
                 .grupo-formulario 
                     label(for="direccion") Dirección
@@ -52,45 +69,50 @@ block content
 
                 .grupo-formulario 
                     label(for="provincia") Provincia
-                        input(type="text" value=recepciones.Paciente.provincia placeholder="Ingrese la provincia" name="provincia"  minlength="3" maxlength="30"  required)#direccion
+                    input(type="text" value=recepciones.Paciente.provincia placeholder="Ingrese la provincia" name="provincia"  minlength="3" maxlength="30"  required)#direccion
 
                 .grupo-formulario 
                     label(for="localidad") Localidad
                         input(type="text" value=recepciones.Paciente.localidad placeholder="Ingrese la localidad" name="localidad"  minlength="3" maxlength="30"  required)#direccion
 
-                h3 Datos de la Mutual
-                span
+                .grupo-formulario
+
+                .grupo-formulario 
+                    h3 Datos de la Mutual
+
+                .grupo-formulario  
+
                 .grupo-formulario                     
                     label(for="seguro") Seguro Médico                    
                     select#seguro(name="seguro" )
                         option(value="") Seleccione...
                         each mutual in mutuales
-                            if recepciones.Mutual_Paciente && recepciones.Mutual_Paciente.Mutual && mutual.nombre == recepciones.Mutual_Paciente.Mutual.nombre
+                            if recepciones.Paciente.Mutual_Paciente && recepciones.Paciente.Mutual_Paciente.Mutual && mutual.nombre == recepciones.Paciente.Mutual_Paciente.Mutual.nombre
                                 option(value=mutual.nombre selected) #{mutual.nombre}
                             else
                                 option(value=mutual.nombre) #{mutual.nombre}
                 
                 .grupo-formulario 
                     label(for="codigo_mutual") Credencial Nº
-                        if recepciones.Mutual_Paciente
-                            input(type="text" value=recepciones.Mutual_Paciente.codigo_mutual placeholder="Ingrese el codigo de la credencial" name="codigo_mutual" minlength="5" maxlength="5")#codigo_mutual
-                        else
-                            input(type="text" placeholder="Ingrese el codigo de la credencial" name="codigo_mutual" minlength="5" maxlength="5")#codigo_mutual
+                    if recepciones.Paciente.Mutual_Paciente
+                        input(type="text" value=recepciones.Paciente.Mutual_Paciente.codigo_mutual placeholder="Ingrese el codigo de la credencial" name="codigo_mutual" minlength="5" maxlength="5")#codigo_mutual
+                    else
+                        input(type="text" placeholder="Ingrese el codigo de la credencial" name="codigo_mutual" minlength="5" maxlength="5")#codigo_mutual
                         
                 .grupo-formulario   
                     label(for="tipo_cobertura") Tipo de Cobertura 
-                    if recepciones.Mutual_Paciente
+                    if recepciones.Paciente.Mutual_Paciente
                         select#tipo_cobertura(name="tipo_cobertura")
                             option(value="") Seleccione...
-                            if recepciones.Mutual_Paciente.tipo_cobertura == 'Basico'
+                            if recepciones.Paciente.Mutual_Paciente.tipo_cobertura == 'Basico'
                                 option(value="Basico" selected) Básico
                                 option(value="Completo") Completo
                                 option(value="Premium") Premium
-                            else if recepciones.Mutual_Paciente.tipo_cobertura == 'Completo'
+                            else if recepciones.Paciente.Mutual_Paciente.tipo_cobertura == 'Completo'
                                 option(value="Basico") Básico
                                 option(value="Completo" selected) Completo
                                 option(value="Premium") Premium
-                            else if recepciones.Mutual_Paciente.tipo_cobertura == 'Premium'
+                            else if recepciones.Paciente.Mutual_Paciente.tipo_cobertura == 'Premium'
                                 option(value="Basico") Básico
                                 option(value="Completo") Completo
                                 option(value="Premium" selected) Premium
@@ -103,8 +125,8 @@ block content
 
                 .grupo-formulario 
                     label(for="activa") Mutual Activa
-                    if recepciones.Mutual_Paciente
-                        if recepciones.Mutual_Paciente.activa == true
+                    if recepciones.Paciente.Mutual_Paciente
+                        if recepciones.Paciente.Mutual_Paciente.activa == true
                             select#mutual_activa(name="activa")
                                 option(value="") Seleccione...
                                 option(value="Activa" selected) Activa
@@ -135,7 +157,7 @@ block content
                 .grupo-formulario 
                     label(for="detalle_motivo") Detalle de la Internación
                     if recepciones.detalle_motivo
-                        textarea(rows="3" placeholder="Ingrese detalles del motivo de la internacion" name="detalle_motivo" value=recepciones.detalle_motivo required)
+                        textarea(rows="3" placeholder="Ingrese detalles del motivo de la internacion" name="detalle_motivo"  required)= recepciones.detalle_motivo
                     else
                         textarea(rows="3" placeholder="Ingrese detalles del motivo de la internacion" name="detalle_motivo")#detalle_motivo
                 
@@ -144,6 +166,59 @@ block content
                 button(type="submit" class="boton boton-primario") Continuar
         
         form(action="/enfermeria/pacientesInternados" method="GET" style ="margin-top: -48px;")            
-            button(type="submit" class="boton boton-secundario") Atrás           
+            button(type="submit" class="boton boton-secundario") Atrás
+        script.
+            function agregarContactoEmergencia() {
+                var input = document.getElementById('contacto_emergencia');
+                var valor = input.value.trim();
+                var error = document.getElementById('error');
+                if (error) error.remove();
+
+                // Validar vacío
+                if (!valor) {
+                    mostrarError('Primero agregue un número de emergencia');
+                    return;
+                }
+                // Validar 10 dígitos numéricos
+                if (!/^\d{10}$/.test(valor)) {
+                    mostrarError('El número de celular es incorrecto');
+                    return;
+                }
+                // Crear nuevo input readonly después del input principal
+                var nuevoInput = document.createElement('input');
+                nuevoInput.type = 'text';
+                nuevoInput.name = 'contacto_emergencia';
+                nuevoInput.value = valor;
+                nuevoInput.readOnly = true;
+                nuevoInput.className = 'input-contacto-extra';
+                nuevoInput.style.marginBottom = '5px';
+                input.parentNode.insertBefore(nuevoInput, input); // Insertar antes del input editable
+
+                // Limpiar el input original
+                input.value = '';
+            }
+
+            function quitarContactoEmergencia() {
+                var error = document.getElementById('error');
+                if (error) error.remove();
+                // Selecciona todos los inputs readonly de contacto extra
+                var contactos = document.querySelectorAll('.input-contacto-extra');
+                if (contactos.length > 0) {
+                    // Elimina solo el último input (el más cercano al input editable)
+                    contactos[contactos.length - 1].remove();
+                } else {
+                    mostrarError('No hay contactos de emergencia para quitar');
+                }
+            }
+
+            function mostrarError(mensaje) {
+                var input = document.getElementById('contacto_emergencia');
+                var error = document.createElement('div');
+                error.id = 'error';
+                error.style.color = 'red';
+                error.style.fontSize = '13px';
+                error.textContent = mensaje;
+                input.parentNode.appendChild(error);
+            }               
                 
         

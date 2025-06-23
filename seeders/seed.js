@@ -1,5 +1,5 @@
 const Modelos = require('../models/modelosBD');
-const { sequelize, Paciente, Doctor, Enfermero, Recepcionista, Especialidad, Recepcion, Motivo, Turno, Cama, Habitacion, Ala, Mutual, Empleado, Usuario, Mutual_Paciente } = Modelos;
+const { sequelize, Paciente, Doctor, Enfermero, Recepcionista, Especialidad, Recepcion, Motivo, Turno, Cama, Habitacion, Ala, Mutual, Usuario, Mutual_Paciente, Contacto_Emergencia} = Modelos;
 const bcrypt = require('bcrypt');
 
 async function seed() {
@@ -24,7 +24,7 @@ async function seed() {
   fecha_nacimiento: new Date('1990-05-15'),
   genero: 'Masculino',
   direccion: 'Calle Falsa 123',
-  contacto_emergencia: '1122334455',
+  contacto: '1122334455',
   provincia: 'Buenos Aires',
   localidad: 'La Plata'  
 },
@@ -35,7 +35,7 @@ async function seed() {
   fecha_nacimiento: new Date('1985-10-20'),
   genero: 'Femenino',
   direccion: 'Av. Siempre Viva 742',
-  contacto_emergencia: '1133445566',
+  contacto: '1133445566',
   provincia: 'Córdoba',
   localidad: 'Córdoba'
 },
@@ -46,7 +46,7 @@ async function seed() {
   fecha_nacimiento: new Date('1978-03-12'),
   genero: 'Masculino',
   direccion: 'San Martín 456',
-  contacto_emergencia: '1144556677',
+  contacto: '1144556677',
   provincia: 'Santa Fe',
   localidad: 'Rosario'
 },
@@ -57,7 +57,7 @@ async function seed() {
   fecha_nacimiento: new Date('1995-07-08'),
   genero: 'Femenino',
   direccion: 'Belgrano 789',
-  contacto_emergencia: '1155667788',
+  contacto: '1155667788',
   provincia: 'Mendoza',
   localidad: 'Mendoza'
 },
@@ -68,11 +68,21 @@ async function seed() {
   fecha_nacimiento: new Date('2000-12-01'),
   genero: 'Femenino',
   direccion: 'Mitre 321',
-  contacto_emergencia: '1166778899',
+  contacto: '1166778899',
   provincia: 'Salta',
   localidad: 'Salta'
 }]);
   console.log('Pacientes creados:', pacientes.length);
+
+// Contactos de emergencia
+const contactosEmergencia = await Contacto_Emergencia.bulkCreate([
+  { numero: '1122334455', id_paciente: 1 },
+  { numero: '1133445566', id_paciente: 1 },
+  { numero: '1144556677', id_paciente: 1 },
+  { numero: '1155667788', id_paciente: 4 },
+  { numero: '1166778899', id_paciente: 5 }
+]);
+console.log('Contactos de emergencia creados:', contactosEmergencia.length);
 
 //Mutuales_Pacientes
 const mutualesPacientes = await Mutual_Paciente.bulkCreate([

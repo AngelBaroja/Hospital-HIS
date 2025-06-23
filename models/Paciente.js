@@ -50,12 +50,12 @@ Paciente.init(
         defaultValue: 'Sin dirección',       
         comment: 'Dirección del paciente'
     },
-    contacto_emergencia: {
+    contacto: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: false,
         defaultValue: `Sin contacto`,       
-        comment: `Contacto de emergencia del paciente`,
+        comment: `Contacto del paciente`
     },
     provincia:{
         type: DataTypes.STRING,

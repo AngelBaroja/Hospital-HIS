@@ -13,6 +13,7 @@ const Mutual_Paciente = require('./Mutual_Paciente');
 const Doctor = require('./Doctor');
 const Enfermero = require('./Enfermero');
 const Recepcionista = require('./Recepcionista');
+const Contacto_Emergencia = require('./Contacto_Emergencia');
 
 
 module.exports = {
@@ -30,5 +31,6 @@ module.exports = {
     Mutual_Paciente,    
     Doctor,
     Enfermero,
-    Recepcionista,    
+    Recepcionista,
+    Contacto_Emergencia    
 }

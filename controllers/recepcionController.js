@@ -7,6 +7,7 @@ const Motivo = require('../models/Motivo');
 const Cama = require('../models/Cama');
 const Habitacion = require('../models/Habitacion');
 const Ala = require('../models/Ala');
+const Contacto_Emergencia = require('../models/Contacto_Emergencia');
 
 const { Op, EagerLoadingError } = require('sequelize');
 
@@ -70,7 +71,21 @@ async function buscarTurno(req, res) {
                 if (mutualPacientes) {
                     nombreMutual = mutualPacientes.Mutual.nombre; 
                 }                  
-        }          
+        }
+
+        let contactosEmergencia=null;
+        
+        if (paciente) {
+            // Verificar si el paciente tiene contactos de emergencia
+            contactosEmergencia = await Contacto_Emergencia.findAll({
+                where: { id_paciente: paciente.id }
+            });
+            if (contactosEmergencia.length > 0) {
+                paciente.contactos_emergencia = contactosEmergencia.map(contacto => contacto.numero);
+            } else {
+                paciente.contactos_emergencia = []; // Si no hay contactos, inicializar como array vacío
+            }
+        }
     
       // Si es cita programada, buscar turno
         if (tipo === 'Cita Programada') { 
@@ -125,7 +140,8 @@ async function buscarTurno(req, res) {
                 mutuales,
                 mutualPacientes,
                 nombreMutual,
-                motivos               
+                motivos,
+                contactosEmergencia                              
             });
         }
 
@@ -165,7 +181,8 @@ async function buscarTurno(req, res) {
             mutuales,
             mutualPacientes,
             nombreMutual,
-            motivos,                       
+            motivos,
+            contactosEmergencia                       
         });
 
      } catch (error) {
@@ -211,7 +228,7 @@ async function crearPaciente(req, res) {
         apellido,
         fecha_nacimiento, 
         genero,    
-        contacto_emergencia,
+        contacto,
         direccion,
         provincia,
         localidad,
@@ -222,6 +239,7 @@ async function crearPaciente(req, res) {
         motivo,
         detalle_motivo
     } = req.body;
+    let contactos_emergencia = req.body.contacto_emergencia;
     
     let paciente = req.body.paciente;
     const usuario = req.session.nombreUsuario;
@@ -296,7 +314,7 @@ async function crearPaciente(req, res) {
         String(pacienteExistente.fecha_nacimiento) === String(fecha_nacimiento) &&
         pacienteExistente.genero === genero &&  
         pacienteExistente.direccion === direccion &&
-        pacienteExistente.contacto_emergencia === contacto_emergencia &&
+        pacienteExistente.contacto === contacto &&
         pacienteExistente.provincia === provincia &&
         pacienteExistente.localidad === localidad) 
     {
@@ -313,7 +331,7 @@ async function crearPaciente(req, res) {
                 fecha_nacimiento,
                 genero,
                 direccion,
-                contacto_emergencia,
+                contacto,
                 provincia,
                 localidad
             });
@@ -327,7 +345,7 @@ async function crearPaciente(req, res) {
                 fecha_nacimiento,
                 genero,
                 direccion,
-                contacto_emergencia,
+                contacto,
                 provincia,
                 localidad
             });
@@ -335,10 +353,51 @@ async function crearPaciente(req, res) {
         }
     };
 
-    // Buscamos la mutual por su nombre
-    const mutualExistente = await Mutual.findOne({ where: { nombre: seguro } });
+   const Elpaciente = await Paciente.findOne({ where: { dni } });
 
-    const Elpaciente = await Paciente.findOne({ where: { dni } });
+    if (!Array.isArray(contactos_emergencia)) {
+        contactos_emergencia = [contactos_emergencia];
+    }
+
+    if (contactos_emergencia.length > 0 && (!contactos_emergencia[contactos_emergencia.length - 1] || contactos_emergencia[contactos_emergencia.length - 1].trim() === "")) {
+        contactos_emergencia.pop();
+    }
+
+    // Trae todos los contactos actuales del paciente, ordenados por id 
+    let contactosActuales = await Contacto_Emergencia.findAll({
+        where: { id_paciente: Elpaciente.id },
+        order: [['id', 'ASC']]
+    });
+
+    // Actualiza o crea según corresponda
+    for (let i = 0; i < contactos_emergencia.length; i++) {
+        const numero = contactos_emergencia[i];
+        if (contactosActuales[i]) {
+            // Si el número es diferente, actualiza
+            if (contactosActuales[i].numero !== numero) {
+                await contactosActuales[i].update({ numero });
+                console.log(`Contacto de emergencia actualizado a ${numero} para el paciente ${Elpaciente.nombre} ${Elpaciente.apellido}`);
+            }
+        } else {
+            // Si no hay contacto en esa posición, crea uno nuevo
+            await Contacto_Emergencia.create({
+                id_paciente: Elpaciente.id,
+                numero
+            });
+            console.log('Contacto de emergencia creado correctamente');
+        }
+    }
+
+    // Eliminar los contactos sobrantes 
+    if (contactos_emergencia.length < contactosActuales.length) {
+        for (let i = contactos_emergencia.length; i < contactosActuales.length; i++) {
+            await contactosActuales[i].destroy();
+            console.log(`Contacto de emergencia eliminado para el paciente ${Elpaciente.nombre} ${Elpaciente.apellido}`);
+        }
+    }
+
+    // Buscamos la mutual por su nombre
+    const mutualExistente = await Mutual.findOne({ where: { nombre: seguro } });    
     
     // Buscamos que mutual tiene el paciente
     const pacienteMutual = await Mutual_Paciente.findOne({

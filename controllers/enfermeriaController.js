@@ -7,6 +7,7 @@ const Motivo = require('../models/Motivo');
 const Cama = require('../models/Cama');
 const Habitacion = require('../models/Habitacion');
 const Ala = require('../models/Ala');
+const Contacto_Emergencia = require('../models/Contacto_Emergencia');
 
 const { Op } = require('sequelize');
 
@@ -83,11 +84,10 @@ async function vistaRegistroEnfermeria(req, res) {
                     include: [
                         {
                             model: Mutual_Paciente,
-                            include: [
-                                {
-                                    model: Mutual,
-                                }
-                            ]
+                            include: [{model: Mutual}]
+                        },
+                        {
+                            model: Contacto_Emergencia                            
                         }
                     ]
                 },
@@ -114,8 +114,9 @@ async function vistaRegistroEnfermeria(req, res) {
         const motivos = await Motivo.findAll();
 
         console.log('recepciones:', recepciones);
-        
 
+        // Extrae los contactos de emergencia del paciente (puede ser undefined)
+       // const contactosEmergencia = recepciones.Paciente.Contacto_Emergencia || [];
         res.status(200).render('enfermeria/registro', { usuario, cargo, recepciones, mutuales, motivos });
     } catch (error) {
         console.error('Error en Enfermeria al cargar el registro:', error);
