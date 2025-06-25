@@ -228,6 +228,50 @@ header {
     to { opacity: 1; }
 }
 
+/* Estilos para las pestañas secundarias */
+.pestanas2 {
+    display: flex;
+    gap: 0.5rem;
+    background: #e3f2fd;
+    padding: 0.5rem 0.5rem 0;
+    border-left: 2px solid #1976d2;
+    border-right: 2px solid #1976d2;
+    justify-content: center;
+}
+
+.pestanas2 form {
+    margin: 0;
+}
+
+.pestana-secundaria {
+    background: #bbdefb;
+    color: #1976d2;
+    border: 2px solid #1976d2;
+    border-radius: 6px 6px 0 0;
+    padding: 0.7rem 1.2rem;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-right: 0.2rem;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    outline: none;
+    text-decoration: none;
+}
+
+.pestana-secundaria:hover,
+.pestana-secundaria:focus {
+    background: #1976d2;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.13);
+}
+
+.pestana-secundaria.activa {
+    background: #1976d2;
+    color: #fff;
+    font-weight: bold;
+    z-index: 2;
+}
+
 /* Formularios */
 .formulario-grid {
     display: grid;

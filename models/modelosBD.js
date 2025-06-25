@@ -14,6 +14,13 @@ const Doctor = require('./Doctor');
 const Enfermero = require('./Enfermero');
 const Recepcionista = require('./Recepcionista');
 const Contacto_Emergencia = require('./Contacto_Emergencia');
+const Historial_Medico = require('./Historial_Medico');
+const Enfermedad_Previa = require('./Enfermedad_Previa');
+const Cirugia_Previa = require('./Cirugia_Previa');
+const Medicamento_Paciente = require('./Medicamento_Paciente');
+const Antecedente_Familiar = require('./Antecedente_Familiar');
+const Alergia = require('./Alergia');
+
 
 
 module.exports = {
@@ -32,5 +39,11 @@ module.exports = {
     Doctor,
     Enfermero,
     Recepcionista,
-    Contacto_Emergencia    
+    Contacto_Emergencia,
+    Historial_Medico,
+    Enfermedad_Previa,
+    Cirugia_Previa,
+    Medicamento_Paciente,
+    Antecedente_Familiar,
+    Alergia 
 }

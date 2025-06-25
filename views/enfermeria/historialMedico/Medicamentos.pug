@@ -1,0 +1,16 @@
+extends ../../layout
+
+block content 
+    .pestanas 
+        .pestana 1. Pacientes Internados
+        .pestana 2. Registro
+        .pestana.activa3 3. Historial Médico
+    .pestanas2
+        a(href=`/enfermeria/historialMedico/Alergia/${recepcion.id}`).pestana-secundaria Alergias
+        a(href=`/enfermeria/historialMedico/Enfermedad/${recepcion.id}`).pestana-secundaria Enfermedades Previas
+        a(href=`/enfermeria/historialMedico/Medicamentos/${recepcion.id}`).pestana-secundaria.activa Medicamentos
+        a(href=`/enfermeria/historialMedico/Cirugia/${recepcion.id}`).pestana-secundaria Cirugias Previas
+        a(href=`/enfermeria/historialMedico/Antecedentes/${recepcion.id}`).pestana-secundaria Antecedentes Familiares
+    .contenido-pestana#historial-medico
+        h2 Historial Médico del Paciente
+        p#texto Carga los datos sobre distintas las alergias que posea el paciente.

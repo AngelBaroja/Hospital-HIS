@@ -1,5 +1,5 @@
 const Modelos = require('../models/modelosBD');
-const { sequelize, Paciente, Doctor, Enfermero, Recepcionista, Especialidad, Recepcion, Motivo, Turno, Cama, Habitacion, Ala, Mutual, Usuario, Mutual_Paciente, Contacto_Emergencia} = Modelos;
+const { sequelize, Paciente, Doctor, Enfermero, Recepcionista, Especialidad, Recepcion, Motivo, Turno, Cama, Habitacion, Ala, Mutual, Usuario, Mutual_Paciente, Contacto_Emergencia, Historial_Medico, Alergia, Enfermedad_Previa, Cirugia_Previa, Medicamento_Paciente, Antecedente_Familiar} = Modelos;
 const bcrypt = require('bcrypt');
 
 async function seed() {
@@ -368,6 +368,173 @@ console.log('Especialidades creadas:', especialidades.length);
     }
   ]);
   console.log('Recepcionista creados:', recepcionista.length);
+
+  // Historiales médicos
+  const historialesMedicos = await Historial_Medico.bulkCreate([
+    {
+      id_paciente: 1     
+    },
+    {
+      id_paciente: 2      
+    },
+    {
+      id_paciente: 3     
+    }
+  ]);
+  console.log('Historiales médicos creados:', historialesMedicos.length);
+
+  // Enfermedades previas
+  const enfermedadesPrevias = await Enfermedad_Previa.bulkCreate([
+    {
+      nombre_enfermedad: 'Diabetes',
+      fecha_diagnostico: new Date('2010-01-01'),
+      id_historial_medico: 1
+    },
+    {
+      nombre_enfermedad: 'Hipertensión',
+      fecha_diagnostico: new Date('2012-02-02'),
+      id_historial_medico: 1
+    },
+    {
+      nombre_enfermedad: 'Asma',
+      fecha_diagnostico: new Date('2014-03-03'),
+      id_historial_medico: 2
+    },
+    {
+      nombre_enfermedad: 'Hipertensión',
+      fecha_diagnostico: new Date('2015-05-05'),
+      id_historial_medico: 2
+    },
+    {
+      nombre_enfermedad: 'Asma',
+      fecha_diagnostico: new Date('2018-08-08'),
+      id_historial_medico: 3
+    }
+  ]);
+  console.log('Enfermedades previas creadas:', enfermedadesPrevias.length);
+
+  // Cirugías previas
+  const cirugiasPrevias = await Cirugia_Previa.bulkCreate([
+    {
+      nombre_cirugia: 'Apendicectomía',
+      fecha_cirugia: new Date('2015-01-01'),
+      detalle_motivo: 'Apendicitis aguda',
+      id_historial_medico: 1
+    },
+    {
+      nombre_cirugia: 'Colecistectomía',
+      fecha_cirugia: new Date('2016-02-02'),
+      detalle_motivo: 'Cálculos biliares',
+      id_historial_medico: 2
+    },
+    {
+      nombre_cirugia: 'Cirugía de rodilla',
+      fecha_cirugia: new Date('2017-03-03'),
+      detalle_motivo: 'Lesión de menisco',
+      id_historial_medico: 3
+    },
+    {
+      nombre_cirugia: 'Cirugía de cadera',
+      fecha_cirugia: new Date('2018-04-04'),
+      detalle_motivo: 'Fractura de cadera',
+      id_historial_medico: 2
+    },
+    {
+      nombre_cirugia: 'Cirugía de hombro',
+      fecha_cirugia: new Date('2019-05-05'),
+      detalle_motivo: 'Lesión de manguito rotador',
+      id_historial_medico: 3
+    }
+  ]);
+  console.log('Cirugías previas creadas:', cirugiasPrevias.length);
+
+  // Medicamentos del paciente
+  const medicamentosPacientes = await Medicamento_Paciente.bulkCreate([
+    {
+      nombre_medicamento: 'Metformina',
+      dosis: 500,
+      frecuencia: 'Diaria',
+      id_historial_medico: 1
+    },
+    {
+      nombre_medicamento: 'Lisinopril',
+      dosis: 10,
+      frecuencia: 'Diaria',
+      id_historial_medico: 1
+    },
+    {
+      nombre_medicamento: 'Salbutamol',
+      dosis: 100,
+      frecuencia: 'Cada 8 horas',
+      id_historial_medico: 2
+    },
+    {
+      nombre_medicamento: 'Glaucotensil',
+      dosis: 5,
+      frecuencia: 'Diaria',
+      id_historial_medico: 2
+    },
+    {
+      nombre_medicamento: 'Ibuprofeno',
+      dosis: 400,
+      frecuencia: 'Cada 6 horas',
+      id_historial_medico: 3
+    }
+  ]);
+  console.log('Medicamentos del paciente creados:', medicamentosPacientes.length);
+
+  // Alergias
+  const alergias = await Alergia.bulkCreate([
+    {
+      sustancia: 'Penicilina',
+      reaccion: 'Erupción cutánea',
+      severidad: 'Leve',
+      id_historial_medico: 1
+    },
+    {
+      sustancia: 'Lactosa',
+      reaccion: 'Diarrea',
+      severidad: 'Moderada',
+      id_historial_medico: 2
+    },
+    {
+      sustancia: 'Polen',
+      reaccion: 'Estornudos y picazón',
+      severidad: 'Leve',
+      id_historial_medico: 3
+    }
+  ]);
+  console.log('Alergias creadas:', alergias.length);
+
+  // Antecedentes familiares
+  const antecedentesFamiliares = await Antecedente_Familiar.bulkCreate([
+    {
+      enfermedad_familiar: 'Diabetes',
+      parentesco: 'Padre',
+      id_historial_medico: 1
+    },
+    {
+      enfermedad_familiar: 'Hipertensión',
+      parentesco: 'Madre',
+      id_historial_medico: 1
+    },
+    {
+      enfermedad_familiar: 'Asma',
+      parentesco: 'Hermano',
+      id_historial_medico: 2
+    },
+    {
+      enfermedad_familiar: 'Cáncer de mama',
+      parentesco: 'Abuela',
+      id_historial_medico: 2
+    },
+    {
+      enfermedad_familiar: 'Enfermedad cardíaca',
+      parentesco: 'Tío',
+      id_historial_medico: 3
+    }
+  ]);
+  console.log('Antecedentes familiares creados:', antecedentesFamiliares.length);
 
 process.exit(); 
 }

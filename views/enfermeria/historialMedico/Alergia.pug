@@ -1,0 +1,83 @@
+extends ../../layout
+
+block content 
+    .pestanas 
+        .pestana 1. Pacientes Internados
+        .pestana 2. Registro
+        .pestana.activa3 3. Historial Médico
+    .pestanas2
+        a(href=`/enfermeria/historialMedico/Alergia/${recepcion.id}`).pestana-secundaria.activa Alergias
+        a(href=`/enfermeria/historialMedico/Enfermedad/${recepcion.id}`).pestana-secundaria Enfermedades Previas
+        a(href=`/enfermeria/historialMedico/Medicamentos/${recepcion.id}`).pestana-secundaria Medicamentos
+        a(href=`/enfermeria/historialMedico/Cirugia/${recepcion.id}`).pestana-secundaria Cirugias Previas
+        a(href=`/enfermeria/historialMedico/Antecedentes/${recepcion.id}`).pestana-secundaria Antecedentes Familiares
+    .contenido-pestana#historial-medico
+        h2 Historial Médico del Paciente
+        p#texto Carga los datos sobre distintas las alergias que posea el paciente.
+        form#formulario-registro(action="/enfermeria/historialMedico/Alergia" method="POST")            
+            .formulario-grid
+                if recepcion.Paciente.Historial_Medico && recepcion.Paciente.Historial_Medico.Alergia && recepcion.Paciente.Historial_Medico.Alergia.length > 0
+
+                    .grupo-formulario
+                        label(for="alergia") Alergia:
+                        input(type="text" id="alergia" name="sustancia" placeholder="Ingrese sustancia alergica")
+
+                    .grupo-Formulario
+                        label(for="reaccion") Reacción:   
+                        input(type="text" id="reaccion" name="reaccion" placeholder="Ingrese reacción alérgica")
+
+                    .grupo-Formulario
+                        label(for="severidad") Severidad:      
+                        select(id="severidad" name="severidad")
+                            option(value="") Seleccione... 
+                            option(value="Leve") Leve
+                            option(value="Moderada") Moderada
+                            option(value="Severa") Severa 
+
+                    .grupo-Formulario
+
+                    each alergia in recepcion.Paciente.Historial_Medico.Alergia
+                        hr
+                        hr
+                        .grupo-formulario
+                            label(for="alergia") Alergia:                    
+                            input(type="text" id="alergia" value=alergia.sustancia name="sustancia" placeholder="Ingrese sustancia alergica")
+
+                        .grupo-formulario
+                            label(for="reaccion") Reacción:                    
+                            input(type="text" id="reaccion" value=alergia.reaccion name="reaccion" placeholder="Ingrese reacción alérgica")
+
+                        .grupo-formulario
+                            label(for="severidad") Severidad:                    
+                            select(id="severidad" name="severidad")
+                                option(value="") Seleccione...
+                                if alergia.severidad === 'Leve'
+                                    option(value="Leve" selected) Leve
+                                    option(value="Moderada" ) Moderada
+                                    option(value="Severa" ) Severa
+                                else if alergia.severidad === 'Moderada'
+                                    option(value="Leve" ) Leve
+                                    option(value="Moderada" selected) Moderada
+                                    option(value="Severa" ) Severa
+                                else if alergia.severidad === 'Severa'
+                                    option(value="Leve" ) Leve
+                                    option(value="Moderada" ) Moderada
+                                    option(value="Severa" selected) Severa
+                        .grupo-Formulario
+                else 
+
+                    .grupo-formulario
+                        label(for="alergia") Alergia:
+                        input(type="text" id="alergia" name="sustancia" placeholder="Ingrese sustancia alergica")
+
+                    .grupo-Formulario
+                        label(for="reaccion") Reacción:   
+                        input(type="text" id="reaccion" name="reaccion" placeholder="Ingrese reacción alérgica")
+
+                    .grupo-Formulario
+                        label(for="severidad") Severidad:      
+                        select(id="severidad" name="severidad")
+                            option(value="") Seleccione... 
+                            option(value="Leve") Leve
+                            option(value="Moderada") Moderada
+                            option(value="Severa") Severa 

@@ -5,6 +5,14 @@ block content
         .pestana 1. Pacientes Internados
         .pestana 2. Registro
         .pestana.activa3 3. Historial Médico
+    .pestanas 
+        .pestana.activa1 Alergias
+        a(href="/enfermeria/historialMedico/Enfermedad").pestana Enfermedades Previas
+        a(href="/enfermeria/historialMedico/Medicamentos").pestana Medicamentos
+        a(href="/enfermeria/historialMedico/Cirugia").pestana Cirugias Previas
+        a(href="/enfermeria/historialMedico/Antecedentes").pestana Antecedentes Familiares
     .contenido-pestana#historial-medico
         h2 Historial Médico del Paciente
-        p#texto Carga los datos sobre el historial médico del paciente internado.
+        p#texto Carga los datos sobre distintas las alergias que posea el paciente.
+            .formulario-grid
+                .grupo-formulario

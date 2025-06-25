@@ -10,6 +10,16 @@ router.get(`/registro/:id`, requiereSesion, enfermeriaController.vistaRegistroEn
 
 router.post('/registro', requiereSesion, enfermeriaController.registrarEnfermeria); // Procesa el control del registro de admicion la enfermería para un paciente internado 
 
+router.get('/historialMedico/Alergia/:id', requiereSesion, enfermeriaController.vistaAlegia); // Carga la vista del formulario de Alergias
+
+router.get('/historialMedico/Antecedentes/:id', requiereSesion, enfermeriaController.vistaAntecedentesFamiliares); // Carga la vista del formulario de Antecedentes Familiares
+
+router.get('/historialMedico/Cirugia/:id', requiereSesion, enfermeriaController.vistaCirugiaPrevia); // Carga la vista del formulario de Cirugias Previas
+
+router.get('/historialMedico/Enfermedad/:id', requiereSesion, enfermeriaController.vistaEnfermedadPrevia); // Carga la vista del formulario de Enfermedades Previas
+
+router.get('/historialMedico/Medicamentos/:id', requiereSesion, enfermeriaController.vistaMedicamentosPaciente); // Carga la vista del formulario de los Medicamentos previos del paciente
+
 //router.post('/historialMedico', requiereSesion, enfermeriaController.historialMedico); // Procesa el historial médico del paciente
 
 module.exports = router;

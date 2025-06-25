@@ -423,7 +423,7 @@ async function crearPaciente(req, res) {
     } else {
         // Si no se cargaron datos de la mutual, no se crea una mutual al paciente
         // Si se cargaron datos de la mutual y no existe una Mutual_Paciente, se crea una al paciente
-        if (codigo_mutual && tipo_cobertura && seguro) {        
+        if (mutualExistente && codigo_mutual && tipo_cobertura && seguro) {        
             await Mutual_Paciente.create({
                 id_paciente: Elpaciente.id,
                 id_mutual: mutualExistente?.id,

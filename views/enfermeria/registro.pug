@@ -7,40 +7,40 @@ block content
         .pestana 3. Historial Médico
     .contenido-pestana#recepcion
         h2 Datos Basicos del Paciente               
-        p#texto Información inicial de la admisión del paciente.
+        p#texto Información inicial captada en la admisión del paciente.
 
         form#formulario-registro(action="/enfermeria/registro" method="POST")
-            input(type="hidden" name="recepcion" value=recepciones)            
-            h3 Datos del Paciente
+            input(type="hidden" name="recepcionId" value=recepcion.id)    
+            h3 Datos del Paciente  || #{recepcion.tipo}
             span           
             .formulario-grid
                 .grupo-formulario 
                     label(for="dni") DNI
-                    input(type="text" value=recepciones.Paciente.dni placeholder="Ingrese el DNI" name="dni" minlength="7" maxlength="8" required)#dni
-                
-                .grupo-formulario 
+                    input(type="text" value=recepcion.Paciente.dni placeholder="Ingrese el DNI" name="dni" minlength="7" maxlength="8" required)#dni
+
+                .grupo-formulario
 
                 .grupo-formulario
                     label(for="nombre") Nombre                    
-                    input(type="text" value=recepciones.Paciente.nombre placeholder="Ingrese el nombre" name="nombre" minlength="3" maxlength="20" required)#nombre
+                    input(type="text" value=recepcion.Paciente.nombre placeholder="Ingrese el nombre" name="nombre" minlength="3" maxlength="20" required)#nombre
 
                 .grupo-formulario
                     label(for="apellido") Apellido                    
-                    input(type="text" value=recepciones.Paciente.apellido placeholder="Ingrese el apellido" name="apellido" minlength="3" maxlength="20"  required)#apellido
+                    input(type="text" value=recepcion.Paciente.apellido placeholder="Ingrese el apellido" name="apellido" minlength="3" maxlength="20"  required)#apellido
 
                 .grupo-formulario 
                     label(for="fecha_nacimiento") Fecha de Nacimiento
-                    input(type="date" value=recepciones.Paciente.fecha_nacimiento placeholder="Ingrese la fecha de nacimiento" name="fecha_nacimiento")#fecha_nacimiento
+                    input(type="date" value=recepcion.Paciente.fecha_nacimiento placeholder="Ingrese la fecha de nacimiento" name="fecha_nacimiento")#fecha_nacimiento
                     
                 .grupo-formulario 
                     label(for="genero") Género
                     select#genero(name="genero" required)
                         option(value="") Seleccione...
-                        if recepciones.Paciente.genero == 'Masculino'
+                        if recepcion.Paciente.genero == 'Masculino'
                             option(value="Masculino" selected) Masculino
                             option(value="Femenino") Femenino
                             option(value="No especificado") No especificado
-                        else if recepciones.Paciente.genero == 'Femenino'
+                        else if recepcion.Paciente.genero == 'Femenino'
                             option(value="Masculino") Masculino
                             option(value="Femenino" selected) Femenino
                             option(value="No especificado") No especificado
@@ -51,12 +51,12 @@ block content
 
                 .grupo-formulario 
                     label(for="telefono") Numero de Celular
-                    input(type="text" value=recepciones.Paciente.contacto placeholder="Ingrese el número de celular" name="contacto" minlength="10" maxlength="10")#contacto                   
+                    input(type="text" value=recepcion.Paciente.contacto placeholder="Ingrese el número de celular" name="contacto" minlength="10" maxlength="10")#contacto                   
                 
                 .grupo-formulario 
                     label(for="Contacto_emergencia") Contacto de Emergencia
-                    if recepciones.Paciente.Contacto_Emergencia && recepciones.Paciente.Contacto_Emergencia.length > 0
-                        each contacto in recepciones.Paciente.Contacto_Emergencia
+                    if recepcion.Paciente.Contacto_Emergencia && recepcion.Paciente.Contacto_Emergencia.length > 0
+                        each contacto in recepcion.Paciente.Contacto_Emergencia
                             input(type="text" value=contacto.numero placeholder="Ingrese el contacto de emergencia" name="contacto_emergencia" minlength="10" maxlength="10" class="input-contacto-extra" style="margin-bottom:5px")
                     input(type="text" placeholder="Ingrese el contacto de emergencia" name="contacto_emergencia" minlength="10" maxlength="10" style="margin-bottom:5px" id="contacto_emergencia")
                     button(type="button" class="boton-agregar" onclick="agregarContactoEmergencia()") Agregar
@@ -65,15 +65,15 @@ block content
                 
                 .grupo-formulario 
                     label(for="direccion") Dirección
-                    input(type="text" value=recepciones.Paciente.direccion placeholder="Ingrese la dirección" name="direccion" minlength="3" maxlength="30"  required)#direccion                    
+                    input(type="text" value=recepcion.Paciente.direccion placeholder="Ingrese la dirección" name="direccion" minlength="3" maxlength="30"  required)#direccion                    
 
                 .grupo-formulario 
                     label(for="provincia") Provincia
-                    input(type="text" value=recepciones.Paciente.provincia placeholder="Ingrese la provincia" name="provincia"  minlength="3" maxlength="30"  required)#direccion
+                    input(type="text" value=recepcion.Paciente.provincia placeholder="Ingrese la provincia" name="provincia"  minlength="3" maxlength="30"  required)#direccion
 
                 .grupo-formulario 
                     label(for="localidad") Localidad
-                        input(type="text" value=recepciones.Paciente.localidad placeholder="Ingrese la localidad" name="localidad"  minlength="3" maxlength="30"  required)#direccion
+                        input(type="text" value=recepcion.Paciente.localidad placeholder="Ingrese la localidad" name="localidad"  minlength="3" maxlength="30"  required)#direccion
 
                 .grupo-formulario
 
@@ -87,32 +87,32 @@ block content
                     select#seguro(name="seguro" )
                         option(value="") Seleccione...
                         each mutual in mutuales
-                            if recepciones.Paciente.Mutual_Paciente && recepciones.Paciente.Mutual_Paciente.Mutual && mutual.nombre == recepciones.Paciente.Mutual_Paciente.Mutual.nombre
+                            if recepcion.Paciente.Mutual_Paciente && recepcion.Paciente.Mutual_Paciente.Mutual && mutual.nombre == recepcion.Paciente.Mutual_Paciente.Mutual.nombre
                                 option(value=mutual.nombre selected) #{mutual.nombre}
                             else
                                 option(value=mutual.nombre) #{mutual.nombre}
                 
                 .grupo-formulario 
                     label(for="codigo_mutual") Credencial Nº
-                    if recepciones.Paciente.Mutual_Paciente
-                        input(type="text" value=recepciones.Paciente.Mutual_Paciente.codigo_mutual placeholder="Ingrese el codigo de la credencial" name="codigo_mutual" minlength="5" maxlength="5")#codigo_mutual
+                    if recepcion.Paciente.Mutual_Paciente
+                        input(type="text" value=recepcion.Paciente.Mutual_Paciente.codigo_mutual placeholder="Ingrese el codigo de la credencial" name="codigo_mutual" minlength="5" maxlength="5")#codigo_mutual
                     else
                         input(type="text" placeholder="Ingrese el codigo de la credencial" name="codigo_mutual" minlength="5" maxlength="5")#codigo_mutual
                         
                 .grupo-formulario   
                     label(for="tipo_cobertura") Tipo de Cobertura 
-                    if recepciones.Paciente.Mutual_Paciente
+                    if recepcion.Paciente.Mutual_Paciente
                         select#tipo_cobertura(name="tipo_cobertura")
                             option(value="") Seleccione...
-                            if recepciones.Paciente.Mutual_Paciente.tipo_cobertura == 'Basico'
+                            if recepcion.Paciente.Mutual_Paciente.tipo_cobertura == 'Basico'
                                 option(value="Basico" selected) Básico
                                 option(value="Completo") Completo
                                 option(value="Premium") Premium
-                            else if recepciones.Paciente.Mutual_Paciente.tipo_cobertura == 'Completo'
+                            else if recepcion.Paciente.Mutual_Paciente.tipo_cobertura == 'Completo'
                                 option(value="Basico") Básico
                                 option(value="Completo" selected) Completo
                                 option(value="Premium") Premium
-                            else if recepciones.Paciente.Mutual_Paciente.tipo_cobertura == 'Premium'
+                            else if recepcion.Paciente.Mutual_Paciente.tipo_cobertura == 'Premium'
                                 option(value="Basico") Básico
                                 option(value="Completo") Completo
                                 option(value="Premium" selected) Premium
@@ -125,8 +125,8 @@ block content
 
                 .grupo-formulario 
                     label(for="activa") Mutual Activa
-                    if recepciones.Paciente.Mutual_Paciente
-                        if recepciones.Paciente.Mutual_Paciente.activa == true
+                    if recepcion.Paciente.Mutual_Paciente
+                        if recepcion.Paciente.Mutual_Paciente.activa == true
                             select#mutual_activa(name="activa")
                                 option(value="") Seleccione...
                                 option(value="Activa" selected) Activa
@@ -149,15 +149,15 @@ block content
                     select#motivo(name="motivo" required)
                         option(value="") Seleccione...
                         each motivo in motivos
-                            if motivo.tipos == recepciones.Motivo.tipos
+                            if motivo.tipos == recepcion.Motivo.tipos
                                 option(value=motivo.tipos selected) #{motivo.tipos}
                             else                               
                                 option(value=motivo.tipos) #{motivo.tipos}
                       
                 .grupo-formulario 
                     label(for="detalle_motivo") Detalle de la Internación
-                    if recepciones.detalle_motivo
-                        textarea(rows="3" placeholder="Ingrese detalles del motivo de la internacion" name="detalle_motivo"  required)= recepciones.detalle_motivo
+                    if recepcion.detalle_motivo
+                        textarea(rows="3" placeholder="Ingrese detalles del motivo de la internacion" name="detalle_motivo"  required)= recepcion.detalle_motivo
                     else
                         textarea(rows="3" placeholder="Ingrese detalles del motivo de la internacion" name="detalle_motivo")#detalle_motivo
                 
@@ -184,7 +184,7 @@ block content
                     mostrarError('El número de celular es incorrecto');
                     return;
                 }
-                // Crear nuevo input readonly después del input principal
+                // Crear nuevo input después del input principal
                 var nuevoInput = document.createElement('input');
                 nuevoInput.type = 'text';
                 nuevoInput.name = 'contacto_emergencia';
@@ -192,7 +192,7 @@ block content
                 nuevoInput.readOnly = true;
                 nuevoInput.className = 'input-contacto-extra';
                 nuevoInput.style.marginBottom = '5px';
-                input.parentNode.insertBefore(nuevoInput, input); // Insertar antes del input editable
+                input.parentNode.insertBefore(nuevoInput, input); 
 
                 // Limpiar el input original
                 input.value = '';
