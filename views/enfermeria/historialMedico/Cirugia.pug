@@ -1,16 +1,74 @@
 extends ../../layout
 
 block content 
-    .pestanas 
-        .pestana 1. Pacientes Internados
-        .pestana 2. Registro
-        .pestana.activa3 3. Historial Médico
+    .pestanas
+        .pestana.activa4  Paciente Internado: #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}
+    .pestanas3 
+        a.pestana.activa5(href=`/enfermeria/registro/${recepcion.id}`)  Registro
+        a.pestana.activa5(href=`/enfermeria/historialMedico/alergia/${recepcion.id}`)  Historial Medico
+        a.pestana.activa5(href=`/enfermeria/signosVitales/${recepcion.id}`)  Signos Vitales
+        a.pestana.activa5(href=`/enfermeria/sintomas/${recepcion.id}`)  Sintomas / Tratamiento
     .pestanas2
-        a(href=`/enfermeria/historialMedico/Alergia/${recepcion.id}`).pestana-secundaria Alergias
-        a(href=`/enfermeria/historialMedico/Enfermedad/${recepcion.id}`).pestana-secundaria Enfermedades Previas
-        a(href=`/enfermeria/historialMedico/Medicamentos/${recepcion.id}`).pestana-secundaria Medicamentos
-        a(href=`/enfermeria/historialMedico/Cirugia/${recepcion.id}`).pestana-secundaria.activa Cirugias Previas
-        a(href=`/enfermeria/historialMedico/Antecedentes/${recepcion.id}`).pestana-secundaria Antecedentes Familiares
+        a(href=`/enfermeria/historialMedico/alergia/${recepcion.id}`).pestana-secundaria Alergias
+        a(href=`/enfermeria/historialMedico/antecedentes/${recepcion.id}`).pestana-secundaria Antecedentes Familiares
+        a(href=`/enfermeria/historialMedico/enfermedad/${recepcion.id}`).pestana-secundaria Enfermedades Previas
+        a(href=`/enfermeria/historialMedico/cirugia/${recepcion.id}`).pestana-secundaria.activa Cirugias Previas
+        a(href=`/enfermeria/historialMedico/medicamentos/${recepcion.id}`).pestana-secundaria Medicamentos
     .contenido-pestana#historial-medico
-        h2 Historial Médico del Paciente
-        p#texto Carga los datos sobre distintas las alergias que posea el paciente.
+        h2 Historial Médico del Paciente || Cirugias Previas
+        p#texto Carga los datos sobre distintas las cirugias que posea el paciente.
+        form#formulario-registro(action=`/enfermeria/historialMedico/cirugia/${recepcion.id}` method="POST")                    
+            .formulario-grid
+
+                .grupo-formulario
+                    label(for="cirugia") Nombre de la Cirugia:
+                    input(type="text" id="nombre_cirugia"  placeholder="Ingrese el nombre de la cirugia")
+                
+                .grupo-formulario
+                    label(for="fecha") Fecha de la Cirugia:
+                    input(type="date"  id="fecha_cirugia"  placeholder="Ingrese la fecha de la cirugia")
+
+                .grupo-formulario
+                    label(for="detalle_motivo") Detalle de la Internación
+                    textarea(rows="3" id="detalle_motivo" placeholder="Ingrese detalles del motivo de la cirugia")
+                    button(type="button" class="boton-agregar" onclick="agregarCirugia()") Agregar
+                
+            #cirugias-cargadas
+            if recepcion.Paciente.Historial_Medico && recepcion.Paciente.Historial_Medico.Cirugia_Previa && recepcion.Paciente.Historial_Medico.Cirugia_Previa.length > 0
+                each cirugia in recepcion.Paciente.Historial_Medico.Cirugia_Previa
+                    .bloque-historial
+                        .formulario-grid
+                            .grupo-formulario
+                                label Nombre de la Cirugia:
+                                input(type="text" name="nombre_cirugia" value=cirugia.nombre_cirugia readonly)
+                            .grupo-formulario
+                                label Fecha de la Cirugia:
+                                input(type="date" name="fecha_cirugia" value=cirugia.fecha_cirugia readonly)
+                            .grupo-formulario
+                                label Detalle de la Internación
+                                textarea(rows="3" name="detalle_motivo" readonly)= cirugia.detalle_motivo
+                            .grupo-formulario#quitar
+                                button(type="button" class="boton-quitar" onclick="quitarCirugia(this)") Quitar
+        
+            .botones-accion             
+                .grupo-Formulario 
+                button(type="submit" class="boton boton-primario") Guardar
+
+        form(action="/enfermeria/pacientesInternados" method="GET" style ="margin-top: -48px;")            
+            button(type="submit" class="boton boton-secundario") Atrás
+    if cartel
+        .modal-exito#modalExito
+            .modal-contenido
+                img(src="/img/aceptar.ico" alt="Éxito")
+                if recepcion.Paciente.Historial_Medico.Cirugia_Previa.length > 1
+                    h2 ¡#{recepcion.Paciente.Historial_Medico.Cirugia_Previa.length} Cirugias guardadas con éxito!
+                if recepcion.Paciente.Historial_Medico.Cirugia_Previa.length === 1 
+                    h2 ¡Cirugia guardada con éxito!
+                else 
+                    h2 ¡Paciente sin Cirugias guardado con éxito!
+                p
+                    | Paciente:                    
+                    b #{recepcion.Paciente.nombre}  #{recepcion.Paciente.apellido}
+                button(type="button" class="btn-cerrar-modal") Aceptar
+    script(src="/scriptEnfermeria/historialMedico/scriptCirugia.js")
+            

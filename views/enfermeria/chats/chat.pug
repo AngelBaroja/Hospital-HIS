@@ -1,0 +1,232 @@
+extends ../../layout
+
+block content
+    .chat-container    
+        .chat-sidebar
+            h3 Pacientes Internados
+            ul.lista-pacientes
+                each recepcion in recepciones
+                    if recepcion.estado === 'Internado'
+                        li.paciente-item(data-recepcion-id=recepcion.id onclick=`seleccionarPaciente(${JSON.stringify(recepcion.Paciente)})`)
+                            .div-prioridades2    
+                                .paciente-nombre #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}
+                                .leyenda-prioridad 
+                                    if recepcion.prioridadClase === 'prioridad-sin-cargar'
+                                        .circulo-prioridad.prioridad-sin-cargar
+                                            img(src="/img/signo-de-interrogacion.ico" alt="Sin prioridad" style="width:20px;height:20px;")
+                                    else
+                                        .circulo-prioridad(class=recepcion.prioridadClase) 
+                            .paciente-habitacion Habitación: #{recepcion.Cama.Habitacion.id}
+                            .paciente-motivo Motivo: #{recepcion.Motivo.tipos}                            
+                            .paciente-prioridad(class=recepcion.prioridadClase)
+            h3 Doctores y Enfermeros
+            ul.lista-pacientes
+                each doctor in doctores
+                    if cargo === 'Doctora' || cargo === 'Doctor' 
+                        if usuarioCompleto.id !== doctor.id
+                            li.paciente-item(data-doctor-id=doctor.id onclick=`seleccionarPersonal('doctor', ${JSON.stringify(doctor)})`)
+                                .personal-nombre Doc. #{doctor.nombre} #{doctor.apellido}
+                                .personal-especialidad #{doctor.Especialidad.tipo}
+                    else 
+                        li.paciente-item(data-doctor-id=doctor.id onclick=`seleccionarPersonal('doctor', ${JSON.stringify(doctor)})`)
+                            .personal-nombre Doc. #{doctor.nombre} #{doctor.apellido}
+                            .personal-especialidad #{doctor.Especialidad.tipo}
+                        
+                each enfermero in enfermeros
+                    if cargo === 'Enfermero' || cargo === 'Enfermera' 
+                        if usuarioCompleto.id !== enfermero.id
+                            li.paciente-item(data-enfermero-id=enfermero.id onclick=`seleccionarPersonal('enfermero', ${JSON.stringify(enfermero)})`)
+                                .personal-nombre Enf. #{enfermero.nombre} #{enfermero.apellido}
+                                .personal-especialidad #{enfermero.Especialidad.tipo}
+                    else
+                        li.paciente-item(data-enfermero-id=enfermero.id onclick=`seleccionarPersonal('enfermero', ${JSON.stringify(enfermero)})`)
+                            .personal-nombre Enf. #{enfermero.nombre} #{enfermero.apellido}
+                            .personal-especialidad #{enfermero.Especialidad.tipo} 
+
+            
+        
+        #chat-panel  
+   
+    script#chats-data(type="application/json").
+        !{JSON.stringify(chats)}
+    script#recepciones-data(type="application/json").
+        !{JSON.stringify(recepciones)}         
+    script#usuario-actual(type="application/json").
+        !{JSON.stringify({ id: usuarioCompleto.id, nombre: usuarioCompleto.nombre + ' ' + usuarioCompleto.apellido, tipo: cargo })}   
+    script.
+
+        // Variables globales para el chat
+        const chats = JSON.parse(document.getElementById('chats-data').textContent);
+        const recepciones = JSON.parse(document.getElementById('recepciones-data').textContent);
+        const usuarioActual = JSON.parse(document.getElementById('usuario-actual').textContent);
+        let destinatarioSeleccionado = null;
+        let tipoSeleccionado = null; // 'paciente', 'doctor', 'enfermero'
+        
+        // Función para seleccionar un doctor o enfermero
+        function seleccionarPersonal(tipo, personal) {
+            destinatarioSeleccionado = personal;
+            tipoSeleccionado = tipo;
+            // Determinar si es conversación entre profesionales
+            if (tipoSeleccionado !== 'paciente') {
+                esConversacionPrivada = true;
+            }
+            renderizarChatPanel();
+        }
+
+        // Función para seleccionar un paciente
+        function seleccionarPaciente(paciente) {
+            destinatarioSeleccionado = paciente;
+            tipoSeleccionado = 'paciente';
+            renderizarChatPanel();
+        }
+
+        // Función para seleccionar un doctor o enfermero
+        function seleccionarPersonal(tipo, personal) {
+            destinatarioSeleccionado = personal;
+            tipoSeleccionado = tipo;
+            renderizarChatPanel();
+        }
+
+        // Renderiza los mensajes del chat según el destinatario seleccionado
+        function renderizarMensajes() {
+            const contenedor = document.getElementById('chat-mensajes');
+            if (!contenedor || !destinatarioSeleccionado) return;
+            contenedor.innerHTML = '';
+
+            let mensajesFiltrados = [];
+
+            if (tipoSeleccionado === 'paciente') {
+                // Mensajes sobre el paciente (todos pueden ver)
+                mensajesFiltrados = chats.filter(chat => 
+                    chat.id_paciente === destinatarioSeleccionado.id
+                );
+            } else {
+                // Mensajes entre dos profesionales
+                mensajesFiltrados = chats.filter(chat => {
+                    // Caso 1: Yo envié al destinatario
+                    const yoEnvie = (
+                        chat.id_autor === usuarioActual.id && 
+                        ((tipoSeleccionado === 'doctor' && chat.id_doctor === destinatarioSeleccionado.id) ||
+                        (tipoSeleccionado === 'enfermero' && chat.id_enfermero === destinatarioSeleccionado.id))
+                    );
+                    
+                    // Caso 2: Destinatario me envió a mí
+                    const elEnvio = (
+                        chat.id_autor === destinatarioSeleccionado.id &&
+                        ((usuarioActual.tipo.toLowerCase().includes('doctor') && chat.id_doctor === usuarioActual.id) ||
+                        (usuarioActual.tipo.toLowerCase().includes('enfermer') && chat.id_enfermero === usuarioActual.id))
+                    );
+                    
+                    return yoEnvie || elEnvio;
+                });
+            }
+
+            // Ordenar mensajes
+            mensajesFiltrados.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+            // Renderizar
+            mensajesFiltrados.forEach(mensaje => {
+                const div = document.createElement('div');
+                div.className = mensaje.id_autor === usuarioActual.id ? 'mensaje enviado' : 'mensaje recibido';
+                
+                const hora = mensaje.createdAt ? 
+                    new Date(mensaje.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
+                
+                div.innerHTML = `
+                    <div class="mensaje-contenido">
+                        <span class="mensaje-autor">${mensaje.autor} (${mensaje.cargo})</span>
+                        <span class="mensaje-texto">${mensaje.mensaje}</span>
+                        <span class="mensaje-hora">${hora}</span>
+                    </div>
+                `;
+                contenedor.appendChild(div);
+            });
+
+            contenedor.scrollTop = contenedor.scrollHeight;
+        }       
+
+        function renderizarChatPanel() {
+            const panel = document.getElementById('chat-panel');
+            panel.innerHTML = '';
+            
+            if (!destinatarioSeleccionado) {
+                panel.innerHTML = '<div class="chat-placeholder"><p>Selecciona un paciente o profesional para comenzar a chatear.</p></div>';
+                return;
+            }
+
+            // Estructura completa
+            panel.innerHTML = `
+                <div class="chat-content">
+                    <div class="chat-header">
+                        ${tipoSeleccionado === 'paciente' ? 
+                            `<h3>Chat sobre el Paciente: ${destinatarioSeleccionado.nombre} ${destinatarioSeleccionado.apellido}</h3>` : 
+                            `<h3>Chat con ${tipoSeleccionado === 'doctor' ? 'Dr.' : 'Enf.'} ${destinatarioSeleccionado.nombre} ${destinatarioSeleccionado.apellido}</h3>
+                            <p>${destinatarioSeleccionado.Especialidad?.tipo || ''}</p>`
+                        }
+                    </div>
+                    <div class="messages-container" id="chat-mensajes"></div>
+                    <div class="chat-form-container">
+                        <form class="chat-form" onsubmit="enviarMensaje(event)">
+                            <input type="text" name="mensaje" id="mensaje-input" placeholder="Escribe un mensaje..." autocomplete="off" required>
+                            <button type="submit" class="boton boton-primario">Enviar</button>
+                        </form>
+                    </div>
+                </div>
+            `;
+
+            renderizarMensajes();
+        }
+
+        // Función para enviar mensajes
+        async function enviarMensaje(event) {
+            event.preventDefault();
+            
+            if (!destinatarioSeleccionado) {
+                alert('Por favor, selecciona un destinatario primero');
+                return;
+            }
+
+            const mensajeInput = document.getElementById('mensaje-input');
+            const mensajeTexto = mensajeInput.value.trim();
+            
+            if (!mensajeTexto) return;
+
+            try {
+                let body = {
+                    mensaje: mensajeTexto
+                };
+
+                if (tipoSeleccionado === 'paciente') {
+                    body.id_paciente = destinatarioSeleccionado.id;
+                } else if (tipoSeleccionado === 'doctor') {
+                    body.id_doctor = destinatarioSeleccionado.id;
+                } else if (tipoSeleccionado === 'enfermero') {
+                    body.id_enfermero = destinatarioSeleccionado.id;
+                }
+
+                const response = await fetch('/enfermeria/chats/enviar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                if (response.ok) {
+                    const nuevoMensaje = await response.json();
+                    chats.push(nuevoMensaje);
+                    mensajeInput.value = '';
+                    renderizarMensajes();
+                } else {
+                    throw new Error('Error al enviar el mensaje');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al enviar el mensaje');
+            }
+        }
+
+        // Inicializar el chat al cargar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            renderizarChatPanel();
+        });

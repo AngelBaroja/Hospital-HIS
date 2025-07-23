@@ -20,8 +20,10 @@ const Cirugia_Previa = require('./Cirugia_Previa');
 const Medicamento_Paciente = require('./Medicamento_Paciente');
 const Antecedente_Familiar = require('./Antecedente_Familiar');
 const Alergia = require('./Alergia');
-
-
+const Signos_Vitales = require('./Signos_Vitales');
+const Sintoma = require('./Sintoma');
+const Tratamiento = require('./Tratamiento');
+const Chat = require('./Chat');
 
 module.exports = {
     sequelize,
@@ -45,5 +47,9 @@ module.exports = {
     Cirugia_Previa,
     Medicamento_Paciente,
     Antecedente_Familiar,
-    Alergia 
+    Alergia,
+    Signos_Vitales,
+    Sintoma,
+    Tratamiento,
+    Chat
 }

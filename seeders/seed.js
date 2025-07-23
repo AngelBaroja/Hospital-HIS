@@ -1,5 +1,5 @@
 const Modelos = require('../models/modelosBD');
-const { sequelize, Paciente, Doctor, Enfermero, Recepcionista, Especialidad, Recepcion, Motivo, Turno, Cama, Habitacion, Ala, Mutual, Usuario, Mutual_Paciente, Contacto_Emergencia, Historial_Medico, Alergia, Enfermedad_Previa, Cirugia_Previa, Medicamento_Paciente, Antecedente_Familiar} = Modelos;
+const { sequelize, Paciente, Doctor, Enfermero, Recepcionista, Especialidad, Recepcion, Motivo, Turno, Cama, Habitacion, Ala, Mutual, Usuario, Mutual_Paciente, Contacto_Emergencia, Historial_Medico, Alergia, Enfermedad_Previa, Cirugia_Previa, Medicamento_Paciente, Antecedente_Familiar, Signos_Vitales, Sintoma} = Modelos;
 const bcrypt = require('bcrypt');
 
 async function seed() {
@@ -225,7 +225,7 @@ const camas = await Cama.bulkCreate([
     { numero: 1, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: false, id_habitacion: 18 },
     { numero: 1, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: false, id_habitacion: 19 },
     { numero: 1, tipo: 'Normal', estado: 'Libre', electrica: false, oxigeno: false, id_habitacion: 20 },
-    { numero: 1, tipo: 'UCI', estado: 'Libre', electrica: true, oxigeno: true, id_habitacion: 20 }
+    { numero: 2, tipo: 'UCI', estado: 'Libre', electrica: true, oxigeno: true, id_habitacion: 20 }
 ]);
 console.log('Camas creadas:', camas.length);
 
@@ -294,8 +294,10 @@ console.log('Especialidades creadas:', especialidades.length);
 
 // Hashear contraseñas
     const saltRounds = 10;
-    const passwordDoctor = await bcrypt.hash('doctor1', saltRounds);
-    const passwordEnfermero = await bcrypt.hash('enfermero1', saltRounds);
+    const passwordDoctor = await bcrypt.hash('d', saltRounds);
+    const passwordEnfermero1 = await bcrypt.hash('e', saltRounds);
+    const passwordEnfermero2 = await bcrypt.hash('e', saltRounds);
+    const passwordEnfermero3 = await bcrypt.hash('e', saltRounds);
     const passwordRecepcion = await bcrypt.hash('recepcion1', saltRounds);
 
   // Crear usuarios
@@ -306,7 +308,15 @@ console.log('Especialidades creadas:', especialidades.length);
     },
     {
       usuario: 'Enf.Perez',
-      contraseña: passwordEnfermero   
+      contraseña: passwordEnfermero1  
+    },
+    {
+      usuario: 'Enf.Perez1',
+      contraseña: passwordEnfermero2  
+    },
+    {
+      usuario: 'Enf.Perez2',
+      contraseña: passwordEnfermero3  
     },
     {
       usuario: 'Rec.Angel',
@@ -348,7 +358,33 @@ console.log('Especialidades creadas:', especialidades.length);
       activo: true,
       id_usuario: 2,
       id_especialidad: 16
-    }
+    },
+    {
+      nombre: 'Blanca',
+      apellido: 'Sosa',    
+      dni: '18095087',
+      genero: 'Femenino',
+      direccion: 'Belgrano 1410',
+      telefono: '2664522325',
+      provincia: 'San Luis',
+      localidad: 'Villa Mercedes',
+      activo: true,
+      id_usuario: 3,
+      id_especialidad: 17
+    },
+    {
+      nombre: 'Jonathan',
+      apellido: 'Sombra',    
+      dni: '34567890',
+      genero: 'Masculino',
+      direccion: '3 de Febrero',
+      telefono: '2664522325',
+      provincia: 'San Luis',
+      localidad: 'Villa Mercedes',
+      activo: true,
+      id_usuario: 4,
+      id_especialidad: 15
+    },
   ]);
   console.log('Enfermero creados:', enfermero.length);
 
@@ -364,7 +400,7 @@ console.log('Especialidades creadas:', especialidades.length);
       provincia: 'San Luis',
       localidad: 'Villa Mercedes',
       activo: true,
-      id_usuario: 3,
+      id_usuario: 5,
     }
   ]);
   console.log('Recepcionista creados:', recepcionista.length);
@@ -530,12 +566,67 @@ console.log('Especialidades creadas:', especialidades.length);
     },
     {
       enfermedad_familiar: 'Enfermedad cardíaca',
-      parentesco: 'Tío',
+      parentesco: 'Tio',
       id_historial_medico: 3
     }
   ]);
   console.log('Antecedentes familiares creados:', antecedentesFamiliares.length);
 
+  //Signos Vitales
+const signosVitales = await Signos_Vitales.bulkCreate([
+  {
+    presion_arterial: 120,
+    frecuencia_cardiaca: 75,
+    frecuencia_respiratoria: 16,
+    temperatura_corporal: 36,
+    tonalidad_piel: "Rosada",
+    detalle_piel: "Sin lesiones visibles",
+    estimulo: "Alerta (responde normalmente)",
+    id_historial_medico: 1
+  },
+  {
+    presion_arterial: 135,
+    frecuencia_cardiaca: 82,
+    frecuencia_respiratoria: 18,
+    temperatura_corporal: 37,
+    tonalidad_piel: "Pálida",
+    detalle_piel: "Leve palidez en extremidades",
+    estimulo: "Responde a estímulos verbales",
+    id_historial_medico: 2
+  },
+  {
+    presion_arterial: 110,
+    frecuencia_cardiaca: 68,
+    frecuencia_respiratoria: 15,
+    temperatura_corporal: 36,
+    tonalidad_piel: "Morena clara",
+    detalle_piel: "Sin alteraciones",
+    estimulo: "Alerta (responde normalmente)",
+    id_historial_medico: 3
+  }
+]);
+console.log('Signos vitales creados:', signosVitales.length);
+
+
+// Sintoma
+const sintomas = await Sintoma.bulkCreate([
+  {
+    sintomas: "Dolor de cabeza, visión borrosa, debilidad en un lado del cuerpo",
+    prioridad: "Baja",
+    id_historial_medico: 1
+  },
+  {
+    sintomas: "Dolor agudo en el pecho, dificultad para respirar, sudoración",
+    prioridad: "Media",
+    id_historial_medico: 2
+  },
+  {
+    sintomas: "Mareos, desmayos, debilidad general",
+    prioridad: "Alta",
+    id_historial_medico: 3
+  }
+]);
+console.log('Síntomas creados:', sintomas.length);
 process.exit(); 
 }
 

@@ -1,0 +1,165 @@
+extends ../layout
+
+block content   
+    .pestanas
+        .pestana.activa4  Paciente Internado: #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}
+    .pestanas3
+        a.pestana.activa5(href=`/enfermeria/registro/${recepcion.id}`)  Registro
+        a.pestana.activa5(href=`/enfermeria/historialMedico/alergia/${recepcion.id}`)  Historial Medico
+        a.pestana.activa5(href=`/enfermeria/signosVitales/${recepcion.id}`)  Signos Vitales
+        a.pestana.activa5(href=`/enfermeria/sintomas/${recepcion.id}`)  Sintomas / Tratamiento
+    .contenido-pestana#recepcion        
+        .div-cabecera-signos
+            .cabecera-izquierda
+                h2 Signos Vitales
+                p#texto Registre los signos vitales captados al paciente.
+            .cabecera-derecha
+                a.boton-verde(href=`/enfermeria/signosVitales/historial/${recepcion.id}`) Historial
+        form#formulario-registro(action=`/enfermeria/signosVitales/${recepcion.id}`, method='POST')
+            input(type="hidden" name="recepcionId" value=recepcion.id)
+            .formulario-grid                
+                .grupo-formulario 
+                    label(for='presion_arterial') Presión Arterial (mmHg):
+                    input(type="text" name="presion_arterial" id="presion_arterial" placeholder="Ingrese la presión arterial")
+                .grupo-formulario 
+                    label(for='frecuencia_cardiaca') Frecuencia Cardíaca (latidos por minuto):
+                    input(type="text" name="frecuencia_cardiaca" id="frecuencia_cardiaca" placeholder="Ingrese la frecuencia cardíaca")
+                .grupo-formulario 
+                    label(for='frecuencia_respiratoria') Frecuencia Respiratoria (respiracion por minuto):
+                    input(type="text" name="frecuencia_respiratoria" id="frecuencia_respiratoria" placeholder="Ingrese la frecuencia respiratoria")
+                .grupo-formulario 
+                    label(for='temperatura_corporal') Temperatura Corporal (°C):
+                    input(type="text" name="temperatura_corporal" id="temperatura_corporal" placeholder="Ingrese la frecuencia respiratoria")
+                .grupo-formulario                   
+                    label(for='piel') Tonalidad de Piel:
+                    select(for="piel" name="tonalidad_piel" id="piel" class="tonalidad-select")
+                        option(value="") Seleccione...
+                        option(value="Normal" style="background-color: white;") Normal
+                        option(value="Pálida" style="background-color: #f5f5dc;") Pálida
+                        option(value="Rosada" style="background-color: #ffdbac;") Rosada
+                        option(value="Rojiza" style="background-color: #ff9999;") Rojiza
+                        option(value="Cianótica (azulada)" style="background-color: #99ccff;") Cianótica (azulada)
+                        option(value="Amarillenta" style="background-color: #ffff99;") Amarillenta
+                        option(value="Morena clara" style="background-color: #e0ac69;") Morena clara
+                        option(value="Morena Oscura" style="color: white;background-color: #8d5524;") Morena Oscura
+                        option(value="Otra tonalidad" style="background-color: #cccccc;") Otra tonalidad                       
+                .grupo-formulario 
+                    label(for='detalle_piel') Describa la tonalidad de Piel:
+                    textarea(rows="3" name="detalle_piel" id="detalle_piel" placeholder="Ingrese el detalle de la tonalidad de la piel") 
+                .grupo-formulario                   
+                    label(for='estimulo') Respuesta a Estimulo:
+                    select(for="estimulo" name="estimulo" id="estimulo" )
+                        option(value="") Seleccione...
+                        option(value="Alerta (responde normalmente)") Alerta (responde normalmente)
+                        option(value="Responde a estímulos verbales") Responde a estímulos verbales
+                        option(value="Respuesta confusa/desorientada") Respuesta confusa/desorientada
+                        option(value="Respuesta verbal incoherente") Respuesta verbal incoherente
+                        option(value="Responde solo al dolor") Responde solo al dolor
+                        option(value="No responde a estímulos") No responde a estímulos
+
+            .botones-accion 
+                .grupo-formulario
+                button(type="submit" class="boton boton-primario") Guardar
+        form(action="/enfermeria/pacientesInternados" method="GET" style ="margin-top: -48px;")            
+            button(type="submit" class="boton boton-secundario") Atrás    
+    if cartel
+        .modal-exito#modalExito
+            .modal-contenido
+                img(src="/img/aceptar.ico" alt="Éxito")
+                h2 ¡Signos Vitales guardados con éxito!
+                p
+                    | Paciente:                    
+                    b #{recepcion.Paciente.nombre}  #{recepcion.Paciente.apellido}
+                button(type="button" class="btn-cerrar-modal") Aceptar
+    script.
+        document.getElementById('formulario-registro').addEventListener('submit', function(e) {
+            // IDs de los inputs a validar
+            const campos = [
+                { id: 'presion_arterial', nombre: 'Presión arterial' },
+                { id: 'frecuencia_cardiaca', nombre: 'Frecuencia cardíaca' },
+                { id: 'frecuencia_respiratoria', nombre: 'Frecuencia respiratoria' },
+                { id: 'temperatura_corporal', nombre: 'Temperatura corporal' }
+            ];
+            let valido = true;
+
+            // Elimina mensajes previos
+            campos.forEach(campo => {
+                const input = document.getElementById(campo.id);
+                const error = document.getElementById('error-' + campo.id);
+                if (error) error.remove();
+                if (input) input.classList.remove('input-error');
+            });
+
+            // Validación de los campos numéricos
+            campos.forEach(campo => {
+                const input = document.getElementById(campo.id);
+                if (input) {
+                    if (input.value.trim() === '' || isNaN(input.value)) {
+                        valido = false;
+                        input.classList.add('input-error');
+                        const mensaje = document.createElement('span');
+                        mensaje.id = 'error-' + campo.id;
+                        mensaje.style.color = 'red';
+                        mensaje.style.fontSize = '0.95em';
+                        mensaje.textContent = `Debe ingresar un número en ${campo.nombre}.`;
+                        input.parentNode.appendChild(mensaje);
+                    }
+                }
+            });
+
+            // Validación de select tonalidad de piel
+            const piel = document.getElementById('piel');
+            const errorPiel = document.getElementById('error-piel');
+            if (errorPiel) errorPiel.remove();
+            if (piel && !piel.value) {
+                valido = false;
+                piel.classList.add('input-error');
+                const mensaje = document.createElement('span');
+                mensaje.id = 'error-piel';
+                mensaje.style.color = 'red';
+                mensaje.style.fontSize = '0.95em';
+                mensaje.textContent = 'Debe seleccionar una tonalidad de piel.';
+                piel.parentNode.appendChild(mensaje);
+            } else if (piel) {
+                piel.classList.remove('input-error');
+            }
+
+            // Validación de select estimulo
+            const estimulo = document.getElementById('estimulo');
+            const errorEstimulo = document.getElementById('error-estimulo');
+            if (errorEstimulo) errorEstimulo.remove();
+            if (estimulo && !estimulo.value) {
+                valido = false;
+                estimulo.classList.add('input-error');
+                const mensaje = document.createElement('span');
+                mensaje.id = 'error-estimulo';
+                mensaje.style.color = 'red';
+                mensaje.style.fontSize = '0.95em';
+                mensaje.textContent = 'Debe seleccionar una respuesta a estímulo.';
+                estimulo.parentNode.appendChild(mensaje);
+            } else if (estimulo) {
+                estimulo.classList.remove('input-error');
+            }
+
+            if (!valido) {
+                e.preventDefault();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('modalExito');
+            if (modal) {
+                modal.classList.add('visible');
+                
+                document.querySelector('.btn-cerrar-modal').addEventListener('click', () => {
+                    modal.style.display = 'none';
+                });
+                
+                // Cerrar al hacer clic fuera del contenido
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            }
+        });

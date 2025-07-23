@@ -1,83 +1,75 @@
 extends ../../layout
 
-block content 
-    .pestanas 
-        .pestana 1. Pacientes Internados
-        .pestana 2. Registro
-        .pestana.activa3 3. Historial Médico
+block content
+    .pestanas
+        .pestana.activa4  Paciente Internado: #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}
+    .pestanas3
+        a.pestana.activa5(href=`/enfermeria/registro/${recepcion.id}`)  Registro
+        a.pestana.activa5(href=`/enfermeria/historialMedico/alergia/${recepcion.id}`)  Historial Medico
+        a.pestana.activa5(href=`/enfermeria/signosVitales/${recepcion.id}`)  Signos Vitales
+        a.pestana.activa5(href=`/enfermeria/sintomas/${recepcion.id}`)  Sintomas / Tratamiento
     .pestanas2
-        a(href=`/enfermeria/historialMedico/Alergia/${recepcion.id}`).pestana-secundaria.activa Alergias
-        a(href=`/enfermeria/historialMedico/Enfermedad/${recepcion.id}`).pestana-secundaria Enfermedades Previas
-        a(href=`/enfermeria/historialMedico/Medicamentos/${recepcion.id}`).pestana-secundaria Medicamentos
-        a(href=`/enfermeria/historialMedico/Cirugia/${recepcion.id}`).pestana-secundaria Cirugias Previas
-        a(href=`/enfermeria/historialMedico/Antecedentes/${recepcion.id}`).pestana-secundaria Antecedentes Familiares
+        a(href=`/enfermeria/historialMedico/alergia/${recepcion.id}`).pestana-secundaria.activa Alergias
+        a(href=`/enfermeria/historialMedico/antecedentes/${recepcion.id}`).pestana-secundaria Antecedentes Familiares
+        a(href=`/enfermeria/historialMedico/enfermedad/${recepcion.id}`).pestana-secundaria Enfermedades Previas
+        a(href=`/enfermeria/historialMedico/cirugia/${recepcion.id}`).pestana-secundaria Cirugias Previas
+        a(href=`/enfermeria/historialMedico/medicamentos/${recepcion.id}`).pestana-secundaria Medicamentos
+
     .contenido-pestana#historial-medico
-        h2 Historial Médico del Paciente
+        h2 Historial Médico del Paciente || Alergias
         p#texto Carga los datos sobre distintas las alergias que posea el paciente.
-        form#formulario-registro(action="/enfermeria/historialMedico/Alergia" method="POST")            
+        form#formulario-registro(action=`/enfermeria/historialMedico/alergia/${recepcion.id}` method="POST")    
             .formulario-grid
-                if recepcion.Paciente.Historial_Medico && recepcion.Paciente.Historial_Medico.Alergia && recepcion.Paciente.Historial_Medico.Alergia.length > 0
+                .grupo-formulario
+                    label(for="alergia-nueva") Alergia:
+                    input(type="text" id="alergia-nueva" placeholder="Ingrese sustancia alergica")
+                .grupo-formulario
+                    label(for="reaccion-nueva") Reacción:
+                    input(type="text" id="reaccion-nueva" placeholder="Ingrese reacción alérgica")
+                .grupo-formulario
+                    label(for="severidad-nueva") Severidad:
+                    select(id="severidad-nueva")
+                        option(value="") Seleccione...
+                        option(value="Leve") Leve
+                        option(value="Moderada") Moderada
+                        option(value="Severa") Severa
+                    button(type="button" class="boton-agregar" onclick="agregarAlergia()") Agregar
 
-                    .grupo-formulario
-                        label(for="alergia") Alergia:
-                        input(type="text" id="alergia" name="sustancia" placeholder="Ingrese sustancia alergica")
+            #alergias-cargadas
+            if recepcion.Paciente.Historial_Medico && recepcion.Paciente.Historial_Medico.Alergia && recepcion.Paciente.Historial_Medico.Alergia.length > 0
+                each alergia in recepcion.Paciente.Historial_Medico.Alergia
+                    .bloque-historial                        
+                        .formulario-grid
+                            .grupo-formulario
+                                label Alergia:
+                                input(type="text" value=alergia.sustancia name="sustancia" readonly)
+                            .grupo-formulario
+                                label Reacción:
+                                input(type="text" value=alergia.reaccion name="reaccion" readonly)
+                            .grupo-formulario
+                                label Severidad:
+                                input(type="text" value=alergia.severidad name="severidad" readonly)
+                            .grupo-formulario#quitar
+                                button(type="button" class="boton-quitar" onclick="quitarAlergia(this)") Quitar
 
-                    .grupo-Formulario
-                        label(for="reaccion") Reacción:   
-                        input(type="text" id="reaccion" name="reaccion" placeholder="Ingrese reacción alérgica")
-
-                    .grupo-Formulario
-                        label(for="severidad") Severidad:      
-                        select(id="severidad" name="severidad")
-                            option(value="") Seleccione... 
-                            option(value="Leve") Leve
-                            option(value="Moderada") Moderada
-                            option(value="Severa") Severa 
-
-                    .grupo-Formulario
-
-                    each alergia in recepcion.Paciente.Historial_Medico.Alergia
-                        hr
-                        hr
-                        .grupo-formulario
-                            label(for="alergia") Alergia:                    
-                            input(type="text" id="alergia" value=alergia.sustancia name="sustancia" placeholder="Ingrese sustancia alergica")
-
-                        .grupo-formulario
-                            label(for="reaccion") Reacción:                    
-                            input(type="text" id="reaccion" value=alergia.reaccion name="reaccion" placeholder="Ingrese reacción alérgica")
-
-                        .grupo-formulario
-                            label(for="severidad") Severidad:                    
-                            select(id="severidad" name="severidad")
-                                option(value="") Seleccione...
-                                if alergia.severidad === 'Leve'
-                                    option(value="Leve" selected) Leve
-                                    option(value="Moderada" ) Moderada
-                                    option(value="Severa" ) Severa
-                                else if alergia.severidad === 'Moderada'
-                                    option(value="Leve" ) Leve
-                                    option(value="Moderada" selected) Moderada
-                                    option(value="Severa" ) Severa
-                                else if alergia.severidad === 'Severa'
-                                    option(value="Leve" ) Leve
-                                    option(value="Moderada" ) Moderada
-                                    option(value="Severa" selected) Severa
-                        .grupo-Formulario
-                else 
-
-                    .grupo-formulario
-                        label(for="alergia") Alergia:
-                        input(type="text" id="alergia" name="sustancia" placeholder="Ingrese sustancia alergica")
-
-                    .grupo-Formulario
-                        label(for="reaccion") Reacción:   
-                        input(type="text" id="reaccion" name="reaccion" placeholder="Ingrese reacción alérgica")
-
-                    .grupo-Formulario
-                        label(for="severidad") Severidad:      
-                        select(id="severidad" name="severidad")
-                            option(value="") Seleccione... 
-                            option(value="Leve") Leve
-                            option(value="Moderada") Moderada
-                            option(value="Severa") Severa 
+            .botones-accion 
+                .grupo-formulario
+                button(type="submit" class="boton boton-primario") Guardar
+        form(action="/enfermeria/pacientesInternados" method="GET" style ="margin-top: -48px;")            
+            button(type="submit" class="boton boton-secundario") Atrás    
+    if cartel
+        .modal-exito#modalExito
+            .modal-contenido
+                img(src="/img/aceptar.ico" alt="Éxito")
+                if recepcion.Paciente.Historial_Medico.Alergia.length > 1
+                    h2 ¡#{recepcion.Paciente.Historial_Medico.Alergia.length} Alergias guardadas con éxito!
+                if recepcion.Paciente.Historial_Medico.Alergia.length === 1
+                    h2 ¡Alergia guardada con éxito!
+                else
+                    h2 ¡Paciente sin Alergias guardado con éxito!
+                p
+                    | Paciente:                    
+                    b #{recepcion.Paciente.nombre}  #{recepcion.Paciente.apellido}
+                button(type="button" class="btn-cerrar-modal") Aceptar
+    script(src="/scriptEnfermeria/historialMedico/scriptAlergia.js")
+            

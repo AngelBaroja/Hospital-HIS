@@ -1,16 +1,75 @@
 extends ../../layout
 
 block content 
-    .pestanas 
-        .pestana 1. Pacientes Internados
-        .pestana 2. Registro
-        .pestana.activa3 3. Historial Médico
+    .pestanas
+        .pestana.activa4  Paciente Internado: #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}
+    .pestanas3 
+        a.pestana.activa5(href=`/enfermeria/registro/${recepcion.id}`)  Registro
+        a.pestana.activa5(href=`/enfermeria/historialMedico/alergia/${recepcion.id}`)  Historial Medico
+        a.pestana.activa5(href=`/enfermeria/signosVitales/${recepcion.id}`)  Signos Vitales
+        a.pestana.activa5(href=`/enfermeria/sintomas/${recepcion.id}`)  Sintomas / Tratamiento
     .pestanas2
-        a(href=`/enfermeria/historialMedico/Alergia/${recepcion.id}`).pestana-secundaria Alergias
-        a(href=`/enfermeria/historialMedico/Enfermedad/${recepcion.id}`).pestana-secundaria Enfermedades Previas
-        a(href=`/enfermeria/historialMedico/Medicamentos/${recepcion.id}`).pestana-secundaria.activa Medicamentos
-        a(href=`/enfermeria/historialMedico/Cirugia/${recepcion.id}`).pestana-secundaria Cirugias Previas
-        a(href=`/enfermeria/historialMedico/Antecedentes/${recepcion.id}`).pestana-secundaria Antecedentes Familiares
+        a(href=`/enfermeria/historialMedico/alergia/${recepcion.id}`).pestana-secundaria Alergias
+        a(href=`/enfermeria/historialMedico/antecedentes/${recepcion.id}`).pestana-secundaria Antecedentes Familiares
+        a(href=`/enfermeria/historialMedico/enfermedad/${recepcion.id}`).pestana-secundaria Enfermedades Previas
+        a(href=`/enfermeria/historialMedico/cirugia/${recepcion.id}`).pestana-secundaria Cirugias Previas
+        a(href=`/enfermeria/historialMedico/medicamentos/${recepcion.id}`).pestana-secundaria.activa Medicamentos
+
     .contenido-pestana#historial-medico
-        h2 Historial Médico del Paciente
-        p#texto Carga los datos sobre distintas las alergias que posea el paciente.
+        h2 Historial Médico del Paciente || Medicamentos 
+        p#texto Carga los datos sobre distintos medicamentos que consuma el paciente.
+
+        form#formulario-registro(action=`/enfermeria/historialMedico/medicamentos/${recepcion.id}` method="POST")                    
+            .formulario-grid
+                .grupo-formulario
+                    label(for="nombre_medicamento") Medicamento:
+                    input(type="text" id="nombre_medicamento"  placeholder="Ingrese el nombre del Medicamento")
+
+                .grupo-formulario
+                    label(for="dosis") Dosis: (Mg)
+                    input(type="text" id="dosis" placeholder="Ingrese la cantidad de miligramos")
+
+                .grupo-formulario
+                    label(for="frecuencia") Frecuencia de Consumo:
+                    input(type="text" id="frecuencia" placeholder="Ingrese la frecuencia de consumo")
+                    button(type="button" class="boton-agregar" onclick="agregarMedicamento()") Agregar
+
+            #medicamentos-cargados
+            if recepcion.Paciente.Historial_Medico && recepcion.Paciente.Historial_Medico.Medicamento_Pacientes && recepcion.Paciente.Historial_Medico.Medicamento_Pacientes.length > 0
+                each medicacion in recepcion.Paciente.Historial_Medico.Medicamento_Pacientes
+                    .bloque-historial
+                        .formulario-grid
+                            .grupo-formulario
+                                label Medicamento:
+                                input(type="text" name="nombre_medicamento" value=medicacion.nombre_medicamento readonly)
+                            .grupo-formulario
+                                label Dosis: (Mg)
+                                input(type="text" name="dosis" value=medicacion.dosis readonly)
+                            .grupo-formulario
+                                label Frecuencia de Consumo:
+                                input(type="text" name="frecuencia" value=medicacion.frecuencia readonly)
+                            .grupo-formulario#quitar
+                                button(type="button" class="boton-quitar" onclick="quitarMedicamento(this)") Quitar
+
+            .botones-accion             
+                .grupo-formulario 
+                button(type="submit" class="boton boton-primario") Guardar
+
+        form(action="/enfermeria/pacientesInternados" method="GET" style ="margin-top: -48px;")            
+            button(type="submit" class="boton boton-secundario") Atrás
+    if cartel
+        .modal-exito#modalExito
+            .modal-contenido
+                img(src="/img/aceptar.ico" alt="Éxito")
+                if recepcion.Paciente.Historial_Medico.Medicamento_Pacientes.length > 1
+                    h2 ¡#{recepcion.Paciente.Historial_Medico.Medicamento_Pacientes.length} Medicamentos guardados con éxito!
+                else if recepcion.Paciente.Historial_Medico.Medicamento_Pacientes.length === 1
+                    h2 ¡Medicamento guardado con éxito!
+                else 
+                    h2 ¡Paciente sin Medicacion guardado con éxito!
+                p
+                    | Paciente:                    
+                    b #{recepcion.Paciente.nombre}  #{recepcion.Paciente.apellido}
+                button(type="button" class="btn-cerrar-modal") Aceptar
+
+    script(src="/scriptEnfermeria/historialMedico/scriptMedicamentos.js")

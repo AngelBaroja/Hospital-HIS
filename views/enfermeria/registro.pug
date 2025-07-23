@@ -1,10 +1,13 @@
 extends ../layout
 
 block content 
-    .pestanas 
-        .pestana 1. Pacientes Internados
-        .pestana.activa2 2. Registro
-        .pestana 3. Historial Médico
+    .pestanas
+        .pestana.activa4  Paciente Internado: #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}
+    .pestanas3
+        a.pestana.activa5(href=`/enfermeria/registro/${recepcion.id}`)  Registro
+        a.pestana.activa5(href=`/enfermeria/historialMedico/alergia/${recepcion.id}`)  Historial Medico
+        a.pestana.activa5(href=`/enfermeria/signosVitales/${recepcion.id}`)  Signos Vitales
+        a.pestana.activa5(href=`/enfermeria/sintomas/${recepcion.id}`)  Sintomas / Tratamiento
     .contenido-pestana#recepcion
         h2 Datos Basicos del Paciente               
         p#texto Información inicial captada en la admisión del paciente.
@@ -73,7 +76,7 @@ block content
 
                 .grupo-formulario 
                     label(for="localidad") Localidad
-                        input(type="text" value=recepcion.Paciente.localidad placeholder="Ingrese la localidad" name="localidad"  minlength="3" maxlength="30"  required)#direccion
+                    input(type="text" value=recepcion.Paciente.localidad placeholder="Ingrese la localidad" name="localidad"  minlength="3" maxlength="30"  required)#direccion
 
                 .grupo-formulario
 
@@ -157,68 +160,24 @@ block content
                 .grupo-formulario 
                     label(for="detalle_motivo") Detalle de la Internación
                     if recepcion.detalle_motivo
-                        textarea(rows="3" placeholder="Ingrese detalles del motivo de la internacion" name="detalle_motivo"  required)= recepcion.detalle_motivo
+                        textarea(rows="3" placeholder="Ingrese detalles del motivo de la internacion" name="detalle_motivo")= recepcion.detalle_motivo
                     else
                         textarea(rows="3" placeholder="Ingrese detalles del motivo de la internacion" name="detalle_motivo")#detalle_motivo
                 
             .botones-accion             
                 span 
-                button(type="submit" class="boton boton-primario") Continuar
+                button(type="submit" class="boton boton-primario") Guardar
         
         form(action="/enfermeria/pacientesInternados" method="GET" style ="margin-top: -48px;")            
             button(type="submit" class="boton boton-secundario") Atrás
-        script.
-            function agregarContactoEmergencia() {
-                var input = document.getElementById('contacto_emergencia');
-                var valor = input.value.trim();
-                var error = document.getElementById('error');
-                if (error) error.remove();
-
-                // Validar vacío
-                if (!valor) {
-                    mostrarError('Primero agregue un número de emergencia');
-                    return;
-                }
-                // Validar 10 dígitos numéricos
-                if (!/^\d{10}$/.test(valor)) {
-                    mostrarError('El número de celular es incorrecto');
-                    return;
-                }
-                // Crear nuevo input después del input principal
-                var nuevoInput = document.createElement('input');
-                nuevoInput.type = 'text';
-                nuevoInput.name = 'contacto_emergencia';
-                nuevoInput.value = valor;
-                nuevoInput.readOnly = true;
-                nuevoInput.className = 'input-contacto-extra';
-                nuevoInput.style.marginBottom = '5px';
-                input.parentNode.insertBefore(nuevoInput, input); 
-
-                // Limpiar el input original
-                input.value = '';
-            }
-
-            function quitarContactoEmergencia() {
-                var error = document.getElementById('error');
-                if (error) error.remove();
-                // Selecciona todos los inputs readonly de contacto extra
-                var contactos = document.querySelectorAll('.input-contacto-extra');
-                if (contactos.length > 0) {
-                    // Elimina solo el último input (el más cercano al input editable)
-                    contactos[contactos.length - 1].remove();
-                } else {
-                    mostrarError('No hay contactos de emergencia para quitar');
-                }
-            }
-
-            function mostrarError(mensaje) {
-                var input = document.getElementById('contacto_emergencia');
-                var error = document.createElement('div');
-                error.id = 'error';
-                error.style.color = 'red';
-                error.style.fontSize = '13px';
-                error.textContent = mensaje;
-                input.parentNode.appendChild(error);
-            }               
-                
-        
+        if cartel
+            .modal-exito#modalExito
+                .modal-contenido
+                    img(src="/img/aceptar.ico" alt="Éxito")
+                    h2 ¡Paciente Actualizado con éxito!
+                    p
+                        | Paciente:                    
+                        b #{recepcion.Paciente.nombre}  #{recepcion.Paciente.apellido}
+                    button(type="button" class="btn-cerrar-modal") Aceptar
+        script(src="/scriptEnfermeria/scriptRegistro.js")
+            

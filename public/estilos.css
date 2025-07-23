@@ -152,6 +152,12 @@ header {
     display: flex;
     background: #e3f2fd;
 }
+.pestanas3 { 
+    border-left: 2px solid black;
+    border-right: 2px solid black;   
+    display: flex;
+    background: #e3f2fd;
+}
 
 .pestana {
     padding: 1rem;    
@@ -195,7 +201,8 @@ header {
 .pestana.activa5:hover {         
     background: rgb(211, 219, 241);
     font-size: 1.15em; 
-    color: #0d47a1;    
+    color: #0d47a1;
+
 }
 .separator {
     display: inline-block;
@@ -208,8 +215,13 @@ header {
 
 #texto{
     margin-bottom: 15px ;
-}   
+}
 
+#textoMedicamentos{
+    font-size: 1.1rem; 
+    color: #0d47a1;
+    font-weight: bold; 
+}   
 
 .contenido-pestana { 
     display: block;
@@ -280,8 +292,69 @@ header {
 }
 
 .grupo-formulario {
-    margin-bottom: 1.5rem;
+    margin-bottom: none;
 }
+
+.bloque-historial {
+    margin-top: 1rem;
+    padding: 1rem;    
+    border: 3px solid #ccc;
+    border-radius: 8px;
+    background-color: #bbdefb;
+}
+
+@keyframes fadeOutDown {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(60px);
+    }
+}
+
+.bloque-historial.saliendo {
+    animation: fadeOutDown 0.7s forwards;
+}
+
+@keyframes fadeInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-40px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.bloque-historial.entrando {
+    animation: fadeInDown 0.7s;
+}
+
+@keyframes fadeOutDown {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+}
+
+#quitar{
+    align-self: flex-end;
+    justify-self: end;    
+}
+
+#quitar2{
+    align-self: flex-end;
+    justify-self: end;
+    margin-top: -30px;
+}
+
 
 label {
     display: block;
@@ -296,7 +369,7 @@ input, select, textarea {
     border: 2px solid #c1c1c1;
     border-radius: 6px;
     font-size: 1rem;
-     cursor: pointer;
+    cursor: pointer;
 }
 
 input:focus, select:focus, textarea:focus {
@@ -304,7 +377,6 @@ input:focus, select:focus, textarea:focus {
     border-color: #1976d2;
     box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
 }
-
 
 /* Estilos para las tarjetas de habitación */
 .grid-habitaciones {
@@ -440,6 +512,118 @@ input:focus, select:focus, textarea:focus {
     font-weight: 500;
 }
 
+.header-paciente {
+    position: relative;
+    min-height: 32px; /* Ajusta según el tamaño del h3 y el círculo */
+    margin-bottom: 0.3rem;
+}
+
+.header-paciente h3 {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    width: max-content;
+    text-align: center;
+    color: #1976d2;
+    font-size: 1.2rem;
+}
+
+.circulo-prioridad {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border: 2.5px solid  #bbdefb;
+    background: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Ejemplo de colores según prioridad */
+.prioridad-alta {
+    background: #e53935;
+    border-color: #b71c1c;
+}
+.prioridad-media {
+    background: #fbc02d;
+    border-color: #f9a825;
+}
+.prioridad-baja {
+    background: #43a047;
+    border-color: #1b5e20;
+}
+
+.circulo-prioridad.prioridad-sin-cargar {
+    background: #fff;   
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 29px;
+    height: 29px;
+}
+
+.div-prioridades {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    margin-bottom: 1.2rem;
+    flex-wrap: wrap; /* Por si la pantalla es chica */
+}
+
+.div-prioridades2 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2.5rem;    
+    flex-wrap: wrap; 
+}
+
+.div-prioridades h3 {
+    margin-right: 1.5rem;
+    font-size: 1.1rem;
+    color: #1976d2;
+    min-width: 160px;
+}
+
+.leyenda-prioridad {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    margin-right: -10px;
+}
+
+.leyenda-prioridad p {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.leyenda-prioridad .circulo-prioridad {
+    position: static !important; /* Quita cualquier posicionamiento absoluto heredado */
+    margin: 0 0.5rem 0 0;        /* Espacio solo a la derecha del círculo */
+    display: inline-block;       /* O block, pero NO flex ni absolute */
+    vertical-align: middle;
+    width: 22px;
+    height: 22px;
+    transform: translateY(1px);
+}
+
+.leyenda-prioridad .circulo-prioridad.prioridad-sin-cargar  {
+    position: static !important;
+    margin: 0 0.5rem 0 0;        
+    display: inline-block;       
+    vertical-align: middle;
+    width: 22px;
+    height: 22px;
+    transform: translateY(1px);
+}
+
 /* Botones */
 .boton {
     padding: 0.8rem 1.5rem;
@@ -462,7 +646,8 @@ input:focus, select:focus, textarea:focus {
 .boton-secundario {
     background: #e0e0e0;
     color: #333;
-    border: 1px solid #c1c1c1a4;        
+    border: 1px solid #c1c1c1a4;
+    text-decoration: none;        
 }
 
 .boton-secundario:hover {
@@ -515,6 +700,23 @@ input:focus, select:focus, textarea:focus {
 .boton-quitar:hover {
     background-color: #d32f2f;
 }
+
+.boton-alertar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #ffa41c;
+  color: #a73737;
+  font-weight: bold;
+}
+
+.boton-alertar:hover {
+  background-color: #ff9900;   
+}
+
+
+
 
 /*Tablas*/
 .tabla-turnos {
@@ -610,7 +812,6 @@ input:focus, select:focus, textarea:focus {
     font-weight: bold;
     font-size: 1.10rem;
     color: #333;
-   
 }
 
 .modal-contenido b { 
@@ -640,4 +841,274 @@ input:focus, select:focus, textarea:focus {
     box-shadow: 0 2px 8px rgba(56, 142, 60, 0.15);
 }
 
+.div-modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
 
+.modal-botones {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+/* Cabecera de signos vitales */
+.div-cabecera-signos {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;    
+    margin-bottom: 1.5rem;
+}
+
+.cabecera-izquierda {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.cabecera-derecha {
+    display: flex;
+    align-items: center;
+    justify-content: center;    
+}
+
+.boton-verde {
+    background-color: #bbdefb;
+    color: #1976d2;    
+    padding: 0.6em 1.5em;
+    border: none;
+    margin-right: 190px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 1.05em;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(67, 160, 71, 0.08);
+    transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+    cursor: pointer;
+    outline: none;
+    display: inline-block;
+    border: 1px solid black;
+}
+
+.boton-verde:hover,
+.boton-verde:focus {
+    background-color: #aacfed;
+    box-shadow: 0 4px 16px rgba(67, 160, 71, 0.18);
+    transform: translateY(-2px) scale(1.04);
+    color: #1976d2;
+    font-weight: bold;
+    border: 1px solid black;
+}
+
+/*Chats*/
+.chat-container {
+    margin-top: 100px;     
+    display: flex;
+    height: calc(100vh - 180px);
+    background: #f7fafd;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
+    overflow: hidden;
+    border: 2px solid #000000;
+}
+
+.chat-sidebar {
+    width: 270px;
+    background: #e3f2fd;
+    padding: 1.2rem 0.7rem;
+    border-right: 2px solid #bbdefb;
+    overflow-y: auto;    
+    border-right: 2px solid black;      
+}
+
+.lista-pacientes {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.paciente-item {
+    padding: 0.7rem 0.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #fff;
+    transition: background 0.2s;
+}
+.paciente-item:hover, .paciente-item.selected {
+    background: #bbdefb;
+}
+
+.paciente-nombre, .personal-nombre {
+    font-weight: bold;
+    color: #1976d2;
+}
+.paciente-habitacion, .paciente-motivo, .personal-especialidad {
+    font-size: 0.92em;
+    color: #444;
+}
+
+/* Estilos para el área principal del chat (parte derecha) */
+#chat-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    height: 100%;
+    overflow: hidden; 
+}
+
+/* Header del chat */
+.chat-header {
+    padding: 15px;
+    background-color: #e3f2fd;
+    color: #1976d2;
+    font-weight: bold;
+    border-bottom: 2px solid #bbdefb;
+    flex-shrink: 0;
+    height: 80px;     
+}
+
+/* Contenedor de mensajes */
+.messages-container {
+    flex: 1;
+    overflow-y: auto;
+    background-color: #f7fafd;
+    padding: 15px;
+    height: calc(100% - 120px); 
+}
+
+
+
+/* Contenedor del chat (header + mensajes + formulario) */
+.chat-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Estilos para los mensajes */
+.mensaje {
+    margin-bottom: 15px;
+    max-width: 70%;
+    padding: 10px 15px;
+    border-radius: 18px;
+    position: relative;
+    word-wrap: break-word;
+}
+
+/* Mensajes enviados (por el usuario actual) */
+.mensaje.enviado {
+    margin-left: auto;
+    background-color: #dcf8c6;
+    border-top-right-radius: 5px;
+}
+
+/* Mensajes recibidos */
+.mensaje.recibido {
+    margin-right: auto;
+    background-color: #ffffff;
+    border-top-left-radius: 5px;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+
+/* Contenido del mensaje */
+.mensaje-contenido {
+    display: flex;
+    flex-direction: column;
+} 
+
+.messages-container::-webkit-scrollbar {
+    width: 8px;
+    background: #e3f2fd;
+}
+.messages-container::-webkit-scrollbar-thumb {
+    background: #1976d2;
+    border-radius: 4px;
+}
+
+/* Autor del mensaje */
+.mensaje-autor {
+    font-weight: bold;
+    font-size: 0.85em;
+    color: #1976d2;
+    margin-bottom: 3px;
+}
+
+/* Texto del mensaje */
+.mensaje-texto {
+    word-wrap: break-word;
+    color: #333;
+}
+
+/* Hora del mensaje */
+.mensaje-hora {
+    font-size: 0.75em;
+    color: #666;
+    text-align: right;
+    margin-top: 3px;
+}
+
+/* Formulario de envío */
+.chat-form {
+    display: flex;
+    padding: 0;
+    background-color: transparent;
+}
+
+.chat-form input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #bbdefb;
+    border-radius: 20px;
+    margin-right: 10px;
+    outline: none;
+}
+
+.chat-form button {
+    padding: 10px 20px;
+    background-color: #1976d2;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.chat-form button:hover {
+    background-color: #1565c0;
+}
+
+.chat-form-container {
+    padding: 10px;
+    background-color: #e3f2fd;
+    border-top: 2px solid #bbdefb;
+    flex-shrink: 0;
+    height: 60px; 
+}
+
+/* Placeholder cuando no hay chat seleccionado */
+.chat-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #666;
+    font-style: italic;
+}
+
+@media (max-height: 600px) {
+    .messages-container {
+        height: calc(100% - 100px);
+    }
+    
+    .chat-header, .chat-form-container {
+        height: 50px;
+    }
+}

@@ -13,11 +13,13 @@ function validarUsuario(req, res, next) {
       // Buscar el empleado asociado al usuario autenticado
       const recepcionista = await Recepcionista.findOne({ where: { id_usuario: user.id } });
       if (recepcionista) {
+        req.session.usuarioCompleto = recepcionista;
         req.session.nombreUsuario = `${recepcionista.nombre} ${recepcionista.apellido}`;            
         req.session.tipoUsuario = 'Recepcionista';
       }
       const doctor = await Doctor.findOne({ where: { id_usuario: user.id } });
       if (doctor) {
+        req.session.usuarioCompleto = doctor;
         req.session.nombreUsuario = `${doctor.nombre} ${doctor.apellido}`;
         if (doctor.genero == "Femenino") {
           req.session.tipoUsuario = 'Doctora'; 
@@ -27,6 +29,7 @@ function validarUsuario(req, res, next) {
       }
       const enfermero = await Enfermero.findOne({ where: { id_usuario: user.id } });
       if (enfermero) {
+        req.session.usuarioCompleto = enfermero;
         req.session.nombreUsuario = `${enfermero.nombre} ${enfermero.apellido}`;
         if (enfermero.genero == "Femenino") {
           req.session.tipoUsuario = 'Enfermera';

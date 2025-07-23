@@ -1,0 +1,145 @@
+extends ../layout
+
+block content   
+    .pestanas
+        .pestana.activa4  Paciente Internado: #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}
+    .pestanas3 
+        a.pestana.activa5(href=`/enfermeria/registro/${recepcion.id}`)  Registro
+        a.pestana.activa5(href=`/enfermeria/historialMedico/alergia/${recepcion.id}`)  Historial Medico
+        a.pestana.activa5(href=`/enfermeria/signosVitales/${recepcion.id}`)  Signos Vitales
+        a.pestana.activa5(href=`/enfermeria/sintomas/${recepcion.id}`)  Sintomas / Tratamiento
+    .contenido-pestana#recepcion
+        .div-cabecera-signos
+            .cabecera-izquierda
+                h2 Sintomas  
+                p#texto Consulte los sintomas del paciente #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido} y determine su prioridad.
+            .cabecera-derecha
+                a.boton-verde(href=`/enfermeria/sintomas/historial/${recepcion.id}`) Historial
+        form(action=`/enfermeria/sintomas/${recepcion.id}`, method='POST')
+            .formulario-grid
+                .grupo-formulario 
+                    label(for='sintomas') Sintomas:
+                    textarea(rows="5" placeholder="Ingrese sintomas del paciente" name="sintomas" required)
+                .grupo-formulario 
+                    label(for='prioridad') Prioridad:
+                    select#prioridad(name='prioridad', required)
+                        option(value='') Seleccione...
+                        option(value='Baja') Baja
+                        option(value='Media') Media
+                        option(value='Alta') Alta
+            .botones-accion#tratamientos
+                button(type="button" class="boton boton-alertar" onclick="abrirModalAlerta()")
+                    span Avisar al Doctor
+                    i.fas.fa-exclamation-triangle 
+
+                 
+                button(type="submit" class="boton boton-primario") Guardar     
+
+    .div-modal#modalAlerta(style="display:none;")
+        form(action=`/enfermeria/alerta/${recepcion.id}`, method='POST')
+            .modal-contenido
+                h2 Alertar la condición del paciente
+                label(for="motivo-alerta") Motivo de la alerta:
+                textarea(rows="3" id="motivo-alerta" name="motivo_alerta" placeholder="Describa el motivo" required)
+                .modal-botones
+                    button(type="button" class="boton boton-secundario" onclick="cerrarModalAlerta()") Cancelar
+                    button(type="submit" class="boton boton-primario" ) Enviar
+    if cartel3
+        .modal-exito#modalExito
+            .modal-contenido
+                img(src="/img/correo-electronico.ico" alt="Éxito")
+                h2 ¡Aviso enviado con éxito!
+                p
+                    | Paciente:                    
+                    b #{recepcion.Paciente.nombre}  #{recepcion.Paciente.apellido}
+                button(type="button" class="btn-cerrar-modal") Aceptar       
+    if cartel
+        .modal-exito#modalExito
+            .modal-contenido
+                img(src="/img/aceptar.ico" alt="Éxito")
+                h2 ¡Sintoma guardado con éxito!
+                p
+                    | Paciente:                    
+                    b #{recepcion.Paciente.nombre}  #{recepcion.Paciente.apellido}
+                button(type="button" class="btn-cerrar-modal") Aceptar
+    .contenido-pestana#recepcion
+        .div-cabecera-signos
+            .cabecera-izquierda
+                h2 Tratamiento
+                h3 Tratamiento para el Dolor
+                p#texto Indique el tipo de estrategia a utilizar para aliviar el dolor.
+            .cabecera-derecha
+                a.boton-verde(href=`/enfermeria/tratamiento/historial/${recepcion.id}`) Historial
+        form#formulario-tratamiento-total(method="POST" action=`/enfermeria/tratamiento/${recepcion.id}`)
+                .formulario-grid
+                    .grupo-formulario
+                        label(for="plan_tratamiento") Plan de tratamiento para el dolor:
+                        select(name="plan_tratamiento" id="plan_tratamiento" required)
+                            option(value="") Seleccione un plan...
+                            option(value="Farmacológico estándar") Farmacológico estándar
+                            option(value="Farmacológico intensivo") Farmacológico intensivo
+                            option(value="No farmacológico: frío/calor") No farmacológico: frío/calor
+                            option(value="No farmacológico: relajación") No farmacológico: técnicas de relajación
+                            option(value="Mixto personalizado") Mixto personalizado
+                            option(value="Evaluación y ajuste diario") Evaluación y ajuste diario
+                            option(value="Otro") Otro (especificar)
+
+                    .grupo-formulario
+                        label(for="detalle_tratamiento") Detalle del plan:
+                        textarea(name="detalle_tratamiento" id="detalle_tratamiento" rows="3" placeholder="Ingrese el detalle del tratamiento")
+
+                h3 Medicación
+                p#texto Indique el tipo de medicación a recetar al paciente.
+
+                .formulario-grid
+                    .grupo-formulario
+                        label(for="nombre_medicamento") Medicamento:
+                        input(type="text" id="nombre_medicamento" name="nuevo_nombre_medicamento" placeholder="Ingrese el nombre del Medicamento")
+
+                    .grupo-formulario
+                        label(for="dosis") Dosis: (Mg)
+                        input(type="text" id="dosis" name="nuevo_dosis" placeholder="Ingrese la cantidad de miligramos")
+
+                    .grupo-formulario
+                        label(for="frecuencia") Frecuencia de Consumo:
+                        input(type="text" id="frecuencia" name="nuevo_frecuencia" placeholder="Ingrese la frecuencia de consumo")
+                        button(type="button" class="boton-agregar" onclick="agregarMedicamento()") Agregar
+
+                #medicamentos-cargados
+                    if recepcion.Paciente.Historial_Medico && recepcion.Paciente.Historial_Medico.Medicamento_Pacientes && recepcion.Paciente.Historial_Medico.Medicamento_Pacientes.length > 0
+                        each medicacion in recepcion.Paciente.Historial_Medico.Medicamento_Pacientes
+                            .bloque-historial
+                                p#textoMedicamentos Medicamento: #{medicacion.nombre_medicamento} / Dosis: #{medicacion.dosis}Mg / Frecuencia: #{medicacion.frecuencia}
+                                input(type="hidden" name="nombre_medicamento[]" value=medicacion.nombre_medicamento)
+                                input(type="hidden" name="dosis[]" value=medicacion.dosis)
+                                input(type="hidden" name="frecuencia[]" value=medicacion.frecuencia)
+                                .grupo-formulario#quitar2
+                                    button(type="button" class="boton-quitar" onclick="quitarMedicamento(this)") Quitar
+
+                .botones-accion
+                    .grupo-formulario
+                    button(type="submit" class="boton boton-primario") Guardar
+
+        form(action="/enfermeria/pacientesInternados" method="GET" style="margin-top: -48px;")
+            button(type="submit" class="boton boton-secundario") Atrás
+
+    if cartel2
+        .modal-exito#modalExito
+            .modal-contenido
+                img(src="/img/aceptar.ico" alt="Éxito")
+                h2 ¡Tratamiento guardado con éxito!                  
+                h3 Tratamiento : #{plan.tratamiento}                
+                if recepcion.Paciente.Historial_Medico.Medicamento_Pacientes.length > 1
+                    h3 #{recepcion.Paciente.Historial_Medico.Medicamento_Pacientes.length} Medicamentos guardados con éxito
+                else if recepcion.Paciente.Historial_Medico.Medicamento_Pacientes.length === 1
+                    h3 Medicamento guardado con éxito
+                else 
+                    h3 Paciente sin Medicacion guardado con éxito
+                p
+                    | Paciente:                    
+                    b #{recepcion.Paciente.nombre}  #{recepcion.Paciente.apellido}
+                button(type="button" class="btn-cerrar-modal") Aceptar
+
+    script(src="/scriptEnfermeria/scriptSintomasTratamientos.js")
+
+    

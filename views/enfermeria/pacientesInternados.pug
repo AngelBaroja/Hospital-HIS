@@ -3,12 +3,25 @@ extends ../layout
 
 block content
     .pestanas
-        .pestana.activa1 1. Pacientes Internados
-        .pestana 2. Registro
-        .pestana 3. Historial Médico
+        .pestana.activa4  Pacientes Internados
     .contenido-pestana#asignacion
         h2 Pacientes Internados
         p#texto Aquí puedes ver la lista de pacientes internados en el hospital, organizados por ala.
+        .div-prioridades
+            h3 Leyenda de Prioridades
+            .leyenda-prioridad
+                .circulo-prioridad.prioridad-baja
+                p Prioridad Baja
+            .leyenda-prioridad
+                .circulo-prioridad.prioridad-media
+                p Prioridad Media
+            .leyenda-prioridad
+                .circulo-prioridad.prioridad-alta
+                p Prioridad Alta
+            .leyenda-prioridad
+                .circulo-prioridad.prioridad-sin-cargar
+                    img(src="/img/signo-de-interrogacion.ico" alt="Sin prioridad" style="width:100%;height:100%;")
+                p Sin prioridad
         br  
         if recepciones
             h2 Ala Norte:
@@ -17,11 +30,19 @@ block content
                         if recepcion.estado === 'Internado'
                             if recepcion.Cama.Habitacion.Ala.sector == "Norte"
                                 .tarjeta-paciente(data-recepcion-id=recepcion.id)
-                                    if recepcion.Paciente.nombre == "Sin Nombre"
-                                        h3 Paciente de Emergencia 
+                                    .header-paciente                                        
+                                        if recepcion.Paciente.nombre == "Sin Nombre"
+                                            h3 Paciente de Emergencia                                             
+                                        else
+                                            h3 #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}
+                                        if recepcion.prioridadClase === 'prioridad-sin-cargar'
+                                            .circulo-prioridad.prioridad-sin-cargar
+                                                img(src="/img/signo-de-interrogacion.ico" alt="Sin prioridad" style="width:100%;height:100%;")
+                                        else
+                                            .circulo-prioridad(class=recepcion.prioridadClase)                                            
+                                    if recepcion.Paciente.nombre == "Sin Nombre"                                        
                                         p -Sin datos cargados-
-                                    else
-                                        h3 #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}
+                                    else                                        
                                         p DNI: #{recepcion.Paciente.dni}
                                     h4 Habitación: #{recepcion.Cama.Habitacion.id}
                                     p Cama: #{recepcion.Cama.numero}
@@ -35,66 +56,79 @@ block content
                     each recepcion in recepciones
                         if recepcion.estado === 'Internado' && recepcion.Cama.Habitacion.Ala.sector == "Este"           
                             .tarjeta-paciente(data-recepcion-id=recepcion.id)
-                                if recepcion.Paciente.nombre == "Sin Nombre"
-                                    h3 Paciente de Emergencia 
-                                    p -Sin datos cargados-
-                                else
-                                    h3 #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}
-                                    p DNI: #{recepcion.Paciente.dni}
-                                p Habitación: #{recepcion.Cama.Habitacion.id}
-                                p Cama: #{recepcion.Cama.numero}
-                                p Motivo: #{recepcion.Motivo.tipos}
-                                if recepcion.detalle_motivo
-                                    p Detalle: #{recepcion.detalle_motivo}
-                                p Fecha de Ingreso: #{recepcion.fecha_entrada_formateada}
+                                    .header-paciente                                        
+                                        if recepcion.Paciente.nombre == "Sin Nombre"
+                                            h3 Paciente de Emergencia                                             
+                                        else
+                                            h3 #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}
+                                        if recepcion.prioridadClase === 'prioridad-sin-cargar'
+                                            .circulo-prioridad.prioridad-sin-cargar
+                                                img(src="/img/signo-de-interrogacion.ico" alt="Sin prioridad" style="width:100%;height:100%;")
+                                        else
+                                            .circulo-prioridad(class=recepcion.prioridadClase)                                            
+                                    if recepcion.Paciente.nombre == "Sin Nombre"                                        
+                                        p -Sin datos cargados-
+                                    else                                        
+                                        p DNI: #{recepcion.Paciente.dni}
+                                    h4 Habitación: #{recepcion.Cama.Habitacion.id}
+                                    p Cama: #{recepcion.Cama.numero}
+                                    p Motivo: #{recepcion.Motivo.tipos}
+                                    if recepcion.detalle_motivo
+                                        p Detalle: #{recepcion.detalle_motivo}
+                                    p Fecha de Ingreso: #{recepcion.fecha_entrada_formateada}
             br 
             h2 Ala Oeste:
                 .grid-ala
                     each recepcion in recepciones
                         if recepcion.estado === 'Internado' && recepcion.Cama.Habitacion.Ala.sector == "Oeste"
                             .tarjeta-paciente(data-recepcion-id=recepcion.id)
-                                if recepcion.Paciente.nombre == "Sin Nombre"
-                                    h3 Paciente de Emergencia 
-                                    p -Sin datos cargados-
-                                else
-                                    h3 #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}
-                                    p DNI: #{recepcion.Paciente.dni}
-                                p Habitación: #{recepcion.Cama.Habitacion.id}
-                                p Cama: #{recepcion.Cama.numero}
-                                p Motivo: #{recepcion.Motivo.tipos}
-                                if recepcion.detalle_motivo
-                                    p Detalle: #{recepcion.detalle_motivo}
-                                p Fecha de Ingreso: #{recepcion.fecha_entrada_formateada}
+                                    .header-paciente                                        
+                                        if recepcion.Paciente.nombre == "Sin Nombre"
+                                            h3 Paciente de Emergencia                                             
+                                        else
+                                            h3 #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}
+                                        if recepcion.prioridadClase === 'prioridad-sin-cargar'
+                                            .circulo-prioridad.prioridad-sin-cargar
+                                                img(src="/img/signo-de-interrogacion.ico" alt="Sin prioridad" style="width:100%;height:100%;")
+                                        else
+                                            .circulo-prioridad(class=recepcion.prioridadClase)                                            
+                                    if recepcion.Paciente.nombre == "Sin Nombre"                                        
+                                        p -Sin datos cargados-
+                                    else                                        
+                                        p DNI: #{recepcion.Paciente.dni}
+                                    h4 Habitación: #{recepcion.Cama.Habitacion.id}
+                                    p Cama: #{recepcion.Cama.numero}
+                                    p Motivo: #{recepcion.Motivo.tipos}
+                                    if recepcion.detalle_motivo
+                                        p Detalle: #{recepcion.detalle_motivo}
+                                    p Fecha de Ingreso: #{recepcion.fecha_entrada_formateada}
             br 
             h2 Ala Sur:
                 .grid-ala
                     each recepcion in recepciones
                         if recepcion.estado === 'Internado' && recepcion.Cama.Habitacion.Ala.sector == "Sur"
                             .tarjeta-paciente(data-recepcion-id=recepcion.id)
-                                if recepcion.Paciente.nombre == "Sin Nombre"
-                                    h3 Paciente de Emergencia 
-                                    p -Sin datos cargados-
-                                else
-                                    h3 #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}
-                                    p DNI: #{recepcion.Paciente.dni}
-                                p Habitación: #{recepcion.Cama.Habitacion.id}
-                                p Cama: #{recepcion.Cama.numero}
-                                p Motivo: #{recepcion.Motivo.tipos}
-                                if recepcion.detalle_motivo
-                                    p Detalle: #{recepcion.detalle_motivo}
-                                p Fecha de Ingreso: #{recepcion.fecha_entrada_formateada}
+                                    .header-paciente                                        
+                                        if recepcion.Paciente.nombre == "Sin Nombre"
+                                            h3 Paciente de Emergencia                                             
+                                        else
+                                            h3 #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}
+                                        if recepcion.prioridadClase === 'prioridad-sin-cargar'
+                                            .circulo-prioridad.prioridad-sin-cargar
+                                                img(src="/img/signo-de-interrogacion.ico" alt="Sin prioridad" style="width:100%;height:100%;")
+                                        else
+                                            .circulo-prioridad(class=recepcion.prioridadClase)                                            
+                                    if recepcion.Paciente.nombre == "Sin Nombre"                                        
+                                        p -Sin datos cargados-
+                                    else                                        
+                                        p DNI: #{recepcion.Paciente.dni}
+                                    h4 Habitación: #{recepcion.Cama.Habitacion.id}
+                                    p Cama: #{recepcion.Cama.numero}
+                                    p Motivo: #{recepcion.Motivo.tipos}
+                                    if recepcion.detalle_motivo
+                                        p Detalle: #{recepcion.detalle_motivo}
+                                    p Fecha de Ingreso: #{recepcion.fecha_entrada_formateada}
         else
             p No hay pacientes internados en este momento.
-        script.
-            document.addEventListener('DOMContentLoaded', function() {
-                document.querySelectorAll('.tarjeta-paciente').forEach(function(card) {
-                    card.addEventListener('click', function() {
-                        document.querySelectorAll('.tarjeta-paciente').forEach(c => c.classList.remove('seleccionada'));
-                        this.classList.add('seleccionada');
-                    });
-                    card.addEventListener('dblclick', function() {
-                        const recepcionId = this.getAttribute('data-recepcion-id');
-                        window.location.href = `/enfermeria/registro/${recepcionId}`;
-                    });
-                });
-            });
+    script(src="/scriptEnfermeria/scriptPacientesInternados.js")
+            

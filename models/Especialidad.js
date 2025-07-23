@@ -6,7 +6,7 @@ class Especialidad extends Model { }
 
 Especialidad.init(
   {
-    tipos: {
+    tipo: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: false,        

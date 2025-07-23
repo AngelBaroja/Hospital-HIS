@@ -1,0 +1,73 @@
+extends ../layout
+
+block content   
+    .pestanas
+        .pestana.activa4  Paciente Internado: #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}
+    .pestanas3
+        a.pestana.activa5(href=`/enfermeria/registro/${recepcion.id}`)  Registro
+        a.pestana.activa5(href=`/enfermeria/historialMedico/alergia/${recepcion.id}`)  Historial Medico
+        a.pestana.activa5(href=`/enfermeria/signosVitales/${recepcion.id}`)  Signos Vitales
+        a.pestana.activa5(href=`/enfermeria/sintomas/${recepcion.id}`)  Sintomas / Tratamiento
+    
+    .contenido-pestana#recepcion
+        h2 Historial Signos Vitales
+        table.tabla-turnos
+            thead                
+                tr
+                    th Presión Arterial
+                    th Frecuencia Cardíaca
+                    th Frecuencia Respiratoria
+                    th Temperatura Corporal
+                    th Piel
+                    th Estimulo
+                    th Fecha
+                    th Hora
+                    th Acciones
+            tbody
+                if recepcion.Paciente.Historial_Medico && recepcion.Paciente.Historial_Medico.Signos_Vitales != 0
+                    each signosVitales in recepcion.Paciente.Historial_Medico.Signos_Vitales
+                        tr
+                            td= signosVitales.presion_arterial
+                            td= signosVitales.frecuencia_cardiaca
+                            td= signosVitales.frecuencia_respiratoria
+                            td= signosVitales.temperatura_corporal
+                            td= signosVitales.tonalidad_piel
+                            td= signosVitales.estimulo
+                            td= signosVitales.fecha_formateada
+                            td= signosVitales.createdAt.toLocaleTimeString()
+                            td
+                                form(action=`/enfermeria/signosVitales/historial/${recepcion.id}/${signosVitales.id}` method="POST" style="display: inline;")
+                                    button.boton-eliminar(type="submit") Eliminar
+                else
+                    tr
+                        td(colspan="7") No hay registro de Signos Vitales del paciente #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido} / DNI : #{recepcion.Paciente.dni}
+        .botones-accion
+            form(action=`/enfermeria/signosVitales/${recepcion.id}` method="GET")            
+                button(type="submit" class="boton boton-secundario") Atrás
+    if cartel
+        .modal-exito#modalExito
+            .modal-contenido
+                img(src="/img/aceptar.ico" alt="Éxito")
+                h2 ¡Signo Vital borrado con éxito!
+                p
+                    | Paciente:                    
+                    b #{recepcion.Paciente.nombre}  #{recepcion.Paciente.apellido}
+                button(type="button" class="btn-cerrar-modal") Aceptar
+    script. 
+         document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('modalExito');
+            if (modal) {
+                modal.classList.add('visible');
+                
+                document.querySelector('.btn-cerrar-modal').addEventListener('click', () => {
+                    modal.style.display = 'none';
+                });
+                
+                // Cerrar al hacer clic fuera del contenido
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            }
+        });

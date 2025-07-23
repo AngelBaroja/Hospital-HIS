@@ -6,6 +6,7 @@ html(lang="es")
     title HIS Hospital - Recepción
     link(rel="stylesheet" href="/estilos.css")
     link(rel="icon" type="image/x-icon" href="/img/Favicon.ico")
+    link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css")
   body 
     .contenedor        
       header
@@ -19,10 +20,9 @@ html(lang="es")
                 a#recepcion(href="/recepcion") Recepción
                 a(href="/turno/elegir") Turno              
                 a(href="/recepcion/lista") Pacientes
-              if cargo == "Enfermera"
+              if cargo == "Enfermera" || cargo == "Enfermero"
                 a#enfermero(href="/enfermeria/pacientesInternados") Pacientes Internados
-                a(href="/turno/elegir") Turno
-                a(href="/doctor/lista") Pacientes
+                a#enfermero(href="/enfermeria/chats/chat") Chats             
           .navbar-right
             .info-usuario              
                 span #{cargo}: #{usuario}

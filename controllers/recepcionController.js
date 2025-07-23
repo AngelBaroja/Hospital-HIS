@@ -551,7 +551,7 @@ try {
     recepciones.forEach(recepcion => {
             if (recepcion.fecha_entrada) {
                 const fecha = new Date(recepcion.fecha_entrada);
-                const dia = String(fecha.getDate()).padStart(2, '0');
+                const dia = String(fecha.getDate() + 1).padStart(2, '0');
                 const mes = String(fecha.getMonth() + 1).padStart(2, '0');
                 const anio = fecha.getFullYear();
                 recepcion.fecha_entrada_formateada = `${dia}/${mes}/${anio}`;
