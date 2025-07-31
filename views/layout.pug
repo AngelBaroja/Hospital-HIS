@@ -20,12 +20,38 @@ html(lang="es")
                 a#recepcion(href="/recepcion") Recepción
                 a(href="/turno/elegir") Turno              
                 a(href="/recepcion/lista") Pacientes
-              if cargo == "Enfermera" || cargo == "Enfermero"
+              if cargo == "Enfermera" || cargo == "Enfermero" || cargo == "Doctor" || cargo == "Doctora" 
                 a#enfermero(href="/enfermeria/pacientesInternados") Pacientes Internados
-                a#enfermero(href="/enfermeria/chats/chat") Chats             
+                a#enfermero(href="/enfermeria/chats/chat") Chats
+              if cargo == 'Administrador' || cargo == "Administradora"
+                a(href='/administrador/elegir') Personal                 
+                a(href='/administrador/elegirSector') Camas y Habitaciones
+                a(href='/administrador/mutual') Mutual
+                
           .navbar-right
             .info-usuario              
                 span #{cargo}: #{usuario}
+            .salir
+              button.boton.boton-salir(onclick="abrirModalCerrarSesion()")
+                i.fa-solid.fa-arrow-right-from-bracket
+                |  Salir
+
+              // Modal de confirmación
+          #modal-cerrar-sesion.modal(style="display: none")
+            .modal-contenido#modal2
+              p ¿Estás seguro que deseas cerrar sesión?
+              .modal-botones
+                button(type="button" onclick="cerrarModalCerrarSesion()").boton-cancelar Cancelar
+                form(action="/logout" method="POST")
+                  button(type="submit").boton-confirmar Aceptar
+          script.
+            function abrirModalCerrarSesion() {
+              document.getElementById("modal-cerrar-sesion").style.display = "flex";
+            }
+
+            function cerrarModalCerrarSesion() {
+              document.getElementById("modal-cerrar-sesion").style.display = "none";
+            }
       block content      
       
         

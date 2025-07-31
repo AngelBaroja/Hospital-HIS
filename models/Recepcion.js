@@ -55,7 +55,7 @@ Recepcion.init(
             unique: false,
             defaultValue:'Internado',        
             validate: {
-                isIn: [['Internado', `Retirado`]]   
+                isIn: [['Internado', `Retirado`,"Alta médica por mejoría o recuperación","Alta por derivación a otro centro","Alta por tratamiento finalizado sin posibilidad de cura","Alta por decisión económica o de la obra social/prepaga","Alta por razones sociales o familiares","Alta voluntaria","Alta por abandono o fuga","Alta por fallecimiento","Alta por traslado judicial"]]   
             },        
             comment: `El estado de la recepcion` 
         }
@@ -65,7 +65,6 @@ Recepcion.init(
     tableName: "recepciones",
 }
 );
-
 
 // Un Paciente puede tener muchas Recepciones
 // Una Recepción tiene a un Paciente (y lleva la clave foránea)

@@ -41,7 +41,7 @@ Ala.init(
 }
 );
 
-Habitacion.belongsTo(Ala, { foreignKey: 'id_ala' });
-Ala.hasMany(Habitacion, { foreignKey: 'id_ala' });
+Habitacion.belongsTo(Ala, { foreignKey: 'id_ala', onDelete: "CASCADE" });
+Ala.hasMany(Habitacion, { foreignKey: 'id_ala', onDelete: "CASCADE" });
 
 module.exports = Ala;

@@ -1,0 +1,72 @@
+extends ../layout
+
+block content   
+    .pestanas
+        a.pestana.activa5(href='/administrador/camas') Camas
+        a.pestana.activa5(href='/administrador/habitaciones') Habitaciones         
+    .pestanas3 
+        a.pestana.activa5(href="/administrador/habitaciones") Generar Habitación       
+        a.pestana.activa5(href="/administrador/listar/habitaciones")  Listar Habitaciones
+        a.pestana.activa5(href="/administrador/insertar/cama")  Insertar Cama
+        a.pestana.activa5(href="/administrador/mover/cama")  Mover Camas
+        
+    .contenido-pestana#recepcion
+        h2 Mover Cama entre Habitaciones
+        p#texto Indique a que habitacion va a mover la cama.
+        if cartel
+            .modal-exito#modalExito
+                .modal-contenido
+                    img(src="/img/aceptar.ico" alt="Éxito")
+                    h2 ¡Cama movida con éxito!                  
+                    p
+                        | Cama ID:                    
+                        b #{camaEncontrada.id}
+                    p
+                        | Habitacion nº:                    
+                        b #{camaEncontrada.id_habitacion}
+                    
+                    button(type="button" class="btn-cerrar-modal") Aceptar
+        form#formulario-registro(action="/administrador/mover/cama" method="POST")                      
+            .formulario-grid
+                .grupo-formulario
+                    label(for="camaSeleccionada") Camas:
+                    select(name="camaSeleccionada" required)#cama
+                        option(value="") Seleccione... 
+                            each cama in camasDisponibles
+                                if cama.Habitacion
+                                    option(value=cama.id) Habitación nº: #{cama.Habitacion.id} / Cama ID: #{cama.id} / Tipo: #{cama.tipo} / Estado: #{cama.estado} / Electrica: #{cama.electrica_respuesta} / Oxigeno: #{cama.oxigeno_respuesta} 
+                                else   
+                                    option(value=cama.id) Sin Habitación / Cama ID: #{cama.id} / Tipo: #{cama.tipo} / Estado: #{cama.estado} / Electrica: #{cama.electrica_respuesta} / Oxigeno: #{cama.oxigeno_respuesta} 
+                    
+                    label(for="habitacionSeleccionada" style="margin-top:15px;") Habitación con espacio disponible: 
+                    select#habitacion(name="habitacionSeleccionada" required) 
+                        option(value="") Seleccione... 
+                        each habi in habitacionesDisponibles
+                            if habitacion
+                                if habi.id == habitacion.id 
+                                    option(value=habi.id selected) Habitacion nº: #{habi.id} / Tipo: #{habi.tipo}
+                                else 
+                                    option(value=habi.id) Habitacion nº: #{habi.id} / Tipo: #{habi.tipo}
+                            else 
+                                option(value=habi.id) Habitacion nº: #{habi.id} / Tipo: #{habi.tipo}
+            .botones-accion             
+                span 
+                button(type="submit" class="boton boton-primario") Guardar 
+        script.
+            document.addEventListener('DOMContentLoaded', () => {
+                const modal = document.getElementById('modalExito');
+                if (modal) {
+                    modal.classList.add('visible');
+                        
+                    document.querySelector('.btn-cerrar-modal').addEventListener('click', () => {
+                        modal.style.display = 'none';
+                    });
+                        
+                    // Cerrar al hacer clic fuera del contenido
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) {
+                            modal.style.display = 'none';
+                        }
+                    });
+                }
+            });

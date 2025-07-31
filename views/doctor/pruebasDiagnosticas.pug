@@ -1,0 +1,197 @@
+extends ../layout
+
+block content   
+    .pestanas
+        .pestana.activa4  Paciente Internado: #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}
+        if cargo == "Doctor" || cargo == "Doctora"
+            a.boton-alta(href=`/doctor/alta/${recepcion.id}`) Alta Médica
+                img.icono-cruz(src="/img/hospital1.png", alt="Cruz médica")
+    .pestanas3
+        if cargo == "Enfermero" || cargo == "Enfermera"
+            a.pestana.activa5(href=`/enfermeria/registro/${recepcion.id}`)  Registro
+        a.pestana.activa5(href=`/enfermeria/historialMedico/alergia/${recepcion.id}`)  Historial Medico
+        a.pestana.activa5(href=`/enfermeria/signosVitales/${recepcion.id}`)  Signos Vitales
+        if cargo == "Doctor" || cargo == "Doctora"
+            a.pestana.activa5(href=`/doctor/estudios/${recepcion.id}`)  Estudios
+        a.pestana.activa5(href=`/enfermeria/sintomas/${recepcion.id}`)  Sintomas / Tratamiento
+        
+    .contenido-pestana#recepcion        
+        h2 Solicitud de Estudios Médicos
+        p#texto Indica que estudio deseas realizarle al paciente y luego presiona el botón "Solicitar estudio" para registrar la solicitud.
+        
+        form#formulario-radiografia(data-modal="modalRadiografia" action=`/doctor/estudios/radiografia/${recepcion.id}` method="POST")
+            .formulario-grid
+                .grupo-formulario
+                    h3 Radiografia : 
+                    select(name="placa" required)
+                        option(value="") Seleccione un estudio
+                        each estudio in estudiosRadriograficos
+                            option(value=estudio) #{estudio}
+                        
+                .grupo-formulario2                     
+                    button.boton-solicitar(type="submit") Solicitar estudio
+                    a.boton-verde2(href=`/doctor/radiografia/historial/${recepcion.id}`) Historial
+
+        .modal-exito#modalRadiografia
+            .modal-contenido
+                img(src="/img/registros-medicos.ico" alt="Éxito")
+                h2 ¡Radiografia realizada con éxito!
+                p
+                    | Paciente:                    
+                    b #{recepcion.Paciente.nombre}  #{recepcion.Paciente.apellido}
+                button(type="button" class="btn-cerrar-modal") Aceptar 
+        
+        form#formulario-ecografia(data-modal="modalEcografia" action=`/doctor/estudios/ecografia/${recepcion.id}` method="POST")
+            .formulario-grid
+                .grupo-formulario
+                    h3 Ecografía : 
+                    select(name="placa" required)
+                        option(value="") Seleccione un estudio
+                        each estudio in estudiosEcograficos
+                            option(value=estudio) #{estudio}
+                .grupo-formulario2
+                    button.boton-solicitar(type="submit") Solicitar estudio
+                    a.boton-verde2(href=`/doctor/ecografia/historial/${recepcion.id}`) Historial 
+
+        .modal-exito#modalEcografia
+            .modal-contenido
+                img(src="/img/registros-medicos.ico" alt="Éxito")
+                h2 ¡Ecografia realizada con éxito!
+                p
+                    | Paciente:                    
+                    b #{recepcion.Paciente.nombre}  #{recepcion.Paciente.apellido}
+                button(type="button" class="btn-cerrar-modal") Aceptar 
+
+        form#formulario-tomografia(data-modal="modalTomografia" action=`/doctor/estudios/tomografia/${recepcion.id}` method="POST")
+            .formulario-grid
+                .grupo-formulario
+                    h3 Tomografía : 
+                    select(name="placa" required)
+                        option(value="") Seleccione un estudio
+                        each estudio in estudiosTomografia
+                            option(value=estudio) #{estudio}
+                .grupo-formulario2
+                    button.boton-solicitar(type="submit") Solicitar estudio
+                    a.boton-verde2(href=`/doctor/tomografia/historial/${recepcion.id}`) Historial
+
+        .modal-exito#modalTomografia
+            .modal-contenido    
+                img(src="/img/registros-medicos.ico" alt="Éxito")
+                h2 ¡Tomografía realizada con éxito!
+                p
+                    | Paciente:                    
+                    b #{recepcion.Paciente.nombre}  #{recepcion.Paciente.apellido}
+                button(type="button" class="btn-cerrar-modal") Aceptar
+        
+        form#formulario-resonancia(data-modal="modalResonanciaMagnetica" action=`/doctor/estudios/resonanciaMagnetica/${recepcion.id}` method="POST")
+            .formulario-grid
+                .grupo-formulario
+                    h3 Resonancia Magnética : 
+                    select(name="placa" required)
+                        option(value="") Seleccione un estudio
+                        each estudio in estudiosResonanciaMagnetica
+                            option(value=estudio) #{estudio}
+                .grupo-formulario2
+                    button.boton-solicitar(type="submit") Solicitar estudio
+                    a.boton-verde2(href=`/doctor/resonanciaMagnetica/historial/${recepcion.id}`) Historial
+
+        .modal-exito#modalResonanciaMagnetica
+            .modal-contenido    
+                img(src="/img/registros-medicos.ico" alt="Éxito")
+                h2 ¡Resonancia Magnetica realizada con éxito!
+                p
+                    | Paciente:                    
+                    b #{recepcion.Paciente.nombre}  #{recepcion.Paciente.apellido}
+                button(type="button" class="btn-cerrar-modal") Aceptar
+        
+        form#formulario-sangre(data-modal="modalAnalisisSangre" action=`/doctor/estudios/analisisSangre/${recepcion.id}` method="POST")
+            .formulario-grid
+                .grupo-formulario
+                    h3 Análisis de Sangre : 
+                    select(name="placa" required)
+                        option(value="") Seleccione un estudio
+                        each estudio in estudiosSangre
+                            option(value=estudio) #{estudio}
+                .grupo-formulario2
+                    button.boton-solicitar(type="submit") Solicitar estudio
+                    a.boton-verde2(href=`/doctor/analisisSangre/historial/${recepcion.id}`) Historial
+
+        .modal-exito#modalAnalisisSangre
+            .modal-contenido    
+                img(src="/img/registros-medicos.ico" alt="Éxito")
+                h2 ¡Analisis de Sangre realizado con éxito!
+                p
+                    | Paciente:                    
+                    b #{recepcion.Paciente.nombre}  #{recepcion.Paciente.apellido}
+                button(type="button" class="btn-cerrar-modal") Aceptar
+
+        form#formulario-orina(data-modal="modalAnalisisOrina" action=`/doctor/estudios/analisisOrina/${recepcion.id}` method="POST")
+            .formulario-grid
+                .grupo-formulario
+                    h3 Análisis de Orina :
+                    select(name="placa" required)
+                        option(value="") Seleccione un estudio
+                        each estudio in estudiosOrina
+                            option(value=estudio) #{estudio}  
+                     
+                .grupo-formulario2
+                    button.boton-solicitar(type="submit") Solicitar estudio
+                    a.boton-verde2(href=`/doctor/analisisOrina/historial/${recepcion.id}`) Historial
+    
+        .modal-exito#modalAnalisisOrina
+            .modal-contenido    
+                img(src="/img/registros-medicos.ico" alt="Éxito")
+                h2 ¡Analisis de Orina realizado con éxito!
+                p
+                    | Paciente:                    
+                    b #{recepcion.Paciente.nombre}  #{recepcion.Paciente.apellido}
+                button(type="button" class="btn-cerrar-modal") Aceptar
+    script.
+        document.addEventListener('DOMContentLoaded', () => {
+            // Selecciona todos los formularios de estudios
+            document.querySelectorAll('form[id^="formulario-"]').forEach(form => {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const action = form.getAttribute('action');
+                    const modalId = form.getAttribute('data-modal');
+                    const formData = new FormData(form);
+                    const body = {};
+                    formData.forEach((value, key) => body[key] = value);
+
+                    try {
+                        const res = await fetch(action, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(body)
+                        });
+                        const data = await res.json();
+                        if (data.ok) {
+                            // Mostrar el modal con la clase .visible
+                            const modal = document.getElementById(modalId);
+                            modal.classList.add('visible');
+                        } else {
+                            alert(data.error || 'No se pudo registrar el estudio');
+                        }
+                    } catch (err) {
+                        alert('Error de conexión');
+                    }
+                });
+            });
+
+            // Cerrar modales al hacer click en el botón de cerrar
+            document.querySelectorAll('.btn-cerrar-modal').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const modal = btn.closest('.modal-exito');
+                    modal.classList.remove('visible');
+                });
+            });
+
+            // Cerrar al hacer clic fuera del contenido
+            document.querySelectorAll('.modal-exito').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove('visible');
+                    }
+                });
+            });
+        });

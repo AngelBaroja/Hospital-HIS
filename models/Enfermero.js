@@ -34,6 +34,13 @@ Enfermero.init(
         },
         comment: 'DNI del Enfermero'
     },
+    fecha_nacimiento: {
+            type: DataTypes.DATEONLY,
+            allowNull: true,
+            unique: false,
+            defaultValue: null,       
+            comment: 'Fecha de nacimiento del Enfermero'
+    },
     genero: {
         type: DataTypes.STRING,
         allowNull: false,

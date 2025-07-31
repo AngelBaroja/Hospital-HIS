@@ -49,9 +49,15 @@ block content
                             option(value="No especificado") No especificado
 
                 .grupo-formulario 
-                    label(for="telefono") Contacto de Emergencia
-                    input(type="text" placeholder="Ingrese el número de teléfono de emergencia" name="contacto_emergencia" minlength="10" maxlength="10")#contacto_emergencia
+                    label(for="telefono") Numero de Celular
+                    input(type="text"  placeholder="Ingrese el número de celular" name="contacto" minlength="10" maxlength="10")#contacto                   
                 
+                .grupo-formulario 
+                    label(for="Contacto_emergencia") Contacto de Emergencia
+                    input(type="text" placeholder="Ingrese el contacto de emergencia" name="contacto_emergencia" minlength="10" maxlength="10" style="margin-bottom:5px" id="contacto_emergencia")
+                    button(type="button" class="boton-agregar" onclick="agregarContactoEmergencia()") Agregar
+                    button(type="button" class="boton-quitar" onclick="quitarContactoEmergencia()") Quitar
+
                 .grupo-formulario 
                     label(for="direccion") Dirección
                     input(type="text" placeholder="Ingrese la dirección" name="direccion" minlength="3" maxlength="30" required)#direccion
@@ -63,7 +69,7 @@ block content
                 .grupo-formulario 
                     label(for="localidad") Localidad
                     input(type="text" placeholder="Ingrese la localidad" name="localidad"  minlength="3" maxlength="30" required)#localidad 
-
+                .grupo-formulario 
                 h3 Datos de la Mutual
                 span
 
@@ -97,7 +103,10 @@ block content
                 span
                 .grupo-formulario 
                     label(for="doctor") Doctor
-                    input(type="text" placeholder="Ingrese el nombre del doctor" name="doctor" required)#doctor
+                    select#doctor(name="doctor")
+                        option(value="") Seleccione...
+                        each doctor in doctores 
+                            option(value=doctor.id) Dr. #{doctor.nombre} #{doctor.apellido}   
                 
                 .grupo-formulario 
                     label(for="fecha_turno") Fecha del Turno

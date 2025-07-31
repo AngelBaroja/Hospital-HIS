@@ -24,6 +24,13 @@ const Signos_Vitales = require('./Signos_Vitales');
 const Sintoma = require('./Sintoma');
 const Tratamiento = require('./Tratamiento');
 const Chat = require('./Chat');
+const Radiografia = require('./Radiografia');
+const Ecografia = require('./Ecografia');
+const Tomografia = require('./Tomografia');
+const ResonanciaMagnetica = require('./ResonanciaMagnetica');
+const AnalisisSangre = require('./AnalisisSangre');
+const AnalisisOrina = require('./AnalisisOrina');
+const Administrador = require('./Administrador');
 
 module.exports = {
     sequelize,
@@ -51,5 +58,12 @@ module.exports = {
     Signos_Vitales,
     Sintoma,
     Tratamiento,
-    Chat
+    Chat,
+    Radiografia,
+    Ecografia,
+    Tomografia,
+    ResonanciaMagnetica,
+    AnalisisSangre,
+    AnalisisOrina,
+    Administrador
 }

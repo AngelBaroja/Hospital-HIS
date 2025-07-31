@@ -6,6 +6,8 @@ const Mutual = require('../models/Mutual');
 const Habitacion = require('../models/Habitacion');
 const Cama = require('../models/Cama');
 const Ala = require('../models/Ala');
+const Contacto_Emergencia = require('../models/Contacto_Emergencia')
+const Doctor = require('../models/Doctor')
 
 
 async function vistaGenerarTurno(req, res) { 
@@ -15,8 +17,9 @@ async function vistaGenerarTurno(req, res) {
     const mutuales = await Mutual.findAll();
     const pacientes = await Paciente.findAll();
     const mutualPacientes = await Mutual_Paciente.findAll();
+    const doctores = await Doctor.findAll();
 
-    res.status(200).render('turno/generar',{mutuales,pacientes,mutualPacientes,usuario,cargo});
+    res.status(200).render('turno/generar',{doctores,mutuales,pacientes,mutualPacientes,usuario,cargo});
   }catch (error) {
     console.error('Error en vistaGenerarTurno:', error);
     res.status(500).render('error', {
@@ -33,7 +36,7 @@ async function generarTurno(req, res) {
     apellido,
     fecha_nacimiento,
     genero,
-    contacto_emergencia,
+    contacto,
     direccion,
     provincia,
     localidad,
@@ -46,6 +49,7 @@ async function generarTurno(req, res) {
     hora,
     detalle_motivo
   } = req.body;
+  let contactos_emergencia = req.body.contacto_emergencia;
   const usuario = req.session.nombreUsuario;
   const cargo = req.session.tipoUsuario;
   //Busco al paciente
@@ -59,7 +63,7 @@ async function generarTurno(req, res) {
       apellido,
       fecha_nacimiento,
       genero,
-      contacto_emergencia,
+      contacto,
       direccion,
       provincia,
       localidad
@@ -85,7 +89,7 @@ async function generarTurno(req, res) {
         String(paciente.fecha_nacimiento) === String(fecha_nacimiento) &&
         paciente.genero === genero &&  
         paciente.direccion === direccion &&
-        paciente.contacto_emergencia === contacto_emergencia &&
+        paciente.contacto === contacto &&
         paciente.provincia === provincia &&
         paciente.localidad === localidad) 
     {
@@ -99,13 +103,54 @@ async function generarTurno(req, res) {
                 fecha_nacimiento,
                 genero,
                 direccion,
-                contacto_emergencia,
+                contacto,
                 provincia,
                 localidad
             });
             console.log('Paciente actualizado correctamente');
       }
   }  
+
+     // Verificar si se proporcionó un contacto de emergencia
+    if (!Array.isArray(contactos_emergencia)) {
+        contactos_emergencia = [contactos_emergencia];
+    }
+
+    if (contactos_emergencia.length > 0 && (!contactos_emergencia[contactos_emergencia.length - 1] || contactos_emergencia[contactos_emergencia.length - 1].trim() === "")) {
+        contactos_emergencia.pop();
+    }
+
+    // Trae todos los contactos actuales del paciente, ordenados por id 
+    let contactosActuales = await Contacto_Emergencia.findAll({
+        where: { id_paciente: paciente.id },
+        order: [['id', 'ASC']]
+    });
+
+    // Actualiza o crea según corresponda
+    for (let i = 0; i < contactos_emergencia.length; i++) {
+        const numero = contactos_emergencia[i];
+        if (contactosActuales[i]) {
+            // Si el número es diferente, actualiza
+            if (contactosActuales[i].numero !== numero) {
+                await contactosActuales[i].update({ numero });
+                console.log(`Contacto de emergencia actualizado a ${numero} para el paciente ${paciente.nombre} ${paciente.apellido}`);
+            }
+        } else {
+            // Si no hay contacto en esa posición, crea uno nuevo
+            await Contacto_Emergencia.create({
+                id_paciente: paciente.id,
+                numero
+            });
+            console.log('Contacto de emergencia creado correctamente');
+        }
+    }
+    // Eliminar los contactos sobrantes 
+    if (contactos_emergencia.length < contactosActuales.length) {
+        for (let i = contactos_emergencia.length; i < contactosActuales.length; i++) {
+            await contactosActuales[i].destroy();
+            console.log(`Contacto de emergencia eliminado para el paciente ${paciente.nombre} ${paciente.apellido}`);
+        }
+    }   
   
    //Transformo la variable activa de Mutual a boolean para comparar en la BD
     const activaBoolean = activa === "Activa";    
@@ -155,10 +200,11 @@ async function generarTurno(req, res) {
     }
 
   paciente=Elpaciente;
-  
+  let nombreDoctor=await Doctor.findByPk(doctor);
+  nombreDoctor=`Dr. ${nombreDoctor.nombre} ${nombreDoctor.apellido}`;
   const turno= await Turno.create({
     id_paciente: paciente.id,
-    doctor,
+    doctor: nombreDoctor ,
     fecha_turno,
     hora,
     detalle:detalle_motivo,

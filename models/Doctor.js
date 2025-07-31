@@ -34,6 +34,13 @@ Doctor.init(
         },
         comment: 'DNI del Doctor'
     },
+    fecha_nacimiento: {
+        type: DataTypes.DATEONLY,
+        allowNull: true,
+        unique: false,
+        defaultValue: null,       
+        comment: 'Fecha de nacimiento del doctor'
+    },
     genero: {
         type: DataTypes.STRING,
         allowNull: false,

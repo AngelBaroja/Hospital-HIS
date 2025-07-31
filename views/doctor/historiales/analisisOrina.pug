@@ -1,0 +1,44 @@
+extends ../../layout
+
+block content   
+    .pestanas
+        .pestana.activa4  Paciente Internado: #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}
+        if cargo == "Doctor" || cargo == "Doctora"
+            a.boton-alta(href=`/doctor/alta/${recepcion.id}`) Alta Médica
+                img.icono-cruz(src="/img/hospital1.png", alt="Cruz médica")
+    .pestanas3
+        if cargo == "Enfermero" || cargo == "Enfermera"
+            a.pestana.activa5(href=`/enfermeria/registro/${recepcion.id}`)  Registro
+        a.pestana.activa5(href=`/enfermeria/historialMedico/alergia/${recepcion.id}`)  Historial Medico
+        a.pestana.activa5(href=`/enfermeria/signosVitales/${recepcion.id}`)  Signos Vitales
+        if cargo == "Doctor" || cargo == "Doctora"
+            a.pestana.activa5(href=`/doctor/estudios/${recepcion.id}`)  Estudios
+        a.pestana.activa5(href=`/enfermeria/sintomas/${recepcion.id}`)  Sintomas / Tratamiento
+    .contenido-pestana#recepcion
+        h2 Historial de Análisis de Orina
+
+        if analisisOrinas.length === 0
+            .sin-analisisSangre
+                p No hay Análisis de Orina registrados para este paciente.
+        else
+            each analisisOrina, i in analisisOrinas
+                .hoja-analisis
+                    img.icono-analisis(src="/img/examen-de-orina.png", alt='Análisis de Orina')
+                    .hoja-encabezado
+                        img.logo-hospital(src="/img/Logo-Hospital1.jpg", alt='Logo del Hospital')
+                        h3.nombre-hospital HIS HOSPITAL
+
+                    .hoja-cuerpo
+                        .hoja-detalle
+                            h4 Paciente: #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido} / #{recepcion.Paciente.dni}
+                            h4 Fecha: #{analisisOrina.fecha_formateada} / Hora: #{analisisOrina.createdAt.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
+                            h4 Tipo de Estudio: #{analisisOrina.tipo}
+                            p Resultado:
+                            pre.informe #{analisisOrina.informacion}
+
+                if i < analisisOrinas.length - 1
+                    hr.separador-analisis
+    
+        .botones-accion
+            form(action=`/doctor/estudios/${recepcion.id}` method="GET")            
+                button(type="submit" class="boton boton-secundario") Atrás

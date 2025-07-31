@@ -17,7 +17,7 @@ Usuario.init(
         comment: `Usuario del personal del hospital`                
     },
     contraseña: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(120),
         allowNull: false,       
         comment: `Contraseña del personal del hospital`
     }         

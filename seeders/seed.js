@@ -1,5 +1,5 @@
 const Modelos = require('../models/modelosBD');
-const { sequelize, Paciente, Doctor, Enfermero, Recepcionista, Especialidad, Recepcion, Motivo, Turno, Cama, Habitacion, Ala, Mutual, Usuario, Mutual_Paciente, Contacto_Emergencia, Historial_Medico, Alergia, Enfermedad_Previa, Cirugia_Previa, Medicamento_Paciente, Antecedente_Familiar, Signos_Vitales, Sintoma} = Modelos;
+const { sequelize, Paciente, Doctor, Enfermero, Recepcionista, Administrador, Especialidad, Recepcion, Motivo, Turno, Cama, Habitacion, Ala, Mutual, Usuario, Mutual_Paciente, Contacto_Emergencia, Historial_Medico, Alergia, Enfermedad_Previa, Cirugia_Previa, Medicamento_Paciente, Antecedente_Familiar, Signos_Vitales, Sintoma} = Modelos;
 const bcrypt = require('bcrypt');
 
 async function seed() {
@@ -11,7 +11,14 @@ async function seed() {
         {nombre: 'Swiss Medical'},
         {nombre: 'PAMI'},
         {nombre: 'Sancor Salud'},
-        {nombre: 'MEOC'}
+        {nombre: 'MEOC'},
+        {nombre: 'AOMA'},
+        {nombre: 'OSFATLYF'},
+        {nombre: 'OSCHOCHA'},
+        {nombre: 'UOCRA'},
+        {nombre: 'OSPIA'},
+        {nombre: 'OSECAC'},
+        {nombre: 'AMUF'},
     ]);
     console.log('Mutuales creadas:', mutuales.length);
 
@@ -273,7 +280,9 @@ const especialidades = await Especialidad.bulkCreate([
     { tipo: 'Ginecologia' },
     { tipo: 'Neurologia' },
     { tipo: 'Oncologia' },
+    { tipo: 'Medico Clinico' },
     { tipo: 'Psiquiatria' },
+    { tipo: 'Cirujano' },
     { tipo: 'Dermatologia' },
     { tipo: 'Oftalmologia' },
     { tipo: 'Otorrinolaringologia' },
@@ -282,6 +291,8 @@ const especialidades = await Especialidad.bulkCreate([
     { tipo: 'Nefrologia' },
     { tipo: 'Infectologia' },
     { tipo: 'Reumatologia' },
+    { tipo: 'Anestisiologo' },
+    { tipo: 'Instrumentista' },
     { tipo: 'Medicina General' },
     { tipo: 'Enfermeria pediatrica' },
     { tipo: 'Enfermeria geriatrica' },
@@ -295,16 +306,23 @@ console.log('Especialidades creadas:', especialidades.length);
 // Hashear contraseñas
     const saltRounds = 10;
     const passwordDoctor = await bcrypt.hash('d', saltRounds);
+    const passwordDoctor2 = await bcrypt.hash('d', saltRounds);
     const passwordEnfermero1 = await bcrypt.hash('e', saltRounds);
     const passwordEnfermero2 = await bcrypt.hash('e', saltRounds);
     const passwordEnfermero3 = await bcrypt.hash('e', saltRounds);
-    const passwordRecepcion = await bcrypt.hash('recepcion1', saltRounds);
+    const passwordRecepcion = await bcrypt.hash('r', saltRounds);
+    const passwordAdministrador = await bcrypt.hash('a', saltRounds);
+    const passwordAdministrador2 = await bcrypt.hash('a', saltRounds);
 
   // Crear usuarios
   const usuarios = await Usuario.bulkCreate([
     {
       usuario: 'Dr.Lautaro',
       contraseña: passwordDoctor   
+    },
+     {
+      usuario: 'Dr.Bessone',
+      contraseña: passwordDoctor2   
     },
     {
       usuario: 'Enf.Perez',
@@ -321,6 +339,14 @@ console.log('Especialidades creadas:', especialidades.length);
     {
       usuario: 'Rec.Angel',
       contraseña: passwordRecepcion
+    },
+    {
+      usuario: 'Adm.Seba',
+      contraseña: passwordAdministrador
+    },
+    {
+      usuario: 'Adm.Alex',
+      contraseña: passwordAdministrador2
     }
   ]);
   console.log('Usuarios creados:', usuarios.length);
@@ -332,6 +358,7 @@ console.log('Especialidades creadas:', especialidades.length);
       nombre: 'Lautaro',
       apellido: 'González',    
       dni: '33356789',
+      fecha_nacimiento: new Date('1990-05-15') ,
       genero: 'Masculino',
       direccion: 'Sucre 1254',
       telefono: '2657111050',
@@ -340,7 +367,22 @@ console.log('Especialidades creadas:', especialidades.length);
       activo: true,
       id_usuario: 1,
       id_especialidad: 1     
-    }
+    },
+    {
+      nombre: 'Emiliano',
+      apellido: 'Bessone',    
+      dni: '35315486',
+      fecha_nacimiento: new Date('1990-05-15') ,
+      genero: 'Masculino',
+      direccion: 'Humberto Primero',
+      telefono: '2657111050',
+      provincia: 'Cordoba',
+      localidad: 'Rio Cuarto',
+      activo: true,
+      id_usuario: 2,
+      id_especialidad: 4     
+    },
+
   ]);
   console.log('Doctores creados:', doctores.length);
 
@@ -350,39 +392,42 @@ console.log('Especialidades creadas:', especialidades.length);
       nombre: 'Fernanda',
       apellido: 'Pérez',    
       dni: '34567890',
+      fecha_nacimiento: new Date('1990-05-15') ,
       genero: 'Femenino',
       direccion: 'Belgrano 500',
       telefono: '2664522325',
       provincia: 'Buenos Aires',
       localidad: 'Quilmes',
       activo: true,
-      id_usuario: 2,
+      id_usuario: 3,
       id_especialidad: 16
     },
     {
       nombre: 'Blanca',
       apellido: 'Sosa',    
       dni: '18095087',
+      fecha_nacimiento: new Date('1990-05-15') ,
       genero: 'Femenino',
       direccion: 'Belgrano 1410',
       telefono: '2664522325',
       provincia: 'San Luis',
       localidad: 'Villa Mercedes',
       activo: true,
-      id_usuario: 3,
+      id_usuario: 4,
       id_especialidad: 17
     },
     {
       nombre: 'Jonathan',
       apellido: 'Sombra',    
       dni: '34567890',
+      fecha_nacimiento: new Date('1990-05-15') ,
       genero: 'Masculino',
       direccion: '3 de Febrero',
       telefono: '2664522325',
       provincia: 'San Luis',
       localidad: 'Villa Mercedes',
       activo: true,
-      id_usuario: 4,
+      id_usuario: 5,
       id_especialidad: 15
     },
   ]);
@@ -394,16 +439,48 @@ console.log('Especialidades creadas:', especialidades.length);
       nombre: 'Angel',
       apellido: 'Baroja',
       dni: '39137714',
+      fecha_nacimiento: new Date('1996-01-21') ,
       genero: 'Masculino',
       direccion: 'Belgrano 1200',
       telefono: '2657507376',
       provincia: 'San Luis',
       localidad: 'Villa Mercedes',
       activo: true,
-      id_usuario: 5,
+      id_usuario: 6,
     }
   ]);
   console.log('Recepcionista creados:', recepcionista.length);
+
+   // Administradores
+  const administrador = await Administrador.bulkCreate([
+    {
+      nombre: 'Seba',
+      apellido: 'Yubero',
+      dni: '38127752',
+      fecha_nacimiento: new Date('1990-05-15') ,
+      genero: 'Masculino',
+      direccion: 'Belgrano 1500',
+      telefono: '2657507376',
+      provincia: 'San Luis',
+      localidad: 'Villa Mercedes',
+      activo: true,
+      id_usuario: 7,
+    },
+    {
+      nombre: 'Alex',
+      apellido: 'Rodriguez',
+      dni: '23145612',
+      fecha_nacimiento: new Date('1992-06-08') ,
+      genero: 'Masculino',
+      direccion: 'San Luis 500',
+      telefono: '2657507376',
+      provincia: 'San Luis',
+      localidad: 'Villa Mercedes',
+      activo: true,
+      id_usuario: 8,
+    },
+  ]);
+  console.log('Administradores creados:', administrador.length);
 
   // Historiales médicos
   const historialesMedicos = await Historial_Medico.bulkCreate([

@@ -1,0 +1,206 @@
+extends ../layout
+
+block content
+    .pestanas
+        a.pestana.activa5(href='/administrador/doctores') Doctores
+        a.pestana.activa5(href='/administrador/enfermeros') Enfermeros
+        a.pestana.activa5(href='/administrador/administradores') Administradores
+        a.pestana.activa5(href='/administrador/recepcionistas') Recepcionistas 
+    .pestanas3 
+        a.pestana.activa5(href="/administrador/recepcionistas")  Generar Recepcionista        
+        a.pestana.activa5(href="/administrador/listar/recepcionistas")  Listar Recepcionistas           
+    .contenido-pestana#recepcion
+        h2 Formulario para la creacion de Recepcionistas 
+        p#texto Complete el formulario para generar un Recepcionista.
+            
+        script#doctores-data(type="application/json").
+            !{JSON.stringify(recepcionistas)}
+        if cartel
+            .modal-exito#modalExito
+                .modal-contenido
+                    img(src="/img/aceptar.ico" alt="Éxito")
+                    h2 ¡Recepcionista generado con éxito!                  
+                    p
+                        | Recepcionista:                    
+                        b #{recepcionista.nombre}  #{recepcionista.apellido}                        
+                    button(type="button" class="btn-cerrar-modal") Aceptar      
+                
+        form#formulario-registro(action="/administrador/recepcionistas" method="POST")                      
+            .formulario-grid
+                h3 Datos del Administrador
+                span
+                   
+                .grupo-formulario
+                    label(for="dni") DNI 
+                    input(type="text" placeholder="Ingrese su DNI" name="dni" minlength="8" maxlength="8" required)#dni
+                    .mensaje-error#dni-error(style="color: red; font-size: 0.9em; margin-top: 4px; display: none;")
+                    .mensaje-error#doctor-no-encontrado-error(style="font-size: 0.9em; margin-top: 4px; display: none;")
+                .grupo-formulario 
+                    label(for="nada" style="visibility:hidden") a
+                    button.boton.boton-primario(type="button" onclick="buscarDoctor()") Buscar
+                .grupo-formulario
+                    label(for="nombre") Nombre:
+                    input(type="text" placeholder="Ingrese el nombre" name="nombre" minlength="3" maxlength="20" required)#nombre
+                .grupo-formulario
+                    label(for="apellido") Apellido:
+                    input(type="text" placeholder="Ingrese el apellido" name="apellido" minlength="3" maxlength="20" required)#apellido
+
+                .grupo-formulario 
+                    label(for="fecha_nacimiento") Fecha de Nacimiento:
+                    input(type="date" placeholder="Ingrese la fecha de nacimiento" name="fecha_nacimiento" required)#fecha_nacimiento
+
+                .grupo-formulario 
+                    label(for="genero") Género:
+                    select#genero(name="genero" required)
+                            option(value="") Seleccione...
+                            option(value="Masculino") Masculino
+                            option(value="Femenino") Femenino
+                            option(value="No especificado") No especificado
+
+                .grupo-formulario 
+                    label(for="telefono") Numero de Celular:
+                    input(type="text" placeholder="Ingrese el número de celular" name="telefono" minlength="10" maxlength="10")#telefono
+                
+                .grupo-formulario 
+                    label(for="direccion") Dirección:
+                    input(type="text" placeholder="Ingrese la dirección" name="direccion" minlength="3" maxlength="30" required)#direccion
+
+                .grupo-formulario 
+                    label(for="provincia") Provincia:
+                    input(type="text" placeholder="Ingrese la provincia" name="provincia"  minlength="3" maxlength="30" required)#provincia
+
+                .grupo-formulario 
+                    label(for="localidad") Localidad:
+                    input(type="text" placeholder="Ingrese la localidad" name="localidad"  minlength="3" maxlength="30" required)#localidad 
+                
+                .grupo-formulario
+                    label(for="activo") Activo:
+                    select#activo(name="activo" required)
+                        option(value="") Seleccione...
+                        option(value="activo") Activo
+                        option(value="inactivo") Inactivo
+
+                .grupo-formulario
+                .grupo-formulario
+                    h3 Datos de Usuario
+                    p Si actualiza un Recepcionista debera colocar una nueva contraseña
+                .grupo-formulario
+
+                .grupo-formulario 
+                    label(for="nombreUsuario") Usuario:
+                    input(type="text" placeholder="Ingrese su nombre de usuario" name="nombreUsuario"  minlength="3" maxlength="30" required)#nombreUsuario 
+                    p#usuarioDuplicado(style="color:red; margin-top:8px; diplay:none;") 
+                        
+                .grupo-formulario 
+                    label(for="contrasena") Contraseña:
+                    input(type="text" placeholder="Ingrese una nueva contaseña" name="contrasena" required)#contrasena 
+            .botones-accion             
+                span 
+                button(type="submit" class="boton boton-primario" onclick="validarAntesDeEnviar(event)") Generar Enfermero
+
+        script. 
+            const usuariosExistentes = !{JSON.stringify(usuariosExistentes || [])};
+            // Función que se ejecuta con el boton “Generar Enfermero”
+            function validarAntesDeEnviar(event) {
+                event.preventDefault();  // no envíes aún
+
+                const doctoresData = JSON.parse(document.getElementById('doctores-data').textContent);
+                const nombreUsuario = document.getElementById('nombreUsuario').value.trim();
+                const dni = document.getElementById('dni').value.trim();
+                const contrasena = document.getElementById('contrasena').value.trim();
+
+                // 1. Obtener el usuario asociado al DNI actual (si existe)
+                const doctorActual = doctoresData.find(doc => doc.dni === dni);
+                const usuarioActual = doctorActual ? doctorActual.Usuario.usuario : '';
+
+                // 2. Obtener el usuario asociado al DNI original (si existe)
+                const dniOriginal = document.getElementById('dni').dataset.originalDni || dni;
+                const doctorOriginal = doctoresData.find(doc => doc.dni === dniOriginal);
+                const usuarioOriginal = doctorOriginal ? doctorOriginal.Usuario.usuario : '';
+
+                // 3. Usuario duplicado
+                if (usuariosExistentes.includes(nombreUsuario) && nombreUsuario !== usuarioOriginal) {
+                    document.getElementById('usuarioDuplicado').textContent = `El usuario “${nombreUsuario}” ya existe.`;
+                    document.getElementById('usuarioDuplicado').style.display = 'block';
+                    document.getElementById('nombreUsuario').focus();
+                    return;
+                }
+                
+
+                // 4. Validaciones nativas del navegador
+                const form = document.getElementById('formulario-registro');
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+
+                // 5. Todo bien → enviar
+                form.submit();
+            } 
+            // Función para formatear fecha a YYYY-MM-DD
+            function formatDate(dateStr) {
+                if (!dateStr) return '';
+                return new Date(dateStr).toISOString().split('T')[0];
+            }
+
+            function buscarDoctor() {
+                const dniInput = document.getElementById('dni');
+                const dni = dniInput.value.trim();
+
+                const dniError = document.getElementById('dni-error');
+                const doctorError = document.getElementById('doctor-no-encontrado-error');
+
+                // Ocultar mensajes previos
+                dniError.style.display = 'none';
+                doctorError.style.display = 'none';
+
+                // Validar longitud del DNI
+                if (dni.length !== 8 || isNaN(dni)) {
+                    dniError.textContent = 'El DNI debe tener exactamente 8 dígitos numéricos.';
+                    dniError.style.color = 'red';
+                    dniError.style.display = 'block';
+                    return;
+                }
+
+                const doctoresData = JSON.parse(document.getElementById('doctores-data').textContent);
+                const doctor = doctoresData.find(doc => doc.dni === dni);
+
+                if (doctor) {
+                document.getElementById('nombre').value = doctor.nombre || '';
+                document.getElementById('apellido').value = doctor.apellido || '';
+                document.getElementById('fecha_nacimiento').value = formatDate(doctor.fecha_nacimiento) || '';
+                document.getElementById('genero').value = doctor.genero || '';
+                document.getElementById('telefono').value = doctor.telefono || '';
+                document.getElementById('direccion').value = doctor.direccion || '';
+                document.getElementById('provincia').value = doctor.provincia || '';
+                document.getElementById('localidad').value = doctor.localidad || '';
+                document.getElementById('activo').value = doctor.activo ? 'activo' : 'inactivo';
+                document.getElementById('nombreUsuario').value = doctor.Usuario?.usuario || '';               
+
+                document.getElementById('doctor-no-encontrado-error').textContent = 'Recepcionista encontrado y datos cargados';
+                document.getElementById('doctor-no-encontrado-error').style.color = 'green';
+                document.getElementById('doctor-no-encontrado-error').style.display = 'block';
+                } else {
+                document.getElementById('doctor-no-encontrado-error').textContent = 'No se encontró un Recepcionista con ese DNI';
+                document.getElementById('doctor-no-encontrado-error').style.color = 'red';
+                document.getElementById('doctor-no-encontrado-error').style.display = 'block';
+                document.getElementById('formulario-registro').reset();
+                }
+            }
+            document.addEventListener('DOMContentLoaded', () => {
+                    const modal = document.getElementById('modalExito');
+                    if (modal) {
+                        modal.classList.add('visible');
+                        
+                        document.querySelector('.btn-cerrar-modal').addEventListener('click', () => {
+                            modal.style.display = 'none';
+                        });
+                        
+                        // Cerrar al hacer clic fuera del contenido
+                        modal.addEventListener('click', (e) => {
+                            if (e.target === modal) {
+                                modal.style.display = 'none';
+                            }
+                        });
+                    }
+                });

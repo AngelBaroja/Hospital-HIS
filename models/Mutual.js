@@ -7,11 +7,7 @@ Mutual.init(
   {    
     nombre: {
         type: DataTypes.STRING,
-        allowNull: false,
-        unique: false,        
-        validate: {
-            isIn: [['OSDE', 'Galeno', 'Swiss Medical', 'PAMI', 'Sancor Salud', 'MEOC']] 
-        },
+        allowNull: false,        
         comment: `Nombre de la mutual`                
     }    
   }, {

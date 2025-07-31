@@ -300,6 +300,7 @@ async function registrarEnfermeria(req, res) {
         console.log('Se actualizará el paciente por cambios en sus datos');
             // Actualizar los campos del paciente
             paciente = await paciente.update({
+                dni,
                 nombre,
                 apellido,
                 fecha_nacimiento,
@@ -414,6 +415,53 @@ async function registrarEnfermeria(req, res) {
     
     const mutuales = await Mutual.findAll();
     const motivos = await Motivo.findAll();
+
+    //Actualizamos la recepcion 
+    recepcion = await Recepcion.findOne({
+            where: {
+                id: recepcion.id
+            },
+            include: [
+                {
+                    model: Paciente,                    
+                    include: [
+                        {
+                            model: Mutual_Paciente,
+                            include: [{model: Mutual}]
+                        },
+                        {
+                            model: Contacto_Emergencia                            
+                        },
+                        {
+                            model: Historial_Medico,
+                            include: [
+                                { model: Alergia },
+                                { model: Antecedente_Familiar },
+                                { model: Cirugia_Previa },
+                                { model: Enfermedad_Previa },
+                                { model: Medicamento_Paciente }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    model: Cama,
+                    include: [
+                        {
+                            model: Habitacion,
+                            include: [
+                                {
+                                    model: Ala,
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    model: Motivo,
+                }
+            ]
+        });
 
     const cartel = true;
     
@@ -1033,7 +1081,7 @@ async function vistaAntecedentesFamiliares(req, res) {
                 }
             ]
         }); 
-        const familiares = ['Padre', 'Madre', 'Hermano', 'Hermana', 'Abuelo', 'Abuela', 'Tio', 'Tia']; 
+        const familiares = ["Padre", "Madre", "Hermano", "Hermana", "Abuelo", "Abuela", "Tío", "Tía"]; 
         
         res.status(200).render('enfermeria/historialMedico/Antecedentes', { usuario, cargo, recepcion,familiares });
     } catch (error) {

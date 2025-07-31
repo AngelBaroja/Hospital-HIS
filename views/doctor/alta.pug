@@ -1,0 +1,46 @@
+extends ../layout
+
+block content   
+    .pestanas
+        .pestana.activa4  Paciente Internado: #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}
+        if cargo == "Doctor" || cargo == "Doctora"
+            a.boton-alta(href=`/doctor/alta/${recepcion.id}`) Alta Médica
+                img.icono-cruz(src="/img/hospital1.png", alt="Cruz médica")
+    .pestanas3
+        if cargo == "Enfermero" || cargo == "Enfermera"
+            a.pestana.activa5(href=`/enfermeria/registro/${recepcion.id}`)  Registro
+        a.pestana.activa5(href=`/enfermeria/historialMedico/alergia/${recepcion.id}`)  Historial Medico
+        a.pestana.activa5(href=`/enfermeria/signosVitales/${recepcion.id}`)  Signos Vitales
+        if cargo == "Doctor" || cargo == "Doctora"
+            a.pestana.activa5(href=`/doctor/estudios/${recepcion.id}`)  Estudios
+        a.pestana.activa5(href=`/enfermeria/sintomas/${recepcion.id}`)  Sintomas / Tratamiento
+        
+    .contenido-pestana#recepcion
+        h2 Alta de Paciente
+        if(recepcion.Paciente.genero=="Femenino") 
+            p#texto Indica la condicion de alta de la paciente #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}.
+        else 
+            p#texto Indica la condicion de alta del paciente #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}.
+        form#formulario-registro(action=`/doctor/alta/${recepcion.id}`, method='POST')
+            .formulario-grid
+                .grupo-formulario 
+                        label(for="alta") Condición:
+                        select#genero(name="alta" required)
+                            option(value="") Seleccione...
+                            option(value="Alta médica por mejoría o recuperación") Alta médica por mejoría o recuperación
+                            option(value="Alta por derivación a otro centro") Alta por derivación a otro centro
+                            option(value="Alta por tratamiento finalizado sin posibilidad de cura") Alta por tratamiento finalizado sin posibilidad de cura
+                            option(value="Alta por decisión económica o de la obra social/prepaga") Alta por decisión económica o de la obra social/prepaga
+                            option(value="Alta por razones sociales o familiares") Alta por razones sociales o familiares
+                            option(value="Alta voluntaria") Alta voluntaria
+                            option(value="Alta por abandono o fuga") Alta por abandono o fuga
+                            option(value="Alta por fallecimiento") Alta por fallecimiento
+                            option(value="Alta por traslado judicial") Alta por traslado judicial
+                .grupo-formulario2                     
+                    button.boton-verde(type="submit") Dar de Alta
+        .botones-accion 
+            form(action="/enfermeria/pacientesInternados" method="GET")
+                button(type="submit" class="boton boton-secundario") Atrás
+                    
+                            
+

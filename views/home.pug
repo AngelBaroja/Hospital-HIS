@@ -49,6 +49,27 @@ block content
                         b #{datosRecepcion.recepcion.detalle_motivo}
                 button(type="button" class="btn-cerrar-modal") Aceptar
 
+    if cartelAlta
+        .modal-exito#modalExito
+            .modal-contenido
+                img(src="/img/alta.png" alt="Éxito")
+                h2 ¡Alta generada con éxito!
+                p
+                    | Paciente: 
+                    if recepcion.Paciente.nombre == 'Sin Nombre'
+                        b De Emergencia - Sin Datos
+                    else
+                        b #{recepcion.Paciente.nombre}  #{recepcion.Paciente.apellido}
+                p
+                    | Condición:
+                    b #{recepcion.estado}
+                p
+                    | Fecha:
+                    b #{recepcion.fecha_formateada}
+                    |  | Hora:
+                    b #{recepcion.updatedAt.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
+                button(type="button" class="btn-cerrar-modal") Aceptar
+
     script.
         // Mostrar modal si existe
         document.addEventListener('DOMContentLoaded', () => {

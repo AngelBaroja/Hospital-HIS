@@ -269,27 +269,39 @@ async function crearPaciente(req, res) {
     
     
     if (paciente.dni == "Sin DNI") {         
-        console.log("El paciente ingreso por Emergencia");        
-        
-        // Obtener habitaciones disponibles para emergencia
-        const habitacionesDisponibles = await Habitacion.findAll({
-                where: { activa: true },
-                include: [{
-                model: Cama,  
-                include: [{
-                    model: Recepcion,
-                    where: { fecha_salida: null },
-                    required: false,  
-                    include: [{
-                        model: Paciente,
-                        attributes: ['id', 'genero']
-                    }]
-                }]
-            },
-            {
-                model: Ala 
-            }]
+        console.log("El paciente ingreso por Emergencia");  
+
+            const habitacionesDisponibles = await Habitacion.findAll({
+                where: {
+                    activa: true,
+                    id_ala: { [Op.ne]: null } // Asegura que la habitación tenga una Ala asociada
+                },
+                include: [
+                    {
+                        model: Cama,
+                        where: { id_habitacion: { [Op.ne]: null } }, // Asegura que la habitación tenga al menos una cama asociada
+                        required: true, // Requiere que al menos una cama esté asociada
+                        include: [
+                            {
+                                model: Recepcion,
+                                where: { fecha_salida: null },
+                                required: false,
+                                include: [
+                                    {
+                                        model: Paciente,
+                                        attributes: ['id', 'genero']
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        model: Ala,
+                        required: true // Requiere que la habitación tenga una Ala asociada
+                    }
+                ]
             });
+            habitacionesDisponibles.sort((a, b) => a.id - b.id);
         
         return res.status(200).render('recepcion/asignacion', {            
             tipo,
@@ -458,6 +470,8 @@ async function crearPaciente(req, res) {
                 model: Ala 
             }]
         });
+        
+        habitacionesDisponibles.sort((a, b) => a.id - b.id);
 
         // Renderizar la vista de asignación
         res.status(200).render('recepcion/asignacion', {         
@@ -575,7 +589,7 @@ async function retirarRecepcion(req, res) {
     await Recepcion.update(
       {
         fecha_salida: new Date(),
-        estado: "Retirado",        
+        estado: "Alta por abandono o fuga",        
       },
       { where: { id } }
     );

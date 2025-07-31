@@ -33,6 +33,13 @@ Recepcionista.init(
         },
         comment: 'DNI del Recepcionista'
     },
+    fecha_nacimiento: {
+            type: DataTypes.DATEONLY,
+            allowNull: true,
+            unique: false,
+            defaultValue: null,       
+            comment: 'Fecha de nacimiento del Recepcionista'
+    },
     genero: {
         type: DataTypes.STRING,
         allowNull: false,

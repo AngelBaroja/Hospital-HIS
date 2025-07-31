@@ -1,0 +1,158 @@
+extends ../layout
+
+block content   
+    .pestanas
+        a.pestana.activa5(href='/administrador/camas') Camas
+        a.pestana.activa5(href='/administrador/habitaciones') Habitaciones
+       
+    .pestanas3 
+        a.pestana.activa5(href="/administrador/camas") Generar Cama       
+        a.pestana.activa5(href="/administrador/listar/camas")  Listar Camas           
+    .contenido-pestana#recepcion
+        h2 Formulario para la creacion de Camas 
+        p#texto Complete el formulario para generar una nueva Cama.
+        if cartel
+            .modal-exito#modalExito
+                .modal-contenido
+                    img(src="/img/aceptar.ico" alt="Éxito")
+                    h2 ¡Cama generada con éxito!                  
+                    p
+                        | Número:                    
+                        b #{camaCartel.numero}
+                    p
+                        | Tipo:                    
+                        b #{camaCartel.tipo} 
+                    p
+                        | Estado:                    
+                        b #{camaCartel.estado}
+                    if camaCartel.electrica
+                        p
+                            | Electrica: 
+                            b Si 
+                    else    
+                        p 
+                            | Electrica:
+                            b  No   
+                    if camaCartel.oxigeno   
+                        p
+                            | Oxigeno: 
+                            b Si 
+                    else
+                        p 
+                            | Oxigeno:
+                            b No    
+                    button(type="button" class="btn-cerrar-modal") Aceptar
+        form#formulario-registro(action="/administrador/camas" method="POST")
+            .formulario-grid
+                h3 Datos de la Cama
+                span
+                if cama 
+                    .grupo-formulario
+                        label(for="id") ID:
+                        input(type="text" placeholder="Identificador para la Cama" name="id" value=cama.id readonly)#id
+
+                .grupo-formulario
+                    label(for="numero") Número:
+                    select#numero(name="numero" required)
+                        option(value="") Seleccione...
+                        if cama
+                            if cama.numero == 1 
+                                option(value="1" selected) Nº 1 
+                                option(value="2") Nº 2
+                            else 
+                                option(value="1") Nº 1 
+                                option(value="2" selected) Nº 2
+                        else 
+                            option(value="1") Nº 1 
+                            option(value="2") Nº 2
+
+                if cama
+                    .grupo-formulario
+                        label(for="tipo") Tipo:
+                        select#tipo(name="tipo")
+                            option(value="") Seleccione...
+                            each tipo in tipos
+                                if tipo==cama.tipo 
+                                    option(value=tipo selected) #{tipo} 
+                                else 
+                                    option(value=tipo) #{tipo}
+                else    
+                    .grupo-formulario
+                        label(for="tipo") Tipo:
+                        select#tipo(name="tipo")
+                            option(value="") Seleccione...
+                            option(value="Normal") Normal
+                            option(value="UCI") UCI
+                            option(value="Reanimacion") Reanimación
+                            option(value="Pediátrica") Pediátrica
+
+                if cama 
+                    .grupo-formulario
+                        label(for="estado") Estado:
+                        select#estado(name="estado")
+                            option(value="") Seleccione...
+                            each estado in estados
+                                if cama.estado == estado
+                                    option(value=estado selected) #{estado}
+                                else
+                                    option(value=estado) #{estado}
+
+                else
+                    .grupo-formulario
+                        label(for="estado") Estado:
+                        select#estado(name="estado")
+                            option(value="") Seleccione...
+                            option(value="Libre") Libre
+                            option(value="Ocupada") Ocupada
+                            option(value="En Desinfeccion") En Desinfección
+                            option(value="En Mantenimiento") En Mantenimiento
+
+                .grupo-formulario
+                    label(for="electrica") Electrica:
+                    select#numero(name="electrica" required)
+                        option(value="") Seleccione...
+                        if cama 
+                            if cama.electrica == true 
+                                option(value="1" selected) Si
+                                option(value="2") No 
+                            else 
+                                option(value="1") Si
+                                option(value="2" selected) No 
+                        else
+                            option(value="1") Si
+                            option(value="2") No 
+                .grupo-formulario
+                    label(for="oxigeno") Oxigeno:
+                    select#numero(name="oxigeno" required)
+                        option(value="") Seleccione...
+                        if cama 
+                            if cama.oxigeno == true 
+                                option(value="1" selected) Si
+                                option(value="2") No 
+                            else 
+                                option(value="1") Si
+                                option(value="2" selected) No 
+                        else
+                            option(value="1") Si
+                            option(value="2") No                         
+            .botones-accion             
+                span 
+                button(type="submit" class="boton boton-primario") Crear Cama 
+        script.
+            document.addEventListener('DOMContentLoaded', () => {
+                const modal = document.getElementById('modalExito');
+                if (modal) {
+                    modal.classList.add('visible');
+                        
+                    document.querySelector('.btn-cerrar-modal').addEventListener('click', () => {
+                        modal.style.display = 'none';
+                    });
+                        
+                    // Cerrar al hacer clic fuera del contenido
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) {
+                            modal.style.display = 'none';
+                        }
+                    });
+                }
+            });

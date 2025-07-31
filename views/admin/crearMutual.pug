@@ -1,0 +1,58 @@
+extends ../layout
+
+block content   
+    .pestanas
+        a.pestana.activa5(href='/administrador/mutual') Crear Mutual        
+              
+    .contenido-pestana#recepcion
+        h2 Crear Mutual 
+        p#texto Introduzca el nombre de la mutual.
+        if cartel
+            .modal-exito#modalExito
+                .modal-contenido
+                    img(src="/img/aceptar.ico" alt="Éxito")
+                    h2 ¡Mutual generada con éxito!                  
+                    p
+                        | Nombre:                    
+                        b #{mutual.nombre}                   
+                    button(type="button" class="btn-cerrar-modal") Aceptar
+
+        form#formulario-registro(action="/administrador/mutual" method="POST")
+            .formulario-grid               
+                .grupo-formulario
+                    label(for="nombreMutual") Mutual:
+                    input(type="text" placeholder="Ingrese el Nombre de la Mutual" name="nombreMutual" required)       
+            .botones-accion             
+                span 
+                button(type="submit" class="boton boton-primario") Guardar 
+
+        table.tabla-turnos
+            thead
+                tr                    
+                    th Nombre de las Mutuales:
+            tbody
+                if mutuales.length
+                    each mutual in mutuales
+                        tr
+                            td= mutual.nombre 
+                else
+                    tr
+                        td(colspan="9") No hay Mutuales cargados en HIS Hospital
+        script.
+            document.addEventListener('DOMContentLoaded', () => {
+                const modal = document.getElementById('modalExito');
+                if (modal) {
+                    modal.classList.add('visible');
+                        
+                    document.querySelector('.btn-cerrar-modal').addEventListener('click', () => {
+                        modal.style.display = 'none';
+                    });
+                        
+                    // Cerrar al hacer clic fuera del contenido
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) {
+                            modal.style.display = 'none';
+                        }
+                    });
+                }
+            });

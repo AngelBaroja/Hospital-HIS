@@ -1,0 +1,81 @@
+extends ../layout
+
+block content   
+    .pestanas
+        a.pestana.activa5(href='/administrador/camas') Camas
+        a.pestana.activa5(href='/administrador/habitaciones') Habitaciones
+    .pestanas3 
+        a.pestana.activa5(href="/administrador/habitaciones") Generar Habitación       
+        a.pestana.activa5(href="/administrador/listar/habitaciones")  Listar Habitaciones
+        a.pestana.activa5(href="/administrador/insertar/cama")  Insertar Cama
+        a.pestana.activa5(href="/administrador/mover/cama")  Mover Camas
+    .contenido-pestana#recepcion
+        h2 Formulario para la creacion de Habitaciones 
+        p#texto Complete el formulario para generar una nueva Habitación.
+        if cartel
+            .modal-exito#modalExito
+                .modal-contenido
+                    img(src="/img/aceptar.ico" alt="Éxito")
+                    h2 ¡Habitación generada con éxito!                  
+                    p
+                        | Número:                    
+                        b #{nuevaHabitacion.id}
+                    p
+                        | Tipo:                    
+                        b #{nuevaHabitacion.tipo}
+                    if nuevaHabitacion.activa==true
+                        p
+                            | Activa:                    
+                            b  Si
+                    else 
+                        p
+                            | Activa:                    
+                            b  No  
+                    p
+                        | Ala:                    
+                        b #{sector.sector}
+                    button(type="button" class="btn-cerrar-modal") Aceptar
+        form#formulario-registro(action="/administrador/habitaciones" method="POST")
+            .formulario-grid
+                h3 Datos de la Habitación
+                span
+                .grupo-formulario
+                    label(for="tipo") Tipo:
+                    select#tipo(name="tipo" required)
+                        option(value="") Seleccione...
+                        option(value="Individual") Individual
+                        option(value="Compartida") Compartida
+                .grupo-formulario
+                    label(for="activa") Activa:
+                    select#tipo(name="activa" required)
+                        option(value="") Seleccione...
+                        option(value="1") Si
+                        option(value="2") No
+                .grupo-formulario
+                    label(for="ala") Ala:
+                    select#ala(name="ala" required)
+                        option(value="") Seleccione...
+                            each ala in alas 
+                                option(value=ala.id) #{ala.sector} 
+
+            .botones-accion             
+                span 
+                button(type="submit" class="boton boton-primario") Generar Habitación 
+        script.
+            document.addEventListener('DOMContentLoaded', () => {
+                const modal = document.getElementById('modalExito');
+                if (modal) {
+                    modal.classList.add('visible');
+                        
+                    document.querySelector('.btn-cerrar-modal').addEventListener('click', () => {
+                        modal.style.display = 'none';
+                    });
+                        
+                    // Cerrar al hacer clic fuera del contenido
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) {
+                            modal.style.display = 'none';
+                        }
+                    });
+                }
+            });

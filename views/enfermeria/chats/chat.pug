@@ -8,8 +8,11 @@ block content
                 each recepcion in recepciones
                     if recepcion.estado === 'Internado'
                         li.paciente-item(data-recepcion-id=recepcion.id onclick=`seleccionarPaciente(${JSON.stringify(recepcion.Paciente)})`)
-                            .div-prioridades2    
-                                .paciente-nombre #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}
+                            .div-prioridades2
+                                if(recepcion.Paciente.nombre=="Sin Nombre")
+                                    .paciente-nombre Pac. de Emergencia
+                                else    
+                                    .paciente-nombre #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}
                                 .leyenda-prioridad 
                                     if recepcion.prioridadClase === 'prioridad-sin-cargar'
                                         .circulo-prioridad.prioridad-sin-cargar
@@ -101,24 +104,20 @@ block content
                     chat.id_paciente === destinatarioSeleccionado.id
                 );
             } else {
-                // Mensajes entre dos profesionales
-                mensajesFiltrados = chats.filter(chat => {
-                    // Caso 1: Yo envié al destinatario
-                    const yoEnvie = (
-                        chat.id_autor === usuarioActual.id && 
-                        ((tipoSeleccionado === 'doctor' && chat.id_doctor === destinatarioSeleccionado.id) ||
-                        (tipoSeleccionado === 'enfermero' && chat.id_enfermero === destinatarioSeleccionado.id))
-                    );
-                    
-                    // Caso 2: Destinatario me envió a mí
-                    const elEnvio = (
-                        chat.id_autor === destinatarioSeleccionado.id &&
-                        ((usuarioActual.tipo.toLowerCase().includes('doctor') && chat.id_doctor === usuarioActual.id) ||
-                        (usuarioActual.tipo.toLowerCase().includes('enfermer') && chat.id_enfermero === usuarioActual.id))
-                    );
-                    
-                    return yoEnvie || elEnvio;
-                });
+                const miId   = usuarioActual.id;
+                const miTipo = usuarioActual.tipo.toLowerCase().replace('a', 'o');
+                const contactoId   = destinatarioSeleccionado.id;
+                const contactoTipo = tipoSeleccionado;
+                mensajesFiltrados = chats.filter(chat =>
+                  chat.id_paciente === null &&
+                  (
+                    (chat.id_autor === miId && chat.cargo.toLowerCase().replace('a', 'o') === miTipo &&
+                     (contactoTipo === 'doctor' ? chat.id_doctor === contactoId : chat.id_enfermero === contactoId)) ||
+                    (chat.id_autor === contactoId && chat.cargo.toLowerCase().replace('a', 'o') === contactoTipo &&
+                     (miTipo === 'doctor' ? chat.id_doctor === miId : chat.id_enfermero === miId))
+                  )
+                );
+            
             }
 
             // Ordenar mensajes
@@ -127,7 +126,11 @@ block content
             // Renderizar
             mensajesFiltrados.forEach(mensaje => {
                 const div = document.createElement('div');
-                div.className = mensaje.id_autor === usuarioActual.id ? 'mensaje enviado' : 'mensaje recibido';
+                if (mensaje.id_autor === usuarioActual.id && mensaje.cargo === usuarioActual.tipo) {
+                    div.className = 'mensaje enviado';
+                } else {
+                    div.className = 'mensaje recibido';
+                }
                 
                 const hora = mensaje.createdAt ? 
                     new Date(mensaje.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';

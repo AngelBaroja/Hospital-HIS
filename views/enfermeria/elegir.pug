@@ -3,10 +3,15 @@ extends ../layout
 block content
     .pestanas
         .pestana.activa4  Paciente Internado: #{recepcion.Paciente.nombre} #{recepcion.Paciente.apellido}
+        if cargo == "Doctor" || cargo == "Doctora"
+            a.boton-alta(href=`/doctor/alta/${recepcion.id}`) Alta Médica
+                img.icono-cruz(src="/img/hospital1.png", alt="Cruz médica")
     .pestanas3
-        a.pestana.activa5(href=`/enfermeria/registro/${recepcion.id}`)  Registro
+        if cargo == "Enfermero" || cargo == "Enfermera"
+            a.pestana.activa5(href=`/enfermeria/registro/${recepcion.id}`)  Registro
         a.pestana.activa5(href=`/enfermeria/historialMedico/alergia/${recepcion.id}`)  Historial Medico
         a.pestana.activa5(href=`/enfermeria/signosVitales/${recepcion.id}`)  Signos Vitales
+        if cargo == "Doctor" || cargo == "Doctora"
+            a.pestana.activa5(href=`/doctor/estudios/${recepcion.id}`)  Estudios
         a.pestana.activa5(href=`/enfermeria/sintomas/${recepcion.id}`)  Sintomas / Tratamiento
-    
-         
+        

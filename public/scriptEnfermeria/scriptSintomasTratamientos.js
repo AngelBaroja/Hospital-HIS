@@ -39,7 +39,7 @@ function agregarMedicamento() {
     const bloque = document.createElement('div');
     bloque.className = 'bloque-historial entrando';
     bloque.innerHTML = `
-    <p id="textoMedicamentos">Medicamento: ${nombre} / Dosis: ${dosis}Mg / Frecuencia de Consumo: ${frecuencia}</p>
+    <p id="textoMedicamentos">Medicamento: ${nombre} / Dosis: ${dosis}Mg / Frecuencia: ${frecuencia}</p>
     <input type="hidden" name="nombre_medicamento" value="${nombre}">
     <input type="hidden" name="dosis" value="${dosis}">
     <input type="hidden" name="frecuencia" value="${frecuencia}">

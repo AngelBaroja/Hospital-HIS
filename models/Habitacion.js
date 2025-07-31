@@ -33,7 +33,8 @@ Habitacion.init(
 }
 );
 
-Habitacion.hasMany(Cama, { foreignKey: 'id_habitacion' });
-Cama.belongsTo(Habitacion, { foreignKey: 'id_habitacion' });
+Habitacion.hasMany(Cama, { foreignKey: 'id_habitacion', onDelete: "CASCADE" });
+Cama.belongsTo(Habitacion, { foreignKey: 'id_habitacion', onDelete: "CASCADE" });
+
 
 module.exports = Habitacion;

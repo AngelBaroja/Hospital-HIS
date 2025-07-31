@@ -1,0 +1,71 @@
+extends ../layout
+
+block content   
+    .pestanas
+        a.pestana.activa5(href='/administrador/doctores') Doctores
+        a.pestana.activa5(href='/administrador/enfermeros') Enfermeros
+        a.pestana.activa5(href='/administrador/administradores') Administradores
+        a.pestana.activa5(href='/administrador/recepcionistas') Recepcionistas
+    .pestanas3 
+        a.pestana.activa5(href="/administrador/administradores")  Generar Administrador        
+        a.pestana.activa5(href="/administrador/listar/administradores")  Listar Administradores 
+    .contenido-pestana#administrador
+        h2 Lista de Administradores
+        if cartel
+            .modal-exito#modalExito
+                .modal-contenido
+                    img(src="/img/aceptar.ico" alt="Éxito")
+                    h2 ¡Administrador modificado con éxito!                  
+                    p
+                        | Administrador:                    
+                        b #{administrador.nombre}  #{administrador.apellido}                        
+                    button(type="button" class="btn-cerrar-modal") Aceptar 
+        table.tabla-turnos
+            thead
+                tr
+                    th DNI
+                    th Nombre y Apellido                    
+                    th Contacto
+                    th Nacimiento
+                    th Direccion                    
+                    th Localidad
+                    th Usuario
+                    th Acciones
+            tbody
+                if administradores.length
+                    each administrador in administradores
+                        tr
+                            td= administrador.dni
+                            td= `${administrador.nombre} ${administrador.apellido}`                            
+                            td= administrador.telefono
+                            td= administrador.fecha_formateada 
+                            td= administrador.direccion                            
+                            td= administrador.localidad
+                            td= administrador.Usuario.usuario
+                            td
+                                form(action=`/administrador/listar/administradores/${administrador.id}` method="POST" style="display: inline;")
+                                    if(administrador.activo==true)
+                                        button.boton-eliminar(type="submit") Dar Baja
+                                    else 
+                                        button.boton-agregar(type="submit") Dar Alta
+                else
+                    tr
+                        td(colspan="9") No hay Administradores cargados en HIS Hospital
+        script.
+            document.addEventListener('DOMContentLoaded', () => {
+                        const modal = document.getElementById('modalExito');
+                        if (modal) {
+                            modal.classList.add('visible');
+                            
+                            document.querySelector('.btn-cerrar-modal').addEventListener('click', () => {
+                                modal.style.display = 'none';
+                            });
+                            
+                            // Cerrar al hacer clic fuera del contenido
+                            modal.addEventListener('click', (e) => {
+                                if (e.target === modal) {
+                                    modal.style.display = 'none';
+                                }
+                            });
+                        }
+                    });
