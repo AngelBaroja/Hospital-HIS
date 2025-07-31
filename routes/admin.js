@@ -47,6 +47,7 @@ router.post('/mover/cama', requiereSesion, adminController.cargarMoverCama);
 //Mutual
 router.get('/mutual', requiereSesion, adminController.vistaMutual);
 router.post('/mutual', requiereSesion, adminController.cargarMutual);
+router.post('/mutual/eliminar/:id', requiereSesion, adminController.eliminarMutual);
 
 
 

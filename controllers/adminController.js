@@ -15,6 +15,7 @@ const Ala = require('../models/Ala');
 const Mutual = require('../models/Mutual');
  
 const bcrypt = require('bcrypt');
+const Mutual_Paciente = require('../models/Mutual_Paciente');
 
 
 
@@ -1404,9 +1405,11 @@ async function vistaMutual(req, res) {
         const mutuales = await Mutual.findAll();      
                 
         const cartel=false;
+        const cartel2=false;
 
 
-        res.status(200).render('admin/crearMutual', { usuario, cargo, cartel, mutuales,});
+
+        res.status(200).render('admin/crearMutual', { usuario, cargo, cartel, cartel2, mutuales,});
     }catch (error) {
         console.error('Error en la vista habitaciones ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista habitaciones', error });
@@ -1427,14 +1430,40 @@ async function cargarMutual(req, res) {
         const mutuales = await Mutual.findAll();
                 
         const cartel=true;
+        const cartel2=false;
 
-
-        res.status(200).render('admin/crearMutual', { usuario, cargo, cartel, mutuales, mutual});
+        res.status(200).render('admin/crearMutual', { usuario, cargo, cartel, cartel2, mutuales, mutual});
     }catch (error) {
         console.error('Error en la vista habitaciones ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista habitaciones', error });
     }
 }
+
+async function eliminarMutual(req, res) {
+    try{
+        const usuario = req.session.nombreUsuario;
+        const cargo = req.session.tipoUsuario;   
+            
+                
+        const cartel2=true;
+        const cartel=false;
+
+        const mutual = await Mutual.findByPk(req.params.id);
+        await Mutual_Paciente.destroy({
+            where:{id_mutual: mutual.id}
+        })
+
+        mutual.destroy();
+
+        const mutuales = await Mutual.findAll();  
+
+        res.status(200).render('admin/crearMutual', { usuario, cargo, cartel, cartel2, mutuales, mutual});
+    }catch (error) {
+        console.error('Error en la vista habitaciones ', error);
+        res.status(500).render('error', { mensaje: 'Error en la vista habitaciones', error });
+    }
+}
+
 
 module.exports = {
     vistaElegir,
@@ -1471,5 +1500,6 @@ module.exports = {
     vistaMoverCama,
     cargarMoverCama,
     vistaMutual,
-    cargarMutual 
+    cargarMutual,
+    eliminarMutual
 };

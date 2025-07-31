@@ -16,6 +16,15 @@ block content
                         | Nombre:                    
                         b #{mutual.nombre}                   
                     button(type="button" class="btn-cerrar-modal") Aceptar
+        if cartel2
+            .modal-exito#modalExito
+                .modal-contenido
+                    img(src="/img/aceptar.ico" alt="Éxito")
+                    h2 ¡Mutual Eliminada con éxito!                  
+                    p
+                        | Nombre:                    
+                        b #{mutual.nombre}                   
+                    button(type="button" class="btn-cerrar-modal") Aceptar
 
         form#formulario-registro(action="/administrador/mutual" method="POST")
             .formulario-grid               
@@ -30,11 +39,16 @@ block content
             thead
                 tr                    
                     th Nombre de las Mutuales:
+                    th Eliminar Mutual:
             tbody
                 if mutuales.length
                     each mutual in mutuales
                         tr
-                            td= mutual.nombre 
+                            td= mutual.nombre
+                            td 
+                                form(action=`/administrador/mutual/eliminar/${mutual.id}` method="POST" style="display: inline;")
+                                        button.boton-eliminar(type="submit") Eliminar
+                                 
                 else
                     tr
                         td(colspan="9") No hay Mutuales cargados en HIS Hospital

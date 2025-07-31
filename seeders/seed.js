@@ -329,11 +329,11 @@ console.log('Especialidades creadas:', especialidades.length);
       contraseña: passwordEnfermero1  
     },
     {
-      usuario: 'Enf.Perez1',
+      usuario: 'Enf.Sosa',
       contraseña: passwordEnfermero2  
     },
     {
-      usuario: 'Enf.Perez2',
+      usuario: 'Enf.Sombra',
       contraseña: passwordEnfermero3  
     },
     {

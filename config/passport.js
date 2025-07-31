@@ -9,11 +9,11 @@ passport.use(new LocalStrategy(
     try {
         const usuario = await Usuario.findOne({ where: { usuario: username.trim().toLowerCase() } });
       if (!usuario) {        
-        return done(null, false, { message: 'Usuario incorrecto.' });
+        return done(null, false, { message: 'incorrecto.' });
       }
       const validPassword = await bcrypt.compare(password, usuario.contraseña);
       if (!validPassword) {
-        return done(null, false, { message: 'Contraseña incorrecta.' });
+        return done(null, false, { message: 'incorrecta.' });
       }      
       return done(null, usuario);
     } catch (error) {
