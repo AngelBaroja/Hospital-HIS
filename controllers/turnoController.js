@@ -18,8 +18,9 @@ async function vistaGenerarTurno(req, res) {
     const pacientes = await Paciente.findAll();
     const mutualPacientes = await Mutual_Paciente.findAll();
     const doctores = await Doctor.findAll();
+    const contactos_emergencia = await Contacto_Emergencia.findAll();
 
-    res.status(200).render('turno/generar',{doctores,mutuales,pacientes,mutualPacientes,usuario,cargo});
+    res.status(200).render('turno/generar',{doctores,mutuales,pacientes,mutualPacientes,usuario,cargo,contactos_emergencia});
   }catch (error) {
     console.error('Error en vistaGenerarTurno:', error);
     res.status(500).render('error', {
@@ -110,15 +111,15 @@ async function generarTurno(req, res) {
             console.log('Paciente actualizado correctamente');
       }
   }  
-
+    console.log(contactos_emergencia);
+    
      // Verificar si se proporcionó un contacto de emergencia
     if (!Array.isArray(contactos_emergencia)) {
         contactos_emergencia = [contactos_emergencia];
     }
 
-    if (contactos_emergencia.length > 0 && (!contactos_emergencia[contactos_emergencia.length - 1] || contactos_emergencia[contactos_emergencia.length - 1].trim() === "")) {
-        contactos_emergencia.pop();
-    }
+   // Eliminar contactos vacíos
+    contactos_emergencia = contactos_emergencia.filter(contacto => contacto && contacto.trim() !== "");
 
     // Trae todos los contactos actuales del paciente, ordenados por id 
     let contactosActuales = await Contacto_Emergencia.findAll({
@@ -128,7 +129,7 @@ async function generarTurno(req, res) {
 
     // Actualiza o crea según corresponda
     for (let i = 0; i < contactos_emergencia.length; i++) {
-        const numero = contactos_emergencia[i];
+        const numero = contactos_emergencia[i];         
         if (contactosActuales[i]) {
             // Si el número es diferente, actualiza
             if (contactosActuales[i].numero !== numero) {
@@ -141,6 +142,7 @@ async function generarTurno(req, res) {
                 id_paciente: paciente.id,
                 numero
             });
+           
             console.log('Contacto de emergencia creado correctamente');
         }
     }
@@ -148,7 +150,6 @@ async function generarTurno(req, res) {
     if (contactos_emergencia.length < contactosActuales.length) {
         for (let i = contactos_emergencia.length; i < contactosActuales.length; i++) {
             await contactosActuales[i].destroy();
-            console.log(`Contacto de emergencia eliminado para el paciente ${paciente.nombre} ${paciente.apellido}`);
         }
     }   
   

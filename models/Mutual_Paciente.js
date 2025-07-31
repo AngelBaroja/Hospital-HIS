@@ -43,7 +43,7 @@ Mutual_Paciente.init(
   }
 );
 
-Mutual.hasOne(Mutual_Paciente, { foreignKey: "id_mutual", onDelete: 'CASCADE' });
+Mutual.hasMany(Mutual_Paciente, { foreignKey: "id_mutual", onDelete: 'CASCADE' });
 Mutual_Paciente.belongsTo(Mutual, {foreignKey: "id_mutual", onDelete: 'CASCADE'});
 
 Paciente.hasOne(Mutual_Paciente, { foreignKey: 'id_paciente', onDelete: 'CASCADE' });

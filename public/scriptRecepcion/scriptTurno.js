@@ -3,12 +3,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const pacientesData = JSON.parse(document.querySelector('#pacientes-data').textContent);
     const mutualPacientesData = JSON.parse(document.querySelector('#mutual-pacientes-data').textContent);
     const mutualesData = JSON.parse(document.querySelector('#mutuales-data').textContent);
+    const contactosEmergenciaData = JSON.parse(document.querySelector('#contactos-emergencia-data').textContent);
 
     // Almacenar en variables globales para acceso rápido
     window.datosApp = {
         pacientes: pacientesData,
         mutualPacientes: mutualPacientesData,
-        mutuales: mutualesData
+        mutuales: mutualesData,
+        contactosEmergencia: contactosEmergenciaData
     };
 
     // Configurar evento del botón buscar
@@ -54,9 +56,12 @@ function buscarPaciente() {
     if (mutualPaciente) {
         mutual = window.datosApp.mutuales.find(m => m.id === mutualPaciente.id_mutual);
     }
+
+    // Buscar contactos de emergencia del paciente
+    const contactosEmergencia = window.datosApp.contactosEmergencia.filter(ce => ce.id_paciente === paciente.id);
     
     // Llenar formulario
-    llenarFormulario(paciente, mutualPaciente, mutual);
+    llenarFormulario(paciente, mutualPaciente, mutual, contactosEmergencia);
 }
 
 function limpiarCampos() {
@@ -98,7 +103,7 @@ function limpiarCampos() {
 }
 
 
-function llenarFormulario(paciente, mutualPaciente, mutual) {
+function llenarFormulario(paciente, mutualPaciente, mutual, contactosEmergencia) {
      console.log("____________________________");
     // Función para formatear fecha (opcional)
     const formatDate = (dateString) => {
@@ -115,9 +120,7 @@ function llenarFormulario(paciente, mutualPaciente, mutual) {
     document.querySelector('#fecha_nacimiento').value = formatDate(paciente.fecha_nacimiento) || '';
     document.querySelector('#genero').value = paciente.genero || '';
     document.querySelector('#contacto').value = paciente.contacto || '';
-    document.querySelector('#direccion').value = paciente.direccion || '';
-    console.log(paciente.provincia);
-    
+    document.querySelector('#direccion').value = paciente.direccion || '';   
     document.querySelector('#provincia').value = paciente.provincia || '';
     document.querySelector('#localidad').value = paciente.localidad || '';
 
@@ -134,58 +137,113 @@ function llenarFormulario(paciente, mutualPaciente, mutual) {
         document.querySelector('#tipo_cobertura').value = '';
         document.querySelector('#mutual_activa').value = '';
     }
-}
-            function agregarContactoEmergencia() {
-                var input = document.getElementById('contacto_emergencia');
-                var valor = input.value.trim();
-                var error = document.getElementById('error');
-                if (error) error.remove();
+    // Limpiar y llenar contactos de emergencia
+        const contactoEmergenciaContainer = document.querySelector('.contacto-emergencia-container');
+        contactoEmergenciaContainer.innerHTML = '';
 
-                // Validar vacío
-                if (!valor) {
-                    mostrarError('Primero agregue un número de emergencia');
-                    return;
+        if (contactosEmergencia && contactosEmergencia.length > 0) {
+            contactosEmergencia.forEach(contacto => {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = contacto.numero;
+                input.placeholder = 'Ingrese el contacto de emergencia';
+                input.name = 'contacto_emergencia';
+                input.minlength = '10';
+                input.maxlength = '10';
+                input.className = 'input-contacto-extra';
+                input.style.marginBottom = '5px';
+                contactoEmergenciaContainer.appendChild(input);
+            });
+        }
+
+        // Agregar el input principal para nuevos contactos de emergencia
+        const nuevoInput = document.createElement('input');
+        nuevoInput.type = 'text';
+        nuevoInput.placeholder = 'Ingrese el contacto de emergencia';
+        nuevoInput.name = 'contacto_emergencia';
+        nuevoInput.minlength = '10';
+        nuevoInput.maxlength = '10';
+        nuevoInput.style.marginBottom = '5px';
+        contactoEmergenciaContainer.appendChild(nuevoInput);
+
+        // Agregar botones para agregar y quitar contactos de emergencia
+        const agregarButton = document.createElement('button');
+        agregarButton.type = 'button';
+        agregarButton.className = 'boton-agregar';
+        agregarButton.textContent = 'Agregar';
+        agregarButton.onclick = agregarContactoEmergencia;
+        contactoEmergenciaContainer.appendChild(agregarButton);
+
+        const quitarButton = document.createElement('button');
+        quitarButton.type = 'button';
+        quitarButton.className = 'boton-quitar';
+        quitarButton.textContent = 'Quitar';
+        quitarButton.onclick = quitarContactoEmergencia;
+        contactoEmergenciaContainer.appendChild(quitarButton);
+    }
+                function agregarContactoEmergencia() {
+                    const input = document.getElementById('contacto_emergencia');
+                    if (!input) {
+                        console.error('El input de contacto de emergencia no existe');
+                        return;
+                    }
+
+                    const valor = input.value.trim();
+                    const error = document.getElementById('error');
+                    if (error) error.remove();
+
+                    // Validate that the input is not empty
+                    if (!valor) {
+                        mostrarError('Primero agregue un número de emergencia');
+                        return;
+                    }
+
+                    // Validate that the input is a 10-digit number
+                    if (!/^\d{10}$/.test(valor)) {
+                        mostrarError('El número de celular es incorrecto');
+                        return;
+                    }
+
+                    // Create a new input element for the additional contact
+                    const nuevoInput = document.createElement('input');
+                    nuevoInput.type = 'text';
+                    nuevoInput.name = 'contacto_emergencia';
+                    nuevoInput.value = valor;
+                    nuevoInput.className = 'input-contacto-extra';
+                    nuevoInput.style.marginBottom = '5px';
+
+                    // Insert the new input element after the original input
+                    input.parentNode.insertBefore(nuevoInput, input.nextSibling);
+
+                    // Clear the original input field
+                    input.value = '';
                 }
-                // Validar 10 dígitos numéricos
-                if (!/^\d{10}$/.test(valor)) {
-                    mostrarError('El número de celular es incorrecto');
-                    return;
+
+                // Function to remove the last emergency contact input
+                function quitarContactoEmergencia() {
+                    const contactos = document.querySelectorAll('.input-contacto-extra');
+                    if (contactos.length > 0) {
+                        contactos[contactos.length - 1].remove();
+                    } else {
+                        mostrarError('No hay contactos de emergencia para quitar');
+                    }
                 }
-                // Crear nuevo input después del input principal
-                var nuevoInput = document.createElement('input');
-                nuevoInput.type = 'text';
-                nuevoInput.name = 'contacto_emergencia';
-                nuevoInput.value = valor;
-                nuevoInput.className = 'input-contacto-extra';
-                nuevoInput.style.marginBottom = '5px';
-                input.parentNode.insertBefore(nuevoInput, input); 
 
-                // Limpiar el input original
-                input.value = '';
-            }
+                // Function to display an error message
+                function mostrarError(mensaje) {
+                    const input = document.getElementById('contacto_emergencia');
+                    if (!input) {
+                        console.error('El input de contacto de emergencia no existe');
+                        return;
+                    }
 
-            function quitarContactoEmergencia() {
-                var error = document.getElementById('error');
-                if (error) error.remove();
-                // Selecciona todos los inputs de contacto extra
-                var contactos = document.querySelectorAll('.input-contacto-extra');
-                if (contactos.length > 0) {
-                    // Elimina solo el último input (el más cercano al input editable)
-                    contactos[contactos.length - 1].remove();
-                } else {
-                    mostrarError('No hay contactos de emergencia para quitar');
-                }
-            }
-
-            function mostrarError(mensaje) {
-                var input = document.getElementById('contacto_emergencia');
-                var error = document.createElement('div');
-                error.id = 'error';
-                error.style.color = 'red';
-                error.style.fontSize = '13px';
-                error.textContent = mensaje;
-                input.parentNode.appendChild(error);
-            }
+                    const error = document.createElement('div');
+                    error.id = 'error';
+                    error.style.color = 'red';
+                    error.style.fontSize = '13px';
+                    error.textContent = mensaje;
+                    input.parentNode.appendChild(error);
+                }             
 
             document.addEventListener('DOMContentLoaded', () => {
             const modal = document.getElementById('modalExito');

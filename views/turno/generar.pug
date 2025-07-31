@@ -15,6 +15,8 @@ block content
             !{JSON.stringify(mutualPacientes)}
         script#mutuales-data(type="application/json").
             !{JSON.stringify(mutuales)}
+        script#contactos-emergencia-data(type="application/json").
+            !{JSON.stringify(contactos_emergencia)}
                 
                 
         form#formulario-registro(action="/turno/generar" method="POST")                      
@@ -54,6 +56,9 @@ block content
                 
                 .grupo-formulario 
                     label(for="Contacto_emergencia") Contacto de Emergencia
+                    if contactosEmergencia && contactosEmergencia.length > 0
+                        each contacto in contactosEmergencia
+                            input(type="text" value=contacto.numero placeholder="Ingrese el contacto de emergencia" name="contacto_emergencia" minlength="10" maxlength="10" class="input-contacto-extra" style="margin-bottom:5px")
                     input(type="text" placeholder="Ingrese el contacto de emergencia" name="contacto_emergencia" minlength="10" maxlength="10" style="margin-bottom:5px" id="contacto_emergencia")
                     button(type="button" class="boton-agregar" onclick="agregarContactoEmergencia()") Agregar
                     button(type="button" class="boton-quitar" onclick="quitarContactoEmergencia()") Quitar
