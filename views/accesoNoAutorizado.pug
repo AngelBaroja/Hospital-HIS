@@ -12,11 +12,9 @@ html(lang="es")
         img(src="/img/exclamacion.png" alt="Error")
       
       .error-contenedor
-        h1 Error en el Sistema
+        h1 Acceso No Autorizado
         .error-mensaje
-          p Lo sentimos, ha ocurrido un error en el sistema.
-          if error
-            p Detalles del error: #{error}           
+          //p Lo sentimos, usted no tiene permisos para acceder a esta sección       
           if mensaje 
             p #{mensaje}
-        a.login-boton(href="/login") Volver al Login
+        a.login-boton(href="/home") Volver al home

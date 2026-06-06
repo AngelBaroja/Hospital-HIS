@@ -1,12 +1,12 @@
 const express = require('express');
 const turnoController = require('../controllers/turnoController');
-const { requiereSesion } = require('../middlewares/auth');
+const { requiereSesion, requiereRecepcionista } = require('../middlewares/auth');
 
 const router = express.Router();
 
-router.get(`/elegir`, requiereSesion, turnoController.elegirVistaTurno);
-router.get(`/generar`, requiereSesion, turnoController.vistaGenerarTurno);
-router.post('/generar', requiereSesion, turnoController.generarTurno);
-router.get('/lista', requiereSesion, turnoController.vistaListarTurno);
+router.get(`/elegir`, requiereSesion, requiereRecepcionista, turnoController.elegirVistaTurno);
+router.get(`/generar`, requiereSesion, requiereRecepcionista, turnoController.vistaGenerarTurno);
+router.post('/generar', requiereSesion, requiereRecepcionista, turnoController.generarTurno);
+router.get('/lista', requiereSesion, requiereRecepcionista, turnoController.vistaListarTurno);
 
 module.exports = router;

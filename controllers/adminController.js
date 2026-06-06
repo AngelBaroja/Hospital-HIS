@@ -13,19 +13,19 @@ const Cama = require('../models/Cama');
 const Habitacion = require('../models/Habitacion');
 const Ala = require('../models/Ala');
 const Mutual = require('../models/Mutual');
- 
+
 const bcrypt = require('bcrypt');
 const Mutual_Paciente = require('../models/Mutual_Paciente');
 
 
 
 async function vistaElegir(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
-        const cargo = req.session.tipoUsuario; 
+        const cargo = req.session.tipoUsuario;
 
         res.status(200).render('admin/elegir', { usuario, cargo, });
-    }catch (error) {
+    } catch (error) {
         console.error('Error en la vista elegir ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista elegir', error });
     }
@@ -33,28 +33,29 @@ async function vistaElegir(req, res) {
 
 //Doctores
 async function vistaDoctores(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
         const cargo = req.session.tipoUsuario;
 
         let doctores = await Doctor.findAll({
             include: [
-                {model: Especialidad},
-                {model: Usuario} 
+                { model: Especialidad },
+                { model: Usuario }
             ]
         });
         let especialidades = await Especialidad.findAll();
         const usuariosExistentes = await Usuario.findAll({
             attributes: ['usuario']
-        });        
+        });
 
-        res.status(200).render('admin/CrearDoctor', { usuario, 
-            cargo, 
-            doctores, 
+        res.status(200).render('admin/CrearDoctor', {
+            usuario,
+            cargo,
+            doctores,
             especialidades,
             usuariosExistentes: usuariosExistentes.map(u => u.usuario),
         });
-    }catch (error) {
+    } catch (error) {
         console.error('Error en la vista para generar Doctores ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista para generar doctores', error });
     }
@@ -78,9 +79,9 @@ async function cargarDoctores(req, res) {
             contrasena
         } = req.body;
 
-        let activoBoolean=false;
-        if(activo=="activo"){
-            activoBoolean=true;
+        let activoBoolean = false;
+        if (activo == "activo") {
+            activoBoolean = true;
         }
 
         // Buscar doctor por DNI
@@ -88,8 +89,8 @@ async function cargarDoctores(req, res) {
 
         // Hashear contraseña
         const saltRounds = 10;
-        const passwordHash = await bcrypt.hash(contrasena, saltRounds);        
-        
+        const passwordHash = await bcrypt.hash(contrasena, saltRounds);
+
         if (doctor) {
             // Actualizar doctor
             await doctor.update({
@@ -112,14 +113,59 @@ async function cargarDoctores(req, res) {
                 contraseña: passwordHash
             },
                 { hooks: false }
-            );            
+            );
         } else {
+            const usuarioExistente = await Usuario.findOne({
+                where: { usuario: nombreUsuario }
+            });
+
+            if (usuarioExistente) {
+                // Listados para la vista
+                const doctores = await Doctor.findAll({
+                    include: [
+                        { model: Especialidad },
+                        { model: Usuario }
+                    ]
+                });
+                const especialidades = await Especialidad.findAll();
+
+                const usuario = req.session.nombreUsuario;
+                const cargo = req.session.tipoUsuario;
+
+                const usuariosExistentes = await Usuario.findAll({
+                    attributes: ['usuario']
+                });
+
+                res.status(200).render('admin/CrearDoctor', {
+                    usuario,
+                    cargo,
+                    doctores,
+                    especialidades,                   
+                    usuariosExistentes: usuariosExistentes.map(u => u.usuario),
+                    mensaje: 'El nombre de usuario ya existe'
+                });               
+            }
+
             // Crear nuevo usuario
             const nuevoUsuario = await Usuario.create({
                 usuario: nombreUsuario,
-                contraseña: passwordHash,                
+                contraseña: passwordHash,
             });
-
+            console.log("Especialidad:", especialidad);
+            console.log("ID Usuario:", nuevoUsuario.id);
+            console.log({
+                dni,
+                nombre,
+                apellido,
+                fecha_nacimiento,
+                genero,
+                especialidad,
+                telefono,
+                direccion,
+                provincia,
+                localidad,
+                activoBoolean
+            });
             // Crear nuevo doctor
             doctor = await Doctor.create({
                 dni,
@@ -136,7 +182,7 @@ async function cargarDoctores(req, res) {
                 id_usuario: nuevoUsuario.id
             });
         }
-
+        console.log("Doctor creado correctamente");
         // Recargar doctor con especialidad y usuario
         doctor = await Doctor.findByPk(doctor.id, {
             include: [
@@ -150,7 +196,7 @@ async function cargarDoctores(req, res) {
             include: [
                 { model: Especialidad },
                 { model: Usuario }
-                ]                
+            ]
         });
         const especialidades = await Especialidad.findAll();
 
@@ -159,7 +205,7 @@ async function cargarDoctores(req, res) {
 
         const usuariosExistentes = await Usuario.findAll({
             attributes: ['usuario']
-        }); 
+        });
 
         res.status(200).render('admin/CrearDoctor', {
             usuario,
@@ -172,27 +218,43 @@ async function cargarDoctores(req, res) {
         });
 
     } catch (error) {
+
+        console.error("=================================");
+        console.error("ERROR COMPLETO");
+        console.error(error);
+
+        if (error.errors) {
+            console.error("DETALLE DE ERRORES:");
+            error.errors.forEach(e => {
+                console.error("Campo:", e.path);
+                console.error("Valor:", e.value);
+                console.error("Mensaje:", e.message);
+            });
+        }
+
+        console.error("=================================");
+
         console.error('Error al crear o actualizar doctor:', error);
         res.status(500).render('error', {
             mensaje: 'Error al procesar el doctor',
-            error
+            error,
         });
     }
 }
 
 async function listarDoctores(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
         const cargo = req.session.tipoUsuario;
 
         let doctores = await Doctor.findAll({
             include: [
-                {model: Especialidad},
-                {model: Usuario} 
+                { model: Especialidad },
+                { model: Usuario }
             ]
         });
 
-        if(doctores){
+        if (doctores) {
             doctores.forEach(doctor => {
                 if (doctor.fecha_nacimiento) {
                     const fecha = new Date(doctor.fecha_nacimiento);
@@ -202,40 +264,40 @@ async function listarDoctores(req, res) {
                     doctor.fecha_formateada = `${dia}/${mes}/${anio}`;
                 }
             });
-        } 
+        }
         const cartel = false;
-        res.status(200).render('admin/listaDoctor', { usuario, cargo, doctores, cartel});
-    }catch (error) {
+        res.status(200).render('admin/listaDoctor', { usuario, cargo, doctores, cartel });
+    } catch (error) {
         console.error('Error en la vista de la lista de Doctores ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista de la lista de Doctores', error });
     }
 }
 
 async function listarDoctoresModificarActivo(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
         const cargo = req.session.tipoUsuario;
-        
+
         let doctor = await Doctor.findByPk(req.params.id)
 
         if (doctor.activo) {
             await doctor.update({
-            activo: false
-        })
+                activo: false
+            })
         } else {
             await doctor.update({
-            activo: true
-            })        
+                activo: true
+            })
         }
 
         let doctores = await Doctor.findAll({
             include: [
-                {model: Especialidad},
-                {model: Usuario} 
+                { model: Especialidad },
+                { model: Usuario }
             ]
         });
 
-        if(doctores){
+        if (doctores) {
             doctores.forEach(doctor => {
                 if (doctor.fecha_nacimiento) {
                     const fecha = new Date(doctor.fecha_nacimiento);
@@ -245,39 +307,40 @@ async function listarDoctoresModificarActivo(req, res) {
                     doctor.fecha_formateada = `${dia}/${mes}/${anio}`;
                 }
             });
-        } 
+        }
         const cartel = true;
-        res.status(200).render('admin/listaDoctor', { usuario, cargo, doctores, doctor, cartel});
-    }catch (error) {
+        res.status(200).render('admin/listaDoctor', { usuario, cargo, doctores, doctor, cartel });
+    } catch (error) {
         console.error('Error al cambiar el estado de activo de los Doctores ', error);
         res.status(500).render('error', { mensaje: 'Error al cambiar el estado de activo de los Doctores', error });
     }
 }
 //Enfermeros
 async function vistaEnfermeros(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
         const cargo = req.session.tipoUsuario;
 
         let enfermeros = await Enfermero.findAll({
             include: [
-                {model: Especialidad},
-                {model: Usuario} 
+                { model: Especialidad },
+                { model: Usuario }
             ]
         });
         const especialidades = await Especialidad.findAll();
 
         const usuariosExistentes = await Usuario.findAll({
             attributes: ['usuario']
-        });       
+        });
 
-        res.status(200).render('admin/CrearEnfermero', { usuario, 
-            cargo, 
-            enfermeros, 
-            especialidades, 
+        res.status(200).render('admin/CrearEnfermero', {
+            usuario,
+            cargo,
+            enfermeros,
+            especialidades,
             usuariosExistentes: usuariosExistentes.map(u => u.usuario),
-            });
-    }catch (error) {
+        });
+    } catch (error) {
         console.error('Error en la vista para generar Enfermeros ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista para generar Enfermeros', error });
     }
@@ -300,11 +363,11 @@ async function cargarEnfermeros(req, res) {
             nombreUsuario,
             contrasena
         } = req.body;
-      
 
-        let activoBoolean=false;
-        if(activo=="activo"){
-            activoBoolean=true;
+
+        let activoBoolean = false;
+        if (activo == "activo") {
+            activoBoolean = true;
         }
 
         // Buscar enfermero por DNI
@@ -312,8 +375,8 @@ async function cargarEnfermeros(req, res) {
 
         // Hashear contraseña
         const saltRounds = 10;
-        const passwordHash = await bcrypt.hash(contrasena, saltRounds);        
-        
+        const passwordHash = await bcrypt.hash(contrasena, saltRounds);
+
         if (enfermero) {
             // Actualizar enfermero
             await enfermero.update({
@@ -336,7 +399,7 @@ async function cargarEnfermeros(req, res) {
                 contraseña: passwordHash
             },
                 { hooks: false }
-            );            
+            );
         } else {
             // Crear nuevo usuario
             const nuevoUsuario = await Usuario.create({
@@ -344,7 +407,7 @@ async function cargarEnfermeros(req, res) {
                 contraseña: passwordHash
             },
                 { hooks: false }
-            ); 
+            );
 
             // Crear nuevo enfermero
             enfermero = await Enfermero.create({
@@ -376,7 +439,7 @@ async function cargarEnfermeros(req, res) {
             include: [
                 { model: Especialidad },
                 { model: Usuario }
-                ]                
+            ]
         });
         const especialidades = await Especialidad.findAll();
 
@@ -385,7 +448,7 @@ async function cargarEnfermeros(req, res) {
 
         const usuariosExistentes = await Usuario.findAll({
             attributes: ['usuario']
-        });  
+        });
 
         res.status(200).render('admin/CrearEnfermero', {
             usuario,
@@ -407,18 +470,18 @@ async function cargarEnfermeros(req, res) {
 }
 
 async function listarEnfermeros(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
         const cargo = req.session.tipoUsuario;
 
         let enfermeros = await Enfermero.findAll({
             include: [
-                {model: Especialidad},
-                {model: Usuario} 
+                { model: Especialidad },
+                { model: Usuario }
             ]
         });
 
-        if(enfermeros){
+        if (enfermeros) {
             enfermeros.forEach(enfermero => {
                 if (enfermero.fecha_nacimiento) {
                     const fecha = new Date(enfermero.fecha_nacimiento);
@@ -428,17 +491,17 @@ async function listarEnfermeros(req, res) {
                     enfermero.fecha_formateada = `${dia}/${mes}/${anio}`;
                 }
             });
-        } 
+        }
         const cartel = false;
-        res.status(200).render('admin/listaEnfermero', { usuario, cargo, enfermeros, cartel});
-    }catch (error) {
+        res.status(200).render('admin/listaEnfermero', { usuario, cargo, enfermeros, cartel });
+    } catch (error) {
         console.error('Error en la vista de la lista de Enfermeros ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista de la lista de Enfermeros', error });
     }
 }
 
 async function listarEnfermerosModificarActivo(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
         const cargo = req.session.tipoUsuario;
 
@@ -446,22 +509,22 @@ async function listarEnfermerosModificarActivo(req, res) {
 
         if (enfermero.activo) {
             await enfermero.update({
-            activo: false
-        })
+                activo: false
+            })
         } else {
             await enfermero.update({
-            activo: true
-            })        
+                activo: true
+            })
         }
 
         let enfermeros = await Enfermero.findAll({
             include: [
-                {model: Especialidad},
-                {model: Usuario} 
+                { model: Especialidad },
+                { model: Usuario }
             ]
         });
 
-        if(enfermeros){
+        if (enfermeros) {
             enfermeros.forEach(enfermero => {
                 if (enfermero.fecha_nacimiento) {
                     const fecha = new Date(enfermero.fecha_nacimiento);
@@ -471,39 +534,39 @@ async function listarEnfermerosModificarActivo(req, res) {
                     enfermero.fecha_formateada = `${dia}/${mes}/${anio}`;
                 }
             });
-        } 
-        
-        const cartel= true;
-        
-        res.status(200).render('admin/listaEnfermero', { usuario, cargo, enfermeros, enfermero, cartel});
-    }catch (error) {
+        }
+
+        const cartel = true;
+
+        res.status(200).render('admin/listaEnfermero', { usuario, cargo, enfermeros, enfermero, cartel });
+    } catch (error) {
         console.error('Error en la vista de la lista de Enfermeros ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista de la lista de Enfermeros', error });
     }
 }
 //Administradores
 async function vistaAdministradores(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
         const cargo = req.session.tipoUsuario;
 
         let administradores = await Administrador.findAll({
             include: [
-                {model: Usuario} 
+                { model: Usuario }
             ]
-        });  
+        });
 
         const usuariosExistentes = await Usuario.findAll({
             attributes: ['usuario']
-        });       
+        });
 
-        res.status(200).render('admin/CrearAdministradores', { 
-            usuario, 
-            cargo, 
-            administradores, 
+        res.status(200).render('admin/CrearAdministradores', {
+            usuario,
+            cargo,
+            administradores,
             usuariosExistentes: usuariosExistentes.map(u => u.usuario),
-            });
-    }catch (error) {
+        });
+    } catch (error) {
         console.error('Error en la vista para generar Enfermeros ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista para generar Enfermeros', error });
     }
@@ -525,11 +588,11 @@ async function cargarAdministradores(req, res) {
             nombreUsuario,
             contrasena
         } = req.body;
-      
 
-        let activoBoolean=false;
-        if(activo=="activo"){
-            activoBoolean=true;
+
+        let activoBoolean = false;
+        if (activo == "activo") {
+            activoBoolean = true;
         }
 
         // Buscar enfermero por DNI
@@ -537,8 +600,8 @@ async function cargarAdministradores(req, res) {
 
         // Hashear contraseña
         const saltRounds = 10;
-        const passwordHash = await bcrypt.hash(contrasena, saltRounds);        
-        
+        const passwordHash = await bcrypt.hash(contrasena, saltRounds);
+
         if (administrador) {
             // Actualizar enfermero
             await administrador.update({
@@ -553,7 +616,7 @@ async function cargarAdministradores(req, res) {
                 activo: activoBoolean
             });
             console.log("ENTRO");
-            
+
             // Actualizar usuario asociado
             const usuario = await Usuario.findByPk(administrador.id_usuario);
             await usuario.update({
@@ -561,7 +624,7 @@ async function cargarAdministradores(req, res) {
                 contraseña: passwordHash
             },
                 { hooks: false }
-            );            
+            );
         } else {
             console.log("NO ENTRO-----------------------------------------------------------------------------------------------------------------------");
             // Crear nuevo usuario
@@ -570,7 +633,7 @@ async function cargarAdministradores(req, res) {
                 contraseña: passwordHash
             },
                 { hooks: false }
-            ); 
+            );
 
             // Crear nuevo enfermero
             administrador = await Administrador.create({
@@ -599,14 +662,14 @@ async function cargarAdministradores(req, res) {
         const administradores = await Administrador.findAll({
             include: [
                 { model: Usuario }
-                ]                
+            ]
         });
         const usuario = req.session.nombreUsuario;
         const cargo = req.session.tipoUsuario;
 
         const usuariosExistentes = await Usuario.findAll({
             attributes: ['usuario']
-        });  
+        });
 
         res.status(200).render('admin/CrearAdministradores', {
             usuario,
@@ -627,17 +690,17 @@ async function cargarAdministradores(req, res) {
 }
 
 async function listarAdministradores(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
         const cargo = req.session.tipoUsuario;
 
         let administradores = await Administrador.findAll({
             include: [
-                {model: Usuario} 
+                { model: Usuario }
             ]
         });
 
-        if(administradores){
+        if (administradores) {
             administradores.forEach(administrador => {
                 if (administrador.fecha_nacimiento) {
                     const fecha = new Date(administrador.fecha_nacimiento);
@@ -647,19 +710,19 @@ async function listarAdministradores(req, res) {
                     administrador.fecha_formateada = `${dia}/${mes}/${anio}`;
                 }
             });
-        } 
+        }
 
-        const cartel= false;
+        const cartel = false;
 
-        res.status(200).render('admin/listaAdministradores', { usuario, cargo, administradores, cartel});
-    }catch (error) {
+        res.status(200).render('admin/listaAdministradores', { usuario, cargo, administradores, cartel });
+    } catch (error) {
         console.error('Error en la vista de la lista de Enfermeros ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista de la lista de Enfermeros', error });
     }
 }
 
 async function listarAdministradoresModificarActivo(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
         const cargo = req.session.tipoUsuario;
 
@@ -667,21 +730,21 @@ async function listarAdministradoresModificarActivo(req, res) {
 
         if (administrador.activo) {
             await administrador.update({
-            activo: false
-        })
+                activo: false
+            })
         } else {
             await administrador.update({
-            activo: true
-            })        
+                activo: true
+            })
         }
 
         let administradores = await Administrador.findAll({
             include: [
-                {model: Usuario} 
+                { model: Usuario }
             ]
         });
 
-        if(administradores){
+        if (administradores) {
             administradores.forEach(administrador => {
                 if (administrador.fecha_nacimiento) {
                     const fecha = new Date(administrador.fecha_nacimiento);
@@ -691,39 +754,39 @@ async function listarAdministradoresModificarActivo(req, res) {
                     administrador.fecha_formateada = `${dia}/${mes}/${anio}`;
                 }
             });
-        } 
-        
-        const cartel=true;
+        }
 
-        res.status(200).render('admin/listaAdministradores', { usuario, cargo, administrador, administradores, cartel});
-    }catch (error) {
+        const cartel = true;
+
+        res.status(200).render('admin/listaAdministradores', { usuario, cargo, administrador, administradores, cartel });
+    } catch (error) {
         console.error('Error en la vista de la lista de Enfermeros ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista de la lista de Enfermeros', error });
     }
 }
 //Recepcionistas
 async function vistaRecepcionistas(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
         const cargo = req.session.tipoUsuario;
 
         let recepcionistas = await Recepcionista.findAll({
             include: [
-                {model: Usuario} 
+                { model: Usuario }
             ]
-        });  
+        });
 
         const usuariosExistentes = await Usuario.findAll({
             attributes: ['usuario']
-        });       
+        });
 
-        res.status(200).render('admin/CrearRecepcionistas', { 
-            usuario, 
-            cargo, 
-            recepcionistas, 
+        res.status(200).render('admin/CrearRecepcionistas', {
+            usuario,
+            cargo,
+            recepcionistas,
             usuariosExistentes: usuariosExistentes.map(u => u.usuario),
-            });
-    }catch (error) {
+        });
+    } catch (error) {
         console.error('Error en la vista para generar Enfermeros ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista para generar Enfermeros', error });
     }
@@ -745,11 +808,11 @@ async function cargarRecepcionistas(req, res) {
             nombreUsuario,
             contrasena
         } = req.body;
-      
 
-        let activoBoolean=false;
-        if(activo=="activo"){
-            activoBoolean=true;
+
+        let activoBoolean = false;
+        if (activo == "activo") {
+            activoBoolean = true;
         }
 
         // Buscar enfermero por DNI
@@ -757,8 +820,8 @@ async function cargarRecepcionistas(req, res) {
 
         // Hashear contraseña
         const saltRounds = 10;
-        const passwordHash = await bcrypt.hash(contrasena, saltRounds);        
-        
+        const passwordHash = await bcrypt.hash(contrasena, saltRounds);
+
         if (recepcionista) {
             // Actualizar enfermero
             await recepcionista.update({
@@ -772,7 +835,7 @@ async function cargarRecepcionistas(req, res) {
                 localidad,
                 activo: activoBoolean
             });
-            
+
             // Actualizar usuario asociado
             const usuario = await Usuario.findByPk(recepcionista.id_usuario);
             await usuario.update({
@@ -780,7 +843,7 @@ async function cargarRecepcionistas(req, res) {
                 contraseña: passwordHash
             },
                 { hooks: false }
-            );            
+            );
         } else {
             // Crear nuevo usuario
             const nuevoUsuario = await Usuario.create({
@@ -788,7 +851,7 @@ async function cargarRecepcionistas(req, res) {
                 contraseña: passwordHash
             },
                 { hooks: false }
-            ); 
+            );
 
             // Crear nuevo enfermero
             recepcionista = await Recepcionista.create({
@@ -817,14 +880,14 @@ async function cargarRecepcionistas(req, res) {
         const recepcionistas = await Recepcionista.findAll({
             include: [
                 { model: Usuario }
-                ]                
+            ]
         });
         const usuario = req.session.nombreUsuario;
         const cargo = req.session.tipoUsuario;
 
         const usuariosExistentes = await Usuario.findAll({
             attributes: ['usuario']
-        });  
+        });
 
         res.status(200).render('admin/CrearRecepcionistas', {
             usuario,
@@ -845,17 +908,17 @@ async function cargarRecepcionistas(req, res) {
 }
 
 async function listarRecepcionistas(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
         const cargo = req.session.tipoUsuario;
 
         let recepcionistas = await Recepcionista.findAll({
             include: [
-                {model: Usuario} 
+                { model: Usuario }
             ]
         });
 
-        if(recepcionistas){
+        if (recepcionistas) {
             recepcionistas.forEach(recepcionista => {
                 if (recepcionista.fecha_nacimiento) {
                     const fecha = new Date(recepcionista.fecha_nacimiento);
@@ -865,41 +928,41 @@ async function listarRecepcionistas(req, res) {
                     recepcionista.fecha_formateada = `${dia}/${mes}/${anio}`;
                 }
             });
-        } 
+        }
 
-        const cartel=false;
+        const cartel = false;
 
-        res.status(200).render('admin/listaRecepcionistas', { usuario, cargo, cartel, recepcionistas});
-    }catch (error) {
+        res.status(200).render('admin/listaRecepcionistas', { usuario, cargo, cartel, recepcionistas });
+    } catch (error) {
         console.error('Error en la vista de la lista de Recepcionistas ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista de la lista de Recepcionistas', error });
     }
 }
 
 async function listarRecepcionistasModificarActivo(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
         const cargo = req.session.tipoUsuario;
 
-         let recepcionista = await Recepcionista.findByPk(req.params.id)
+        let recepcionista = await Recepcionista.findByPk(req.params.id)
 
         if (recepcionista.activo) {
             await recepcionista.update({
-            activo: false
-        })
+                activo: false
+            })
         } else {
             await recepcionista.update({
-            activo: true
-            })        
+                activo: true
+            })
         }
 
         let recepcionistas = await Recepcionista.findAll({
             include: [
-                {model: Usuario} 
+                { model: Usuario }
             ]
         });
 
-        if(recepcionistas){
+        if (recepcionistas) {
             recepcionistas.forEach(recepcionista => {
                 if (recepcionista.fecha_nacimiento) {
                     const fecha = new Date(recepcionista.fecha_nacimiento);
@@ -909,47 +972,47 @@ async function listarRecepcionistasModificarActivo(req, res) {
                     recepcionista.fecha_formateada = `${dia}/${mes}/${anio}`;
                 }
             });
-        } 
-        
-        const cartel=true;
+        }
 
-        res.status(200).render('admin/listaRecepcionistas', { usuario, cargo, cartel, recepcionista, recepcionistas});
-    }catch (error) {
+        const cartel = true;
+
+        res.status(200).render('admin/listaRecepcionistas', { usuario, cargo, cartel, recepcionista, recepcionistas });
+    } catch (error) {
         console.error('Error en la vista de la lista de Recepcionistas ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista de la lista de Recepcionistas', error });
     }
 }
 //Sectores
 async function vistaElegirSector(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
-        const cargo = req.session.tipoUsuario; 
+        const cargo = req.session.tipoUsuario;
 
         res.status(200).render('admin/elegirSector', { usuario, cargo, });
-    }catch (error) {
+    } catch (error) {
         console.error('Error en la vista elegir ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista elegir', error });
     }
 }
 //Camas
 async function vistaCamas(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
-        const cargo = req.session.tipoUsuario; 
-        
+        const cargo = req.session.tipoUsuario;
+
         const cartel = false;
 
-        res.status(200).render('admin/crearCama', { usuario, cargo, cartel,});
-    }catch (error) {
+        res.status(200).render('admin/crearCama', { usuario, cargo, cartel, });
+    } catch (error) {
         console.error('Error en la vista camas ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista camas', error });
     }
 }
 
 async function cargarCamas(req, res) {
-     try {
+    try {
         const usuario = req.session.nombreUsuario;
-        const cargo = req.session.tipoUsuario; 
+        const cargo = req.session.tipoUsuario;
 
         const {
             numero,
@@ -962,30 +1025,30 @@ async function cargarCamas(req, res) {
         const oxigenoBoolean = oxigeno == 1 ? true : false;
 
 
-        let cama = await Cama.findByPk(req.body.id); 
+        let cama = await Cama.findByPk(req.body.id);
 
         if (!cama) {
             cama = await Cama.create({
                 numero,
                 tipo,
                 estado,
-                electrica:electricaBoolean,
-                oxigeno:oxigenoBoolean
+                electrica: electricaBoolean,
+                oxigeno: oxigenoBoolean
             });
         } else {
             await cama.update({
                 numero,
                 tipo,
                 estado,
-                electrica:electricaBoolean,
-                oxigeno:oxigenoBoolean
+                electrica: electricaBoolean,
+                oxigeno: oxigenoBoolean
             });
         }
-        
-        const tipos = ["Normal","UCI","Reanimacion","Pediátrica"]
-        const estados = ["Libre","Ocupada","En Desinfeccion","En Mantenimiento"]
+
+        const tipos = ["Normal", "UCI", "Reanimacion", "Pediátrica"]
+        const estados = ["Libre", "Ocupada", "En Desinfeccion", "En Mantenimiento"]
         const cartel = true;
-        res.status(200).render('admin/crearCama', { usuario, cargo, camaCartel: cama , cartel, tipos, estados});
+        res.status(200).render('admin/crearCama', { usuario, cargo, camaCartel: cama, cartel, tipos, estados });
     } catch (error) {
         console.error('Error al guardar la cama:', error);
         res.status(500).render('error', { mensaje: 'Error al guardar la cama', error });
@@ -993,86 +1056,86 @@ async function cargarCamas(req, res) {
 }
 
 async function listaCamas(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
-        const cargo = req.session.tipoUsuario; 
+        const cargo = req.session.tipoUsuario;
 
         let camas = await Cama.findAll({
-            include:[
-                {model: Habitacion}
+            include: [
+                { model: Habitacion }
             ]
         })
 
-        const cartel=false;
-        
-        res.status(200).render('admin/listaCama', { usuario, cargo, camas, cartel});
-    }catch (error) {
+        const cartel = false;
+
+        res.status(200).render('admin/listaCama', { usuario, cargo, camas, cartel });
+    } catch (error) {
         console.error('Error en la vista camas ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista camas', error });
     }
 }
 
 async function mostrarCama(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
         const cargo = req.session.tipoUsuario;
-        
+
         let cama = await Cama.findByPk(req.params.id)
-        
-        const tipos = ["Normal","UCI","Reanimacion","Pediátrica"]
-        const estados = ["Libre","Ocupada","En Desinfeccion","En Mantenimiento"]
+
+        const tipos = ["Normal", "UCI", "Reanimacion", "Pediátrica"]
+        const estados = ["Libre", "Ocupada", "En Desinfeccion", "En Mantenimiento"]
         const cartel = false;
 
         res.status(200).render('admin/crearCama', { usuario, cargo, cartel, tipos, estados, cama });
-    }catch (error) {
+    } catch (error) {
         console.error('Error en la vista camas ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista camas', error });
     }
 }
 
 async function eliminarCama(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
         const cargo = req.session.tipoUsuario;
-        
+
         let cama = await Cama.findByPk(req.params.id);
-        
+
         // Eliminar la cama por ID
         await Cama.destroy({
             where: { id: req.params.id }
         });
 
         let camas = await Cama.findAll({
-            include:[
-                {model: Habitacion}
+            include: [
+                { model: Habitacion }
             ]
         })
-        const cartel=true;
-        res.status(200).render('admin/listaCama', { usuario, cargo, camas, cama, cartel});
-    }catch (error) {
+        const cartel = true;
+        res.status(200).render('admin/listaCama', { usuario, cargo, camas, cama, cartel });
+    } catch (error) {
         console.error('Error en la vista camas ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista camas', error });
     }
 }
 
 async function vistaHabitaciones(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
-        const cargo = req.session.tipoUsuario; 
+        const cargo = req.session.tipoUsuario;
 
-        const cartel=false;
+        const cartel = false;
 
         const alas = await Ala.findAll();
 
-        res.status(200).render('admin/crearHabitacion', { usuario, cargo, cartel, alas});
-    }catch (error) {
+        res.status(200).render('admin/crearHabitacion', { usuario, cargo, cartel, alas });
+    } catch (error) {
         console.error('Error en la vista habitaciones ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista habitaciones', error });
     }
 }
 
 async function cargarHabitaciones(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
         const cargo = req.session.tipoUsuario;
 
@@ -1082,7 +1145,7 @@ async function cargarHabitaciones(req, res) {
             ala
         } = req.body;
 
-        const activoBoolean = activa == 1 ? true:false;
+        const activoBoolean = activa == 1 ? true : false;
 
         const nuevaHabitacion = await Habitacion.create({
             tipo,
@@ -1093,123 +1156,123 @@ async function cargarHabitaciones(req, res) {
         const sector = await Ala.findByPk(ala);
         const alas = await Ala.findAll();
 
-        const cartel=true;
+        const cartel = true;
 
         res.status(200).render('admin/crearHabitacion', { usuario, cargo, cartel, nuevaHabitacion, sector, alas });
-    }catch (error) {
+    } catch (error) {
         console.error('Error en la vista habitaciones ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista habitaciones', error });
     }
 }
 
 async function listaHabitaciones(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
         const cargo = req.session.tipoUsuario;
-        
+
         let habitaciones = await Habitacion.findAll({
             include: [
-                    {model: Cama},
-                    {model: Ala},
-                    ]
-        })        
-        
+                { model: Cama },
+                { model: Ala },
+            ]
+        })
+
         const habitacionesDisponibles = await sequelize.query(
             `SELECT h.id AS id, h.tipo
             FROM habitaciones h
             LEFT JOIN camas c ON c.id_habitacion = h.id
             WHERE c.id IS NULL OR (h.tipo = 'Compartida' AND (SELECT COUNT(*) FROM camas WHERE id_habitacion = h.id) < 2)`
-        );        
-        
-        const cartel=false;
-        const cartel2=false;
+        );
 
-        res.status(200).render('admin/listaHabitacion', { usuario, cargo, cartel, habitaciones, habitacionesDisponibles, cartel2});
-    }catch (error) {
+        const cartel = false;
+        const cartel2 = false;
+
+        res.status(200).render('admin/listaHabitacion', { usuario, cargo, cartel, habitaciones, habitacionesDisponibles, cartel2 });
+    } catch (error) {
         console.error('Error en la vista habitaciones ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista habitaciones', error });
     }
 }
 
 async function listaActivaHabitacion(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
         const cargo = req.session.tipoUsuario;
 
         const habitacion = await Habitacion.findByPk(req.params.id);
         if (habitacion.activa) {
             await habitacion.update({
-                activa:false
+                activa: false
             })
-        }else{
+        } else {
             await habitacion.update({
-                activa:true
+                activa: true
             })
         }
-        
-        
+
+
         let habitaciones = await Habitacion.findAll({
             include: [
-                    {model: Cama},
-                    {model: Ala},
-                    ]
-        })        
-        
+                { model: Cama },
+                { model: Ala },
+            ]
+        })
+
         const habitacionesDisponibles = await sequelize.query(
             `SELECT h.id AS id, h.tipo
             FROM habitaciones h
             LEFT JOIN camas c ON c.id_habitacion = h.id
             WHERE c.id IS NULL OR (h.tipo = 'Compartida' AND (SELECT COUNT(*) FROM camas WHERE id_habitacion = h.id) < 2)`
-        );        
-        
-        const cartel=false;
-        const cartel2=true;
+        );
 
-        res.status(200).render('admin/listaHabitacion', { usuario, cargo, cartel, habitaciones, habitacionesDisponibles, habitacion, cartel2});
-    }catch (error) {
+        const cartel = false;
+        const cartel2 = true;
+
+        res.status(200).render('admin/listaHabitacion', { usuario, cargo, cartel, habitaciones, habitacionesDisponibles, habitacion, cartel2 });
+    } catch (error) {
         console.error('Error en la vista habitaciones ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista habitaciones', error });
     }
 }
 
 async function listaHabitacionesAgregarCama(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
         const cargo = req.session.tipoUsuario;
-        
-        let habitacion = await Habitacion.findByPk(req.params.id)        
-        
+
+        let habitacion = await Habitacion.findByPk(req.params.id)
+
         let habitacionesDisponibles = await sequelize.query(
             `SELECT h.id AS id, h.tipo
             FROM habitaciones h
             LEFT JOIN camas c ON c.id_habitacion = h.id
             WHERE c.id IS NULL OR (h.tipo = 'Compartida' AND (SELECT COUNT(*) FROM camas WHERE id_habitacion = h.id) < 2)`
         );
-        
-        const cartel=false;
+
+        const cartel = false;
         const camasDisponibles = await Cama.findAll({
-            where:{id_habitacion: null}
+            where: { id_habitacion: null }
         })
 
-        camasDisponibles.map(cama => {            
+        camasDisponibles.map(cama => {
             cama.electrica_respuesta = cama.electrica ? "Si" : "No";
             cama.oxigeno_respuesta = cama.oxigeno ? "Si" : "No";
         });
 
-        res.status(200).render('admin/insertarCama', { usuario, cargo, cartel, habitacion, habitacionesDisponibles, camasDisponibles});
-    }catch (error) {
+        res.status(200).render('admin/insertarCama', { usuario, cargo, cartel, habitacion, habitacionesDisponibles, camasDisponibles });
+    } catch (error) {
         console.error('Error en la vista habitaciones ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista habitaciones', error });
     }
 }
 
 async function listaEliminarHabitacion(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
         const cargo = req.session.tipoUsuario;
-        
+
         let habitacion = await Habitacion.findByPk(req.params.id);
-        
+
         let camasAsociadas = await Cama.findAll({
             where: { id_habitacion: req.params.id }
         });
@@ -1221,8 +1284,8 @@ async function listaEliminarHabitacion(req, res) {
             }));
         }
 
-        await habitacion.destroy();        
-        
+        await habitacion.destroy();
+
         let habitacionesDisponibles = await sequelize.query(
             `SELECT h.id AS id, h.tipo
             FROM habitaciones h
@@ -1232,27 +1295,27 @@ async function listaEliminarHabitacion(req, res) {
 
         let habitaciones = await Habitacion.findAll({
             include: [
-                    {model: Cama},
-                    {model: Ala},
-                    ]
-        }) 
-        
-        const cartel=true;  
-        const cartel2=false;        
-       
-        res.status(200).render('admin/listaHabitacion', { usuario, cargo, cartel, habitacion, habitacionesDisponibles, habitaciones, cartel2});
-    }catch (error) {
+                { model: Cama },
+                { model: Ala },
+            ]
+        })
+
+        const cartel = true;
+        const cartel2 = false;
+
+        res.status(200).render('admin/listaHabitacion', { usuario, cargo, cartel, habitacion, habitacionesDisponibles, habitaciones, cartel2 });
+    } catch (error) {
         console.error('Error en la vista habitaciones ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista habitaciones', error });
     }
 }
 
 async function vistaInsertarCama(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
-        const cargo = req.session.tipoUsuario;   
-               
-        
+        const cargo = req.session.tipoUsuario;
+
+
         let habitacionesDisponibles = await sequelize.query(
             `SELECT h.id AS id, h.tipo
             FROM habitaciones h
@@ -1261,37 +1324,37 @@ async function vistaInsertarCama(req, res) {
             { type: sequelize.QueryTypes.SELECT }
         );
         habitacionesDisponibles = habitacionesDisponibles.flat();
-        
-        
-        const cartel=false;
+
+
+        const cartel = false;
         const camasDisponibles = await Cama.findAll({
-            where:{id_habitacion: null}
+            where: { id_habitacion: null }
         })
 
-        camasDisponibles.map(cama => {            
+        camasDisponibles.map(cama => {
             cama.electrica_respuesta = cama.electrica ? "Si" : "No";
             cama.oxigeno_respuesta = cama.oxigeno ? "Si" : "No";
         });
 
-        res.status(200).render('admin/insertarCama', { usuario, cargo, cartel, habitacionesDisponibles, camasDisponibles});
-    }catch (error) {
+        res.status(200).render('admin/insertarCama', { usuario, cargo, cartel, habitacionesDisponibles, camasDisponibles });
+    } catch (error) {
         console.error('Error en la vista habitaciones ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista habitaciones', error });
     }
 }
 
 async function cargarInsertarCama(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
         const cargo = req.session.tipoUsuario;
 
-        const {camaSeleccionada, habitacionSeleccionada} = req.body;       
+        const { camaSeleccionada, habitacionSeleccionada } = req.body;
 
-        let camaEncontrada= await Cama.findByPk(camaSeleccionada);
+        let camaEncontrada = await Cama.findByPk(camaSeleccionada);
         await camaEncontrada.update({
             id_habitacion: habitacionSeleccionada
         })
-        
+
         let habitacionesDisponibles = await sequelize.query(
             `SELECT h.id AS id, h.tipo
             FROM habitaciones h
@@ -1300,31 +1363,31 @@ async function cargarInsertarCama(req, res) {
             { type: sequelize.QueryTypes.SELECT }
         );
         habitacionesDisponibles = habitacionesDisponibles.flat();
-        
-        const cartel=true;
+
+        const cartel = true;
 
         const camasDisponibles = await Cama.findAll({
-            where:{id_habitacion: null}
+            where: { id_habitacion: null }
         })
 
-        camasDisponibles.map(cama => {            
+        camasDisponibles.map(cama => {
             cama.electrica_respuesta = cama.electrica ? "Si" : "No";
             cama.oxigeno_respuesta = cama.oxigeno ? "Si" : "No";
-        });        
+        });
 
-        res.status(200).render('admin/insertarCama', { usuario, cargo, cartel,  habitacionesDisponibles, camasDisponibles, camaEncontrada});
-    }catch (error) {
+        res.status(200).render('admin/insertarCama', { usuario, cargo, cartel, habitacionesDisponibles, camasDisponibles, camaEncontrada });
+    } catch (error) {
         console.error('Error en la vista habitaciones ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista habitaciones', error });
     }
 }
 
 async function vistaMoverCama(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
-        const cargo = req.session.tipoUsuario;   
-               
-        
+        const cargo = req.session.tipoUsuario;
+
+
         let habitacionesDisponibles = await sequelize.query(
             `SELECT h.id AS id, h.tipo
             FROM habitaciones h
@@ -1335,39 +1398,39 @@ async function vistaMoverCama(req, res) {
 
         // Aplanar el array de arrays
         habitacionesDisponibles = habitacionesDisponibles.flat();
-        
-        
-        const cartel=false;
-        const camasDisponibles = await Cama.findAll({            
-            include:[
-                {model: Habitacion},
+
+
+        const cartel = false;
+        const camasDisponibles = await Cama.findAll({
+            include: [
+                { model: Habitacion },
             ]
         })
 
-        camasDisponibles.map(cama => {            
+        camasDisponibles.map(cama => {
             cama.electrica_respuesta = cama.electrica ? "Si" : "No";
             cama.oxigeno_respuesta = cama.oxigeno ? "Si" : "No";
         });
 
-        res.status(200).render('admin/moverCama', { usuario, cargo, cartel, habitacionesDisponibles, camasDisponibles});
-    }catch (error) {
+        res.status(200).render('admin/moverCama', { usuario, cargo, cartel, habitacionesDisponibles, camasDisponibles });
+    } catch (error) {
         console.error('Error en la vista habitaciones ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista habitaciones', error });
     }
 }
 
 async function cargarMoverCama(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
-        const cargo = req.session.tipoUsuario;  
-        
-        const {camaSeleccionada, habitacionSeleccionada} = req.body;       
+        const cargo = req.session.tipoUsuario;
 
-        let camaEncontrada= await Cama.findByPk(camaSeleccionada);
+        const { camaSeleccionada, habitacionSeleccionada } = req.body;
+
+        let camaEncontrada = await Cama.findByPk(camaSeleccionada);
         await camaEncontrada.update({
             id_habitacion: habitacionSeleccionada
         })
-        
+
         let habitacionesDisponibles = await sequelize.query(
             `SELECT h.id AS id, h.tipo
             FROM habitaciones h
@@ -1378,87 +1441,87 @@ async function cargarMoverCama(req, res) {
 
         // Aplanar el array de arrays
         habitacionesDisponibles = habitacionesDisponibles.flat();
-        
-        const cartel=true;
-        const camasDisponibles = await Cama.findAll({            
-            include:[
-                {model: Habitacion},
+
+        const cartel = true;
+        const camasDisponibles = await Cama.findAll({
+            include: [
+                { model: Habitacion },
             ]
         })
 
-        camasDisponibles.map(cama => {            
+        camasDisponibles.map(cama => {
             cama.electrica_respuesta = cama.electrica ? "Si" : "No";
             cama.oxigeno_respuesta = cama.oxigeno ? "Si" : "No";
         });
 
-        res.status(200).render('admin/moverCama', { usuario, cargo, cartel, habitacionesDisponibles, camasDisponibles, camaEncontrada});
-    }catch (error) {
+        res.status(200).render('admin/moverCama', { usuario, cargo, cartel, habitacionesDisponibles, camasDisponibles, camaEncontrada });
+    } catch (error) {
         console.error('Error en la vista habitaciones ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista habitaciones', error });
     }
 }
 
 async function vistaMutual(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
-        const cargo = req.session.tipoUsuario;   
-        const mutuales = await Mutual.findAll();      
-                
-        const cartel=false;
-        const cartel2=false;
+        const cargo = req.session.tipoUsuario;
+        const mutuales = await Mutual.findAll();
+
+        const cartel = false;
+        const cartel2 = false;
 
 
 
-        res.status(200).render('admin/crearMutual', { usuario, cargo, cartel, cartel2, mutuales,});
-    }catch (error) {
+        res.status(200).render('admin/crearMutual', { usuario, cargo, cartel, cartel2, mutuales, });
+    } catch (error) {
         console.error('Error en la vista habitaciones ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista habitaciones', error });
     }
 }
 
 async function cargarMutual(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
-        const cargo = req.session.tipoUsuario;   
+        const cargo = req.session.tipoUsuario;
 
         const nombreMutual = req.body.nombreMutual;
-        
+
         const mutual = await Mutual.create({
             nombre: nombreMutual
         })
-        
-        const mutuales = await Mutual.findAll();
-                
-        const cartel=true;
-        const cartel2=false;
 
-        res.status(200).render('admin/crearMutual', { usuario, cargo, cartel, cartel2, mutuales, mutual});
-    }catch (error) {
+        const mutuales = await Mutual.findAll();
+
+        const cartel = true;
+        const cartel2 = false;
+
+        res.status(200).render('admin/crearMutual', { usuario, cargo, cartel, cartel2, mutuales, mutual });
+    } catch (error) {
         console.error('Error en la vista habitaciones ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista habitaciones', error });
     }
 }
 
 async function eliminarMutual(req, res) {
-    try{
+    try {
         const usuario = req.session.nombreUsuario;
-        const cargo = req.session.tipoUsuario;   
-            
-                
-        const cartel2=true;
-        const cartel=false;
+        const cargo = req.session.tipoUsuario;
+
+
+        const cartel2 = true;
+        const cartel = false;
 
         const mutual = await Mutual.findByPk(req.params.id);
         await Mutual_Paciente.destroy({
-            where:{id_mutual: mutual.id}
+            where: { id_mutual: mutual.id }
         })
 
         mutual.destroy();
 
-        const mutuales = await Mutual.findAll();  
+        const mutuales = await Mutual.findAll();
 
-        res.status(200).render('admin/crearMutual', { usuario, cargo, cartel, cartel2, mutuales, mutual});
-    }catch (error) {
+        res.status(200).render('admin/crearMutual', { usuario, cargo, cartel, cartel2, mutuales, mutual });
+    } catch (error) {
         console.error('Error en la vista habitaciones ', error);
         res.status(500).render('error', { mensaje: 'Error en la vista habitaciones', error });
     }

@@ -98,7 +98,9 @@ block content
                     label(for="nombreUsuario") Usuario:
                     input(type="text" placeholder="Ingrese su nombre de usuario" name="nombreUsuario"  minlength="3" maxlength="30" required)#nombreUsuario 
                     p#usuarioDuplicado(style="color:red; margin-top:8px; diplay:none;") 
-                    
+                    if(mensaje) 
+                        p#usuarioDuplicado(style="color:red; margin-top:8px; diplay:none;") #{mensaje}
+
                 .grupo-formulario 
                     label(for="contrasena") Contraseña:
                     input(type="text" placeholder="Ingrese una nueva contaseña" name="contrasena" required)#contrasena 
